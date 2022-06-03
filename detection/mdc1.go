@@ -37,22 +37,8 @@ func mdc1(cpe23 string, conf *model.Node) (pos, neg *Node) {
 
 	// Select node/leaf mode
 	if len(conf.Children) != 0 {
-		// Node mode => evaluate circuit
-		pos.Children = []*Node{}
-		neg.Children = []*Node{}
-		for _, child := range conf.Children {
-			pos, neg := mdc1(cpe23, child)
-			pos.Children = append(pos.Children, pos)
-			neg.Children = append(neg.Children, neg)
-		}
-		// Evaluate operator
-		if conf.Operator == "AND" {
-			// Children must all be positives
-			if len(neg.Children) != 0 {
-				neg.Children = append(neg.Children, pos.Children...)
-				pos.Children = []*Node{}
-			}
-		}
+		// This part is not handled by MDC1
+		return pos, neg
 	} else {
 		// Leaf mode => evaluate matching
 		pos.Matchers = []*Matcher{}

@@ -431,6 +431,16 @@ func (mem *Memory) AddCVE(input AddCVEInput) error {
 	for i, conf := range input.Configurations {
 		configurations[i] = loadInputConf(conf)
 	}
+	references := make([]*model.Reference, len(input.References))
+	for i, ref := range input.References {
+		tags := make([]string, len(ref.Tags))
+		copy(tags, ref.Tags)
+		references[i] = &model.Reference{
+			URL:       ref.URL,
+			Refsource: ref.Refsource,
+			Tags:      tags,
+		}
+	}
 	mem.CVEs[input.ID] = &model.CVE{
 		ID:              input.ID,
 		Description:     input.Description,
@@ -440,6 +450,7 @@ func (mem *Memory) AddCVE(input AddCVEInput) error {
 		CVSS31Vector:    cpPtrValue(input.CVSS31Vector),
 		Configurations:  configurations,
 		Components:      []*model.Component{},
+		References:      references,
 	}
 	// => Index
 	cpes23 := getAllCPEs23(configurations)
@@ -582,6 +593,19 @@ func (mem *Memory) UpdateCVE(input UpdateCVEInput) error {
 			}
 		}
 		cve.Components = newComps
+	}
+	// => References
+	if input.References != nil {
+		cve.References = make([]*model.Reference, len(input.References))
+		for i, ref := range input.References {
+			tags := make([]string, len(ref.Tags))
+			copy(tags, ref.Tags)
+			cve.References[i] = &model.Reference{
+				URL:       ref.URL,
+				Refsource: ref.Refsource,
+				Tags:      tags,
+			}
+		}
 	}
 
 	return nil
@@ -738,6 +762,16 @@ func copyCVE(cve *model.CVE) *model.CVE {
 			ID: comp.ID,
 		}
 	}
+	references := make([]*model.Reference, len(cve.References))
+	for i, ref := range cve.References {
+		tags := make([]string, len(ref.Tags))
+		copy(tags, ref.Tags)
+		references[i] = &model.Reference{
+			URL:       ref.URL,
+			Refsource: ref.Refsource,
+			Tags:      tags,
+		}
+	}
 	return &model.CVE{
 		ID:              cve.ID,
 		Description:     cve.Description,
@@ -747,6 +781,7 @@ func copyCVE(cve *model.CVE) *model.CVE {
 		CVSS31Vector:    cpPtrValue(cve.CVSS31Vector),
 		Configurations:  configurations,
 		Components:      comps,
+		References:      references,
 	}
 }
 

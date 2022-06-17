@@ -76,8 +76,58 @@ var CVE = graphql.NewObject(graphql.ObjectConfig{
 				return nil, nil
 			},
 		},
+		"references": {
+			Type: graphql.NewNonNull(&graphql.List{
+				OfType: graphql.NewNonNull(Reference),
+			}),
+			Args: graphql.FieldConfigArgument{
+				"tags": {
+					Type: &graphql.List{
+						OfType: graphql.NewNonNull(graphql.String),
+					},
+				},
+			},
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				if cve, ok := p.Source.(*model.CVE); ok {
+					t := p.Args["tags"].([]any)
+					if len(t) == 0 {
+						return cve.References, nil
+					}
+					tags := make([]string, len(t))
+					for i, tref := range t {
+						tags[i] = tref.(string)
+					}
+					references := []*model.Reference{}
+					for _, ref := range cve.References {
+						if containsAny(ref.Tags, tags) {
+							references = append(references, ref)
+						}
+					}
+					return references, nil
+				}
+				return nil, nil
+			},
+		},
 	},
 })
+
+func contains(slc []string, target string) bool {
+	for _, str := range slc {
+		if str == target {
+			return true
+		}
+	}
+	return false
+}
+
+func containsAny(slc, targets []string) bool {
+	for _, target := range targets {
+		if contains(slc, target) {
+			return true
+		}
+	}
+	return false
+}
 
 var Node = graphql.NewObject(graphql.ObjectConfig{
 	Name:        "Node",
@@ -180,6 +230,41 @@ var CPEMatch = graphql.NewObject(graphql.ObjectConfig{
 	},
 })
 
+var Reference = graphql.NewObject(graphql.ObjectConfig{
+	Name: "Reference",
+	Fields: graphql.Fields{
+		"url": {
+			Type: graphql.NewNonNull(graphql.String),
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				if ref, ok := p.Source.(*model.Reference); ok {
+					return ref.URL, nil
+				}
+				return nil, nil
+			},
+		},
+		"refsource": {
+			Type: graphql.NewNonNull(graphql.String),
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				if ref, ok := p.Source.(*model.Reference); ok {
+					return ref.Refsource, nil
+				}
+				return nil, nil
+			},
+		},
+		"tags": {
+			Type: graphql.NewNonNull(&graphql.List{
+				OfType: graphql.NewNonNull(graphql.String),
+			}),
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				if ref, ok := p.Source.(*model.Reference); ok {
+					return ref.Tags, nil
+				}
+				return nil, nil
+			},
+		},
+	},
+})
+
 var GetCVEInput = graphql.NewInputObject(graphql.InputObjectConfig{
 	Name: "GetCVEInput",
 	Fields: graphql.InputObjectConfigFieldMap{
@@ -226,6 +311,9 @@ var AddCVEInput = graphql.NewInputObject(graphql.InputObjectConfig{
 		"configurations": {
 			Type: AddCVENodeInput,
 		},
+		"references": {
+			Type: AddCVEReferencesInput,
+		},
 	},
 })
 
@@ -270,6 +358,23 @@ var AddCVENodeCPEMatchInput = graphql.NewInputObject(graphql.InputObjectConfig{
 	},
 })
 
+var AddCVEReferencesInput = graphql.NewInputObject(graphql.InputObjectConfig{
+	Name: "AddCVEReferencesInput",
+	Fields: graphql.InputObjectConfigFieldMap{
+		"url": {
+			Type: graphql.NewNonNull(graphql.String),
+		},
+		"refsource": {
+			Type: graphql.NewNonNull(graphql.String),
+		},
+		"tags": {
+			Type: graphql.NewNonNull(&graphql.List{
+				OfType: graphql.NewNonNull(graphql.String),
+			}),
+		},
+	},
+})
+
 var UpdateCVEInput = graphql.NewInputObject(graphql.InputObjectConfig{
 	Name: "UpdateCVEInput",
 	Fields: graphql.InputObjectConfigFieldMap{
@@ -292,6 +397,9 @@ var UpdateCVEInput = graphql.NewInputObject(graphql.InputObjectConfig{
 		},
 		"configurations": {
 			Type: UpdateCVENodeInput,
+		},
+		"references": {
+			Type: UpdateCVEReferencesInput,
 		},
 	},
 })
@@ -333,6 +441,23 @@ var UpdateCVENodeCPEMatchInput = graphql.NewInputObject(graphql.InputObjectConfi
 		},
 		"versionEndExcluding": {
 			Type: graphql.Boolean,
+		},
+	},
+})
+
+var UpdateCVEReferencesInput = graphql.NewInputObject(graphql.InputObjectConfig{
+	Name: "UpdateCVEReferencesInput",
+	Fields: graphql.InputObjectConfigFieldMap{
+		"url": {
+			Type: graphql.NewNonNull(graphql.String),
+		},
+		"refsource": {
+			Type: graphql.NewNonNull(graphql.String),
+		},
+		"tags": {
+			Type: graphql.NewNonNull(&graphql.List{
+				OfType: graphql.NewNonNull(graphql.String),
+			}),
 		},
 	},
 })

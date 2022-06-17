@@ -11,6 +11,7 @@ type CVE struct {
 	CVSS31Vector    *string      `json:"cvss31Vector,omitempty"`
 	Configurations  []*Node      `json:"configurations"`
 	Components      []*Component `json:"components"`
+	References      []*Reference `json:"references"`
 }
 
 type Node struct {
@@ -27,4 +28,10 @@ type CPEMatch struct {
 	VersionStartExcluding *string `json:"versionStartExcluding"`
 	VersionEndIncluding   *string `json:"versionEndIncluding"`
 	VersionEndExcluding   *string `json:"versionEndExcluding"`
+}
+
+type Reference struct {
+	URL       string   `json:"url"`
+	Refsource string   `json:"refsource"`
+	Tags      []string `json:"tags"`
 }

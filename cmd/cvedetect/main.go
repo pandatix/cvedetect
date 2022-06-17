@@ -175,6 +175,15 @@ func run(ctx *cli.Context) error {
 					inputConfs[i] = loadNode(node)
 				}
 			}
+			// Extract references
+			references := make([]db.AddCVEReferenceInput, len(item.CVE.References.ReferenceData))
+			for i, ref := range item.CVE.References.ReferenceData {
+				references[i] = db.AddCVEReferenceInput{
+					URL:       ref.URL,
+					Refsource: *ref.Refsource,
+					Tags:      *ref.Tags,
+				}
+			}
 			// Import CVE
 			if err := memory.AddCVE(db.AddCVEInput{
 				ID:              item.CVE.CVEDataMeta.ID,
@@ -184,6 +193,7 @@ func run(ctx *cli.Context) error {
 				CVSS20Vector:    cvss20vector,
 				CVSS31Vector:    cvss31vector,
 				Configurations:  inputConfs,
+				References:      references,
 			}); err != nil {
 				return err
 			}

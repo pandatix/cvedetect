@@ -64,13 +64,14 @@ type QueryCVEInput struct {
 }
 
 type AddCVEInput struct {
-	ID              string            `json:"id"`
-	Description     string            `json:"description"`
-	PublicationDate time.Time         `json:"publicationDate"`
-	LastUpdate      time.Time         `json:"lastUpdate"`
-	CVSS20Vector    *string           `json:"cvss20Vector,omitempty"`
-	CVSS31Vector    *string           `json:"cvss31Vector,omitempty"`
-	Configurations  []AddCVENodeInput `json:"configurations"`
+	ID              string                 `json:"id"`
+	Description     string                 `json:"description"`
+	PublicationDate time.Time              `json:"publicationDate"`
+	LastUpdate      time.Time              `json:"lastUpdate"`
+	CVSS20Vector    *string                `json:"cvss20Vector,omitempty"`
+	CVSS31Vector    *string                `json:"cvss31Vector,omitempty"`
+	Configurations  []AddCVENodeInput      `json:"configurations"`
+	References      []AddCVEReferenceInput `json:"references"`
 }
 
 type AddCVENodeInput struct {
@@ -89,14 +90,21 @@ type AddCVENodeCPEMatchInput struct {
 	VersionEndExcluding   *string `json:"versionEndExcluding,omitempty"`
 }
 
+type AddCVEReferenceInput struct {
+	URL       string   `json:"url"`
+	Refsource string   `json:"refsource"`
+	Tags      []string `json:"tags"`
+}
+
 type UpdateCVEInput struct {
-	ID             string                    `json:"id"`
-	Description    *string                   `json:"description,omitempty"`
-	LastUpdate     *time.Time                `json:"lastUpdate"`
-	CVSS20Vector   *string                   `json:"cvss20Vector,omitempty"`
-	CVSS31Vector   *string                   `json:"cvss31Vector,omitempty"`
-	Configurations []UpdateCVENodeInput      `json:"configurations"`
-	Components     []UpdateCVEComponentInput `json:"components"`
+	ID             string                     `json:"id"`
+	Description    *string                    `json:"description,omitempty"`
+	LastUpdate     *time.Time                 `json:"lastUpdate"`
+	CVSS20Vector   *string                    `json:"cvss20Vector,omitempty"`
+	CVSS31Vector   *string                    `json:"cvss31Vector,omitempty"`
+	Configurations []UpdateCVENodeInput       `json:"configurations"`
+	Components     []UpdateCVEComponentInput  `json:"components"`
+	References     []UpdateCVEReferencesInput `json:"references"`
 }
 
 type UpdateCVENodeInput struct {
@@ -117,6 +125,12 @@ type UpdateCVENodeCPEMatchInput struct {
 
 type UpdateCVEComponentInput struct {
 	ID string `json:"id"`
+}
+
+type UpdateCVEReferencesInput struct {
+	URL       string   `json:"url"`
+	Refsource string   `json:"refsource"`
+	Tags      []string `json:"tags"`
 }
 
 type DeleteCVEInput struct {

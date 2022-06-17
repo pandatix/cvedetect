@@ -1812,6 +1812,7 @@ func TestMemoryGetCVE(t *testing.T) {
 				CVEs: map[string]*model.CVE{
 					"cve": {
 						ID:              "cve",
+						Description:     "This is a CVE.",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
 						CVSS20Vector:    nil,
@@ -1834,6 +1835,13 @@ func TestMemoryGetCVE(t *testing.T) {
 							},
 						},
 						Components: []*model.Component{},
+						References: []*model.Reference{
+							{
+								URL:       "https://example.com",
+								Refsource: "MISC",
+								Tags:      []string{"Third Party Advisory"},
+							},
+						},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{
@@ -1847,6 +1855,7 @@ func TestMemoryGetCVE(t *testing.T) {
 			},
 			ExpectedCVE: &model.CVE{
 				ID:              "cve",
+				Description:     "This is a CVE.",
 				PublicationDate: timeParse("2020-02-01T14:30Z"),
 				LastUpdate:      timeParse("2020-02-01T14:30Z"),
 				CVSS20Vector:    nil,
@@ -1869,6 +1878,13 @@ func TestMemoryGetCVE(t *testing.T) {
 					},
 				},
 				Components: []*model.Component{},
+				References: []*model.Reference{
+					{
+						URL:       "https://example.com",
+						Refsource: "MISC",
+						Tags:      []string{"Third Party Advisory"},
+					},
+				},
 			},
 			ExpectedErr: nil,
 			ExpectedMemory: &db.Memory{
@@ -1877,6 +1893,7 @@ func TestMemoryGetCVE(t *testing.T) {
 				CVEs: map[string]*model.CVE{
 					"cve": {
 						ID:              "cve",
+						Description:     "This is a CVE.",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
 						CVSS20Vector:    nil,
@@ -1899,6 +1916,13 @@ func TestMemoryGetCVE(t *testing.T) {
 							},
 						},
 						Components: []*model.Component{},
+						References: []*model.Reference{
+							{
+								URL:       "https://example.com",
+								Refsource: "MISC",
+								Tags:      []string{"Third Party Advisory"},
+							},
+						},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{
@@ -1986,6 +2010,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 							},
 						},
 						Components: []*model.Component{},
+						References: []*model.Reference{},
 					},
 					"cve-2": {
 						ID:              "cve-2",
@@ -2011,6 +2036,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 							},
 						},
 						Components: []*model.Component{},
+						References: []*model.Reference{},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{
@@ -2048,6 +2074,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 						},
 					},
 					Components: []*model.Component{},
+					References: []*model.Reference{},
 				}, {
 					ID:              "cve-2",
 					PublicationDate: timeParse("2020-02-01T14:30Z"),
@@ -2072,6 +2099,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 						},
 					},
 					Components: []*model.Component{},
+					References: []*model.Reference{},
 				},
 			},
 			ExpectedMemory: &db.Memory{
@@ -2102,6 +2130,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 							},
 						},
 						Components: []*model.Component{},
+						References: []*model.Reference{},
 					},
 					"cve-2": {
 						ID:              "cve-2",
@@ -2127,6 +2156,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 							},
 						},
 						Components: []*model.Component{},
+						References: []*model.Reference{},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{
@@ -2166,6 +2196,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 							},
 						},
 						Components: []*model.Component{},
+						References: []*model.Reference{},
 					},
 					"cve-2": {
 						ID:              "cve-2",
@@ -2191,6 +2222,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 							},
 						},
 						Components: []*model.Component{},
+						References: []*model.Reference{},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{
@@ -2230,6 +2262,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 						},
 					},
 					Components: []*model.Component{},
+					References: []*model.Reference{},
 				},
 			},
 			ExpectedMemory: &db.Memory{
@@ -2260,6 +2293,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 							},
 						},
 						Components: []*model.Component{},
+						References: []*model.Reference{},
 					},
 					"cve-2": {
 						ID:              "cve-2",
@@ -2285,6 +2319,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 							},
 						},
 						Components: []*model.Component{},
+						References: []*model.Reference{},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{
@@ -2350,6 +2385,7 @@ func TestMemoryAddCVE(t *testing.T) {
 							},
 						},
 						Components: []*model.Component{},
+						References: []*model.Reference{},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{
@@ -2382,6 +2418,7 @@ func TestMemoryAddCVE(t *testing.T) {
 						},
 					},
 				},
+				References: []db.AddCVEReferenceInput{},
 			},
 			ExpectedErr: &db.ErrAlreadyExist{
 				K: db.KeyCVE,
@@ -2416,6 +2453,7 @@ func TestMemoryAddCVE(t *testing.T) {
 							},
 						},
 						Components: []*model.Component{},
+						References: []*model.Reference{},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{
@@ -2456,6 +2494,7 @@ func TestMemoryAddCVE(t *testing.T) {
 						},
 					},
 				},
+				References: []db.AddCVEReferenceInput{},
 			},
 			ExpectedErr: nil,
 			ExpectedMemory: &db.Memory{
@@ -2487,6 +2526,7 @@ func TestMemoryAddCVE(t *testing.T) {
 							},
 						},
 						Components: []*model.Component{},
+						References: []*model.Reference{},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{
@@ -2576,6 +2616,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 							},
 						},
 						Components: []*model.Component{},
+						References: []*model.Reference{},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{
@@ -2630,6 +2671,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 							},
 						},
 						Components: []*model.Component{},
+						References: []*model.Reference{},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{
@@ -2653,6 +2695,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						CVSS31Vector:    nil,
 						Configurations:  []*model.Node{},
 						Components:      []*model.Component{},
+						References:      []*model.Reference{},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{},
@@ -2665,6 +2708,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				CVSS31Vector:   nil,
 				Configurations: nil,
 				Components:     nil,
+				References:     nil,
 			},
 			ExpectedErr: nil,
 			ExpectedMemory: &db.Memory{
@@ -2680,6 +2724,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						CVSS31Vector:    nil,
 						Configurations:  []*model.Node{},
 						Components:      []*model.Component{},
+						References:      []*model.Reference{},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{},
@@ -2715,6 +2760,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 							},
 						},
 						Components: []*model.Component{},
+						References: []*model.Reference{},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{
@@ -2731,6 +2777,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				CVSS31Vector:   nil,
 				Configurations: nil,
 				Components:     nil,
+				References:     nil,
 			},
 			ExpectedErr: nil,
 			ExpectedMemory: &db.Memory{
@@ -2762,6 +2809,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 							},
 						},
 						Components: []*model.Component{},
+						References: []*model.Reference{},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{
@@ -2785,6 +2833,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						CVSS31Vector:    nil,
 						Configurations:  []*model.Node{},
 						Components:      []*model.Component{},
+						References:      []*model.Reference{},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{},
@@ -2797,6 +2846,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				CVSS31Vector:   nil,
 				Configurations: nil,
 				Components:     nil,
+				References:     nil,
 			},
 			ExpectedErr: nil,
 			ExpectedMemory: &db.Memory{
@@ -2812,6 +2862,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						CVSS31Vector:    nil,
 						Configurations:  []*model.Node{},
 						Components:      []*model.Component{},
+						References:      []*model.Reference{},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{},
@@ -2831,6 +2882,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						CVSS31Vector:    nil,
 						Configurations:  []*model.Node{},
 						Components:      []*model.Component{},
+						References:      []*model.Reference{},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{},
@@ -2843,6 +2895,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				CVSS31Vector:   ptr("CVSS:3.1/AV:A/AC:H/PR:L/UI:N/S:C/C:L/I:L/A:H"),
 				Configurations: nil,
 				Components:     nil,
+				References:     nil,
 			},
 			ExpectedErr: nil,
 			ExpectedMemory: &db.Memory{
@@ -2858,6 +2911,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						CVSS31Vector:    ptr("CVSS:3.1/AV:A/AC:H/PR:L/UI:N/S:C/C:L/I:L/A:H"),
 						Configurations:  []*model.Node{},
 						Components:      []*model.Component{},
+						References:      []*model.Reference{},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{},
@@ -2900,6 +2954,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 							},
 						},
 						Components: []*model.Component{},
+						References: []*model.Reference{},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{
@@ -2942,6 +2997,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 					},
 				},
 				Components: nil,
+				References: nil,
 			},
 			ExpectedErr: nil,
 			ExpectedMemory: &db.Memory{
@@ -2980,6 +3036,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 							},
 						},
 						Components: []*model.Component{},
+						References: []*model.Reference{},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{
@@ -3067,6 +3124,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 								ID: "comp-3",
 							},
 						},
+						References: []*model.Reference{},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{
@@ -3089,6 +3147,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						ID: "comp-3",
 					},
 				},
+				References: nil,
 			},
 			ExpectedErr: nil,
 			ExpectedMemory: &db.Memory{
@@ -3165,6 +3224,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 								ID: "comp-3",
 							},
 						},
+						References: []*model.Reference{},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{
@@ -3172,6 +3232,73 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						"cve": {},
 					},
 				},
+			},
+		},
+		"new-references": {
+			Memory: &db.Memory{
+				Components:  map[string]*model.Component{},
+				CompVPIndex: map[string]map[string]struct{}{},
+				CVEs: map[string]*model.CVE{
+					"cve": {
+						ID:              "cve",
+						Description:     "",
+						PublicationDate: timeParse("2020-02-01T14:30Z"),
+						LastUpdate:      timeParse("2020-02-01T14:30Z"),
+						CVSS20Vector:    nil,
+						CVSS31Vector:    nil,
+						Configurations:  []*model.Node{},
+						Components:      []*model.Component{},
+						References: []*model.Reference{
+							{
+								URL:       "https://example.com",
+								Refsource: "MISC",
+								Tags:      []string{"Third Party Advisory"},
+							},
+						},
+					},
+				},
+				CVEVPIndex: map[string]map[string]struct{}{},
+			},
+			Input: db.UpdateCVEInput{
+				ID:             "cve",
+				Description:    nil,
+				LastUpdate:     nil,
+				CVSS20Vector:   nil,
+				CVSS31Vector:   nil,
+				Configurations: nil,
+				Components:     nil,
+				References: []db.UpdateCVEReferencesInput{
+					{
+						URL:       "https://new-example.com",
+						Refsource: "MISC",
+						Tags:      []string{"Exploit", "Patch"},
+					},
+				},
+			},
+			ExpectedErr: nil,
+			ExpectedMemory: &db.Memory{
+				Components:  map[string]*model.Component{},
+				CompVPIndex: map[string]map[string]struct{}{},
+				CVEs: map[string]*model.CVE{
+					"cve": {
+						ID:              "cve",
+						Description:     "",
+						PublicationDate: timeParse("2020-02-01T14:30Z"),
+						LastUpdate:      timeParse("2020-02-01T14:30Z"),
+						CVSS20Vector:    nil,
+						CVSS31Vector:    nil,
+						Configurations:  []*model.Node{},
+						Components:      []*model.Component{},
+						References: []*model.Reference{
+							{
+								URL:       "https://new-example.com",
+								Refsource: "MISC",
+								Tags:      []string{"Exploit", "Patch"},
+							},
+						},
+					},
+				},
+				CVEVPIndex: map[string]map[string]struct{}{},
 			},
 		},
 	}
@@ -3269,6 +3396,7 @@ func TestMemoryDeleteCVE(t *testing.T) {
 								ID: "comp",
 							},
 						},
+						References: []*model.Reference{},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{
@@ -3398,6 +3526,7 @@ func TestGetComponentCVEs(t *testing.T) {
 								ID: "comp",
 							},
 						},
+						References: []*model.Reference{},
 					},
 					"cve-2": {
 						ID:              "cve-2",
@@ -3412,6 +3541,7 @@ func TestGetComponentCVEs(t *testing.T) {
 								ID: "comp",
 							},
 						},
+						References: []*model.Reference{},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{},
@@ -3444,6 +3574,7 @@ func TestGetComponentCVEs(t *testing.T) {
 							ID: "comp",
 						},
 					},
+					References: []*model.Reference{},
 				}, {
 					ID:              "cve-2",
 					Description:     "CVE example 2",
@@ -3457,6 +3588,7 @@ func TestGetComponentCVEs(t *testing.T) {
 							ID: "comp",
 						},
 					},
+					References: []*model.Reference{},
 				},
 			},
 			ExpectedMemory: &db.Memory{
@@ -3491,6 +3623,7 @@ func TestGetComponentCVEs(t *testing.T) {
 								ID: "comp",
 							},
 						},
+						References: []*model.Reference{},
 					},
 					"cve-2": {
 						ID:              "cve-2",
@@ -3505,6 +3638,7 @@ func TestGetComponentCVEs(t *testing.T) {
 								ID: "comp",
 							},
 						},
+						References: []*model.Reference{},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{},
@@ -3630,6 +3764,7 @@ func TestGetCVEComponents(t *testing.T) {
 								ID: "comp-2",
 							},
 						},
+						References: []*model.Reference{},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{},
@@ -3649,6 +3784,7 @@ func TestGetCVEComponents(t *testing.T) {
 						ID: "comp-2",
 					},
 				},
+				References: []*model.Reference{},
 			},
 			ExpectedComponents: []*model.Component{
 				{
@@ -3719,6 +3855,7 @@ func TestGetCVEComponents(t *testing.T) {
 								ID: "comp-2",
 							},
 						},
+						References: []*model.Reference{},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{},

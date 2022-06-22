@@ -9,7 +9,7 @@ It's based on researches on CPE v2.3 future Release 5, NVD analysis, CVE detecti
  - [ ] Implement complete `match` algorithm
  - [ ] Implement `MDCN` algorithm
  - [ ] Harden inputs through scalars
- - [ ] Add support for CVSS 2.0 and CVSS 3.0/3.1 with `github.com/pandatix/cvss` when released
+ - [ ] Add support for CVSS 2.0 and CVSS 3.0 with `github.com/pandatix/cvss` when released
  - [ ] Add score filtering (filter on base, environmental and temporal scores + attributes values)
  - [ ] Improve support of CPE v2.3 Release 4 with `github.com/pandatix/go-cpe` when released
  - [ ] Provide good tests with >85% code coverage
@@ -53,6 +53,10 @@ query QueryCVEs($input: QueryCVEInput!) {
                 cpe23
             }
         }
+        cvss31 {
+            vector
+            baseScore
+        }
     }
 }
 ```
@@ -69,7 +73,7 @@ The previous has the equivalent curl command.
 
 ```bash
 curl -X POST http://localhost:8080/graphql \
-    -d '{"query":"query QueryCVEs($input:QueryCVEInput){queryCVEs(input:$input){id description configurations{negate operator cpeMatches{vulnerable cpe23}}}}","variables":{"input":{"vp":"gitea:gitea"}}}'
+    -d '{"query":"query QueryCVEs($input:QueryCVEInput){queryCVEs(input:$input){id description configurations{negate operator cpeMatches{vulnerable cpe23}}cvss31{vector baseScore}}}","variables":{"input":{"vp":"gitea:gitea"}}}'
 ```
 
 ### Adding a Component
@@ -95,6 +99,10 @@ mutation AddComponent($input: AddComponentInput!) {
                     versionEndExcluding
                 }
             }
+            cvss31 {
+                vector
+                baseScore
+            }
         }
     }
 }
@@ -111,5 +119,5 @@ The previous has the equivalent curl command.
 
 ```bash
 curl -X POST http://localhost:8080/graphql \
-    -d '{"query":"mutation AddComponent($input:AddComponentInput!){addComponent(input:$input){id name cpes23 cves{id description configurations{negate operator cpeMatches{vulnerable cpe23 versionStartIncluding versionStartExcluding versionEndIncluding versionEndExcluding}}}}}","variables":{"input":{"name":"Gitea","cpes23":["cpe:2.3:a:gitea:gitea:1.12.6:*:*:*:*:docker:amd64:*"]}}}'
+    -d '{"query":"mutation AddComponent($input:AddComponentInput!){addComponent(input:$input){id name cpes23 cves{id description configurations{negate operator cpeMatches{vulnerable cpe23 versionStartIncluding versionStartExcluding versionEndIncluding versionEndExcluding}}cvss31{vector baseScore}}}}","variables":{"input":{"name":"Gitea","cpes23":["cpe:2.3:a:gitea:gitea:1.12.6:*:*:*:*:docker:amd64:*"]}}}'
 ```

@@ -164,7 +164,8 @@ func run(ctx *cli.Context) error {
 			var cvss31vector *string = nil
 			if item.Impact != nil &&
 				item.Impact.BaseMetricV3 != nil &&
-				item.Impact.BaseMetricV3.CVSSV3 != nil {
+				item.Impact.BaseMetricV3.CVSSV3 != nil &&
+				item.Impact.BaseMetricV3.CVSSV3.Version == "3.1" {
 				cvss31vector = &item.Impact.BaseMetricV3.CVSSV3.VectorString
 			}
 			// Extract configurations

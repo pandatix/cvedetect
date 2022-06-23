@@ -2,6 +2,7 @@ package object
 
 import (
 	"github.com/graphql-go/graphql"
+	"github.com/pandatix/cvedetect/api/scalar"
 	gocvss31 "github.com/pandatix/go-cvss/31"
 )
 
@@ -10,7 +11,7 @@ var CVSS31 = graphql.NewObject(graphql.ObjectConfig{
 	Description: "Representation of a CVSS v3.1 vector.",
 	Fields: graphql.Fields{
 		"vector": {
-			Type: graphql.NewNonNull(graphql.String),
+			Type: graphql.NewNonNull(scalar.CVSS31Vector),
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				if vector, ok := p.Source.(*string); ok {
 					if vector == nil {

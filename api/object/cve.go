@@ -305,8 +305,7 @@ var AddCVEInput = graphql.NewInputObject(graphql.InputObjectConfig{
 			Type: graphql.String,
 		},
 		"cvss31vector": {
-			// TODO use CVSS31Vector scalar
-			Type: graphql.String,
+			Type: scalar.CVSS31Vector,
 		},
 		"configurations": {
 			Type: AddCVENodeInput,
@@ -392,8 +391,7 @@ var UpdateCVEInput = graphql.NewInputObject(graphql.InputObjectConfig{
 			Type: graphql.String,
 		},
 		"cvss31vector": {
-			// TODO use CVSS31Vector scalar
-			Type: graphql.String,
+			Type: scalar.CVSS31Vector,
 		},
 		"configurations": {
 			Type: UpdateCVENodeInput,

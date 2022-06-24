@@ -2494,7 +2494,13 @@ func TestMemoryAddCVE(t *testing.T) {
 						},
 					},
 				},
-				References: []db.AddCVEReferenceInput{},
+				References: []db.AddCVEReferenceInput{
+					{
+						URL:       "https://example.com",
+						Refsource: "MISC",
+						Tags:      []string{"Patch"},
+					},
+				},
 			},
 			ExpectedErr: nil,
 			ExpectedMemory: &db.Memory{
@@ -2507,6 +2513,7 @@ func TestMemoryAddCVE(t *testing.T) {
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
 						CVSS20Vector:    ptr("AV:A/AC:H/Au:S/C:P/I:P/A:C"),
+						CVSS30Vector:    nil,
 						CVSS31Vector:    ptr("CVSS:3.1/AV:A/AC:H/PR:L/UI:N/S:C/C:L/I:L/A:H"),
 						Configurations: []*model.Node{
 							{
@@ -2526,7 +2533,13 @@ func TestMemoryAddCVE(t *testing.T) {
 							},
 						},
 						Components: []*model.Component{},
-						References: []*model.Reference{},
+						References: []*model.Reference{
+							{
+								URL:       "https://example.com",
+								Refsource: "MISC",
+								Tags:      []string{"Patch"},
+							},
+						},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{
@@ -2859,6 +2872,58 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
 						CVSS20Vector:    ptr("AV:A/AC:H/Au:S/C:P/I:P/A:C"),
+						CVSS31Vector:    nil,
+						Configurations:  []*model.Node{},
+						Components:      []*model.Component{},
+						References:      []*model.Reference{},
+					},
+				},
+				CVEVPIndex: map[string]map[string]struct{}{},
+			},
+		},
+		"new-cvss30vector": {
+			Memory: &db.Memory{
+				Components:  map[string]*model.Component{},
+				CompVPIndex: map[string]map[string]struct{}{},
+				CVEs: map[string]*model.CVE{
+					"cve": {
+						ID:              "cve",
+						Description:     "CVE in something.",
+						PublicationDate: timeParse("2020-02-01T14:30Z"),
+						LastUpdate:      timeParse("2020-02-01T14:30Z"),
+						CVSS20Vector:    nil,
+						CVSS30Vector:    nil,
+						CVSS31Vector:    nil,
+						Configurations:  []*model.Node{},
+						Components:      []*model.Component{},
+						References:      []*model.Reference{},
+					},
+				},
+				CVEVPIndex: map[string]map[string]struct{}{},
+			},
+			Input: db.UpdateCVEInput{
+				ID:             "cve",
+				Description:    nil,
+				LastUpdate:     nil,
+				CVSS20Vector:   nil,
+				CVSS30Vector:   ptr("CVSS:3.0/AV:A/AC:H/PR:L/UI:N/S:C/C:L/I:L/A:H"),
+				CVSS31Vector:   nil,
+				Configurations: nil,
+				Components:     nil,
+				References:     nil,
+			},
+			ExpectedErr: nil,
+			ExpectedMemory: &db.Memory{
+				Components:  map[string]*model.Component{},
+				CompVPIndex: map[string]map[string]struct{}{},
+				CVEs: map[string]*model.CVE{
+					"cve": {
+						ID:              "cve",
+						Description:     "CVE in something.",
+						PublicationDate: timeParse("2020-02-01T14:30Z"),
+						LastUpdate:      timeParse("2020-02-01T14:30Z"),
+						CVSS20Vector:    nil,
+						CVSS30Vector:    ptr("CVSS:3.0/AV:A/AC:H/PR:L/UI:N/S:C/C:L/I:L/A:H"),
 						CVSS31Vector:    nil,
 						Configurations:  []*model.Node{},
 						Components:      []*model.Component{},

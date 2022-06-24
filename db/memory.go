@@ -447,6 +447,7 @@ func (mem *Memory) AddCVE(input AddCVEInput) error {
 		PublicationDate: input.PublicationDate,
 		LastUpdate:      input.LastUpdate,
 		CVSS20Vector:    cpPtrValue(input.CVSS20Vector),
+		CVSS30Vector:    cpPtrValue(input.CVSS30Vector),
 		CVSS31Vector:    cpPtrValue(input.CVSS31Vector),
 		Configurations:  configurations,
 		Components:      []*model.Component{},
@@ -503,6 +504,10 @@ func (mem *Memory) UpdateCVE(input UpdateCVEInput) error {
 		cve.CVSS20Vector = cpPtrValue(input.CVSS20Vector)
 	}
 	// => CVSS30Vector
+	if input.CVSS30Vector != nil {
+		cve.CVSS30Vector = cpPtrValue(input.CVSS30Vector)
+	}
+	// => CVSS31Vector
 	if input.CVSS31Vector != nil {
 		cve.CVSS31Vector = cpPtrValue(input.CVSS31Vector)
 	}
@@ -778,6 +783,7 @@ func copyCVE(cve *model.CVE) *model.CVE {
 		PublicationDate: cve.PublicationDate,
 		LastUpdate:      cve.LastUpdate,
 		CVSS20Vector:    cpPtrValue(cve.CVSS20Vector),
+		CVSS30Vector:    cpPtrValue(cve.CVSS30Vector),
 		CVSS31Vector:    cpPtrValue(cve.CVSS31Vector),
 		Configurations:  configurations,
 		Components:      comps,

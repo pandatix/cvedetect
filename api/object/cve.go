@@ -56,6 +56,15 @@ var CVE = graphql.NewObject(graphql.ObjectConfig{
 				return nil, nil
 			},
 		},
+		"cvss30vector": {
+			Type: graphql.String,
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				if cve, ok := p.Source.(*model.CVE); ok {
+					return cve.CVSS30Vector, nil
+				}
+				return nil, nil
+			},
+		},
 		"cvss31": {
 			Type: CVSS31,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
@@ -367,6 +376,7 @@ var AddCVEReferencesInput = graphql.NewInputObject(graphql.InputObjectConfig{
 			Type: graphql.NewNonNull(graphql.String),
 		},
 		"tags": {
+			// TODO filter using scalars
 			Type: graphql.NewNonNull(&graphql.List{
 				OfType: graphql.NewNonNull(graphql.String),
 			}),

@@ -47,8 +47,8 @@ var CVE = graphql.NewObject(graphql.ObjectConfig{
 				return nil, nil
 			},
 		},
-		"cvss20vector": {
-			Type: graphql.String,
+		"cvss20": {
+			Type: CVSS20,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				if cve, ok := p.Source.(*model.CVE); ok {
 					return cve.CVSS20Vector, nil
@@ -310,8 +310,7 @@ var AddCVEInput = graphql.NewInputObject(graphql.InputObjectConfig{
 			Type: graphql.NewNonNull(scalar.NVDDateTime),
 		},
 		"cvss20vector": {
-			// TODO use CVSS20Vector scalar
-			Type: graphql.String,
+			Type: scalar.CVSS20Vector,
 		},
 		"cvss31vector": {
 			Type: scalar.CVSS31Vector,
@@ -397,8 +396,7 @@ var UpdateCVEInput = graphql.NewInputObject(graphql.InputObjectConfig{
 			Type: scalar.NVDDateTime,
 		},
 		"cvss20vector": {
-			// TODO use CVSS20Vector scalar
-			Type: graphql.String,
+			Type: scalar.CVSS20Vector,
 		},
 		"cvss31vector": {
 			Type: scalar.CVSS31Vector,

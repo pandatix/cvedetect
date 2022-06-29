@@ -11,7 +11,7 @@ var CVSS20 = graphql.NewObject(graphql.ObjectConfig{
 	Description: "Representation of a CVSS v2.0 vector.",
 	Fields: graphql.Fields{
 		"vector": {
-			Type: graphql.NewNonNull(scalar.CVSS20Vector),
+			Type: graphql.NewNonNull(scalar.CVSS30Vector),
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				if vector, ok := p.Source.(*string); ok {
 					if vector == nil {

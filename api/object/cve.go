@@ -56,8 +56,8 @@ var CVE = graphql.NewObject(graphql.ObjectConfig{
 				return nil, nil
 			},
 		},
-		"cvss30vector": {
-			Type: graphql.String,
+		"cvss30": {
+			Type: CVSS30,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				if cve, ok := p.Source.(*model.CVE); ok {
 					return cve.CVSS30Vector, nil

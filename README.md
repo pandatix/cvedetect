@@ -9,7 +9,6 @@ It's based on researches on CPE v2.3 future Release 5, NVD analysis, CVE detecti
  - [ ] Implement complete `match` algorithm
  - [ ] Implement `MDCN` algorithm
  - [ ] Harden inputs through scalars
- - [ ] Add support for CVSS 2.0 and CVSS 3.0 with `github.com/pandatix/cvss` when released
  - [ ] Add score filtering (filter on base, environmental and temporal scores + attributes values)
  - [ ] Improve support of CPE v2.3 Release 4 with `github.com/pandatix/go-cpe` when released
  - [ ] Provide good tests with >85% code coverage

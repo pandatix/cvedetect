@@ -160,13 +160,17 @@ func run(ctx *cli.Context) error {
 				item.Impact.BaseMetricV2.CVSSV2 != nil {
 				cvss20vector = &item.Impact.BaseMetricV2.CVSSV2.VectorString
 			}
-			// Extract CVSS 3.1 vector
+			// Extract CVSS 3.X vector
+			var cvss30vector *string = nil
 			var cvss31vector *string = nil
 			if item.Impact != nil &&
 				item.Impact.BaseMetricV3 != nil &&
-				item.Impact.BaseMetricV3.CVSSV3 != nil &&
-				item.Impact.BaseMetricV3.CVSSV3.Version == "3.1" {
-				cvss31vector = &item.Impact.BaseMetricV3.CVSSV3.VectorString
+				item.Impact.BaseMetricV3.CVSSV3 != nil {
+				if item.Impact.BaseMetricV3.CVSSV3.Version == "3.0" {
+					cvss30vector = &item.Impact.BaseMetricV3.CVSSV3.VectorString
+				} else if item.Impact.BaseMetricV3.CVSSV3.Version == "3.1" {
+					cvss31vector = &item.Impact.BaseMetricV3.CVSSV3.VectorString
+				}
 			}
 			// Extract configurations
 			var inputConfs []db.AddCVENodeInput = nil
@@ -192,6 +196,7 @@ func run(ctx *cli.Context) error {
 				PublicationDate: timeParse(*item.PublishedDate),
 				LastUpdate:      timeParse(*item.LastModifiedDate),
 				CVSS20Vector:    cvss20vector,
+				CVSS30Vector:    cvss30vector,
 				CVSS31Vector:    cvss31vector,
 				Configurations:  inputConfs,
 				References:      references,

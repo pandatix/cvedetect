@@ -14,7 +14,7 @@ func AddComponent(mem *db.Memory, input db.AddComponentInput) (*model.Component,
 	}
 
 	// Perform CVE detection
-	if err := compDetect(mem, input.CPEs23, input.ID); err != nil {
+	if err := compDetect(mem, input.CPE23, input.ID); err != nil {
 		return nil, err
 	}
 
@@ -31,8 +31,10 @@ func UpdateComponent(mem *db.Memory, input db.UpdateComponentInput) (*model.Comp
 	}
 
 	// Perform CVE detection
-	if err := compDetect(mem, input.CPEs23, input.ID); err != nil {
-		return nil, err
+	if input.CPE23 != nil {
+		if err := compDetect(mem, *input.CPE23, input.ID); err != nil {
+			return nil, err
+		}
 	}
 
 	return mem.GetComponent(db.GetComponentInput{
@@ -57,24 +59,13 @@ func DeleteComponent(mem *db.Memory, input db.DeleteComponentInput) (*model.Comp
 	return comp, nil
 }
 
-func compDetect(mem *db.Memory, cpes23 []string, compID string) error {
-	// Shortcut if no cpes23
-	if cpes23 == nil {
-		return nil
-	}
-
+func compDetect(mem *db.Memory, cpe23 string, compID string) error {
 	// Get related CVEs
-	vpMap := map[string]struct{}{}
-	for _, cpe23 := range cpes23 {
-		wfn, _ := naming.UnbindFS(cpe23)
-		vpMap[wfn.GetString("vendor")+":"+wfn.GetString("product")] = struct{}{}
-	}
-	cves := []*model.CVE{}
-	for vp := range vpMap {
-		cves = append(cves, mem.QueryCVEs(db.QueryCVEInput{
-			VP: &vp,
-		})...)
-	}
+	wfn, _ := naming.UnbindFS(cpe23)
+	vp := wfn.GetString("vendor") + ":" + wfn.GetString("product")
+	cves := mem.QueryCVEs(db.QueryCVEInput{
+		VP: &vp,
+	})
 
 	// Run MDC1
 	comp, _ := mem.GetComponent(db.GetComponentInput{

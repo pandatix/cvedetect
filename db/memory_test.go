@@ -16,9 +16,7 @@ func alter(a any) {
 	switch t := a.(type) {
 	case *model.Component:
 		t.Name += flag
-		for i := 0; i < len(t.CPEs23); i++ {
-			t.CPEs23[i] += flag
-		}
+		t.CPE23 += flag
 		for i := 0; i < len(t.CVEs); i++ {
 			t.CVEs[i].ID += flag
 		}
@@ -100,7 +98,7 @@ func TestMemoryGetComponent(t *testing.T) {
 					"comp": {
 						ID:       "comp",
 						Name:     "Component",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -120,7 +118,7 @@ func TestMemoryGetComponent(t *testing.T) {
 			ExpectedComponent: &model.Component{
 				ID:       "comp",
 				Name:     "Component",
-				CPEs23:   []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+				CPE23:    "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 				Parent:   nil,
 				Children: []*model.Component{},
 				CVEs:     []*model.CVE{},
@@ -131,7 +129,7 @@ func TestMemoryGetComponent(t *testing.T) {
 					"comp": {
 						ID:       "comp",
 						Name:     "Component",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -201,7 +199,7 @@ func TestMemoryQueryComponents(t *testing.T) {
 					"comp-1": {
 						ID:       "comp-1",
 						Name:     "Component 1",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:1:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:1:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -209,7 +207,7 @@ func TestMemoryQueryComponents(t *testing.T) {
 					"comp-2": {
 						ID:       "comp-2",
 						Name:     "Component 2",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:2:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:2:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -231,14 +229,14 @@ func TestMemoryQueryComponents(t *testing.T) {
 				{
 					ID:       "comp-1",
 					Name:     "Component 1",
-					CPEs23:   []string{"cpe:2.3:a:fake:component:1:*:*:*:*:*:*:*"},
+					CPE23:    "cpe:2.3:a:fake:component:1:*:*:*:*:*:*:*",
 					Parent:   nil,
 					Children: []*model.Component{},
 					CVEs:     []*model.CVE{},
 				}, {
 					ID:       "comp-2",
 					Name:     "Component 2",
-					CPEs23:   []string{"cpe:2.3:a:fake:component:2:*:*:*:*:*:*:*"},
+					CPE23:    "cpe:2.3:a:fake:component:2:*:*:*:*:*:*:*",
 					Parent:   nil,
 					Children: []*model.Component{},
 					CVEs:     []*model.CVE{},
@@ -249,7 +247,7 @@ func TestMemoryQueryComponents(t *testing.T) {
 					"comp-1": {
 						ID:       "comp-1",
 						Name:     "Component 1",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:1:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:1:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -257,7 +255,7 @@ func TestMemoryQueryComponents(t *testing.T) {
 					"comp-2": {
 						ID:       "comp-2",
 						Name:     "Component 2",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:2:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:2:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -279,7 +277,7 @@ func TestMemoryQueryComponents(t *testing.T) {
 					"comp-1": {
 						ID:       "comp-1",
 						Name:     "Component 1",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:1:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:1:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -287,7 +285,7 @@ func TestMemoryQueryComponents(t *testing.T) {
 					"comp-2": {
 						ID:       "comp-2",
 						Name:     "Component 2",
-						CPEs23:   []string{"cpe:2.3:a:fake\\_new:component:2:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake\\_new:component:2:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -311,7 +309,7 @@ func TestMemoryQueryComponents(t *testing.T) {
 				{
 					ID:       "comp-2",
 					Name:     "Component 2",
-					CPEs23:   []string{"cpe:2.3:a:fake\\_new:component:2:*:*:*:*:*:*:*"},
+					CPE23:    "cpe:2.3:a:fake\\_new:component:2:*:*:*:*:*:*:*",
 					Parent:   nil,
 					Children: []*model.Component{},
 					CVEs:     []*model.CVE{},
@@ -322,7 +320,7 @@ func TestMemoryQueryComponents(t *testing.T) {
 					"comp-1": {
 						ID:       "comp-1",
 						Name:     "Component 1",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:1:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:1:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -330,7 +328,7 @@ func TestMemoryQueryComponents(t *testing.T) {
 					"comp-2": {
 						ID:       "comp-2",
 						Name:     "Component 2",
-						CPEs23:   []string{"cpe:2.3:a:fake\\_new:component:2:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake\\_new:component:2:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -382,7 +380,7 @@ func TestMemoryAddComponent(t *testing.T) {
 					"comp": {
 						ID:       "comp",
 						Name:     "Component",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -399,7 +397,7 @@ func TestMemoryAddComponent(t *testing.T) {
 			Input: db.AddComponentInput{
 				ID:       "comp",
 				Name:     "Component",
-				CPEs23:   []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+				CPE23:    "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 				Children: nil,
 			},
 			ExpectedErr: &db.ErrAlreadyExist{
@@ -411,7 +409,7 @@ func TestMemoryAddComponent(t *testing.T) {
 					"comp": {
 						ID:       "comp",
 						Name:     "Component",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -434,9 +432,9 @@ func TestMemoryAddComponent(t *testing.T) {
 				CVEVPIndex:  map[string]map[string]struct{}{},
 			},
 			Input: db.AddComponentInput{
-				ID:     "comp",
-				Name:   "Component",
-				CPEs23: []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+				ID:    "comp",
+				Name:  "Component",
+				CPE23: "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 				Parent: &db.AddComponentParent{
 					ID: "unexisting-comp",
 				},
@@ -461,9 +459,9 @@ func TestMemoryAddComponent(t *testing.T) {
 				CVEVPIndex:  map[string]map[string]struct{}{},
 			},
 			Input: db.AddComponentInput{
-				ID:     "comp",
-				Name:   "Component",
-				CPEs23: []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+				ID:    "comp",
+				Name:  "Component",
+				CPE23: "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 				Children: []db.AddComponentChildInput{
 					{
 						ID: "unexisting-comp",
@@ -487,7 +485,7 @@ func TestMemoryAddComponent(t *testing.T) {
 					"comp-parent": {
 						ID:       "comp-parent",
 						Name:     "Component Parent",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:*:parent:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:*:parent:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -495,7 +493,7 @@ func TestMemoryAddComponent(t *testing.T) {
 					"comp-child-1": {
 						ID:     "comp-child-1",
 						Name:   "Component Child 1",
-						CPEs23: []string{"cpe:2.3:a:fake:component:1:child:*:*:*:*:*:*"},
+						CPE23:  "cpe:2.3:a:fake:component:1:child:*:*:*:*:*:*",
 						Parent: nil,
 						Children: []*model.Component{
 							{
@@ -505,9 +503,9 @@ func TestMemoryAddComponent(t *testing.T) {
 						CVEs: []*model.CVE{},
 					},
 					"comp-child-2": {
-						ID:     "comp-child-2",
-						Name:   "Component Child 2",
-						CPEs23: []string{"cpe:2.3:a:fake:component:2:child:*:*:*:*:*:*"},
+						ID:    "comp-child-2",
+						Name:  "Component Child 2",
+						CPE23: "cpe:2.3:a:fake:component:2:child:*:*:*:*:*:*",
 						Parent: &model.Component{
 							ID: "comp-child-1",
 						},
@@ -525,9 +523,9 @@ func TestMemoryAddComponent(t *testing.T) {
 				CVEs: map[string]*model.CVE{},
 			},
 			Input: db.AddComponentInput{
-				ID:     "comp",
-				Name:   "Component",
-				CPEs23: []string{"cpe:2.3:a:fake\\_new:component:*:*:*:*:*:*:*:*"},
+				ID:    "comp",
+				Name:  "Component",
+				CPE23: "cpe:2.3:a:fake\\_new:component:*:*:*:*:*:*:*:*",
 				Parent: &db.AddComponentParent{
 					ID: "comp-parent",
 				},
@@ -545,15 +543,15 @@ func TestMemoryAddComponent(t *testing.T) {
 					"comp-parent": {
 						ID:       "comp-parent",
 						Name:     "Component Parent",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:*:parent:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:*:parent:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
 					},
 					"comp": {
-						ID:     "comp",
-						Name:   "Component",
-						CPEs23: []string{"cpe:2.3:a:fake\\_new:component:*:*:*:*:*:*:*:*"},
+						ID:    "comp",
+						Name:  "Component",
+						CPE23: "cpe:2.3:a:fake\\_new:component:*:*:*:*:*:*:*:*",
 						Parent: &model.Component{
 							ID: "comp-parent",
 						},
@@ -567,9 +565,9 @@ func TestMemoryAddComponent(t *testing.T) {
 						CVEs: []*model.CVE{},
 					},
 					"comp-child-1": {
-						ID:     "comp-child-1",
-						Name:   "Component Child 1",
-						CPEs23: []string{"cpe:2.3:a:fake:component:1:child:*:*:*:*:*:*"},
+						ID:    "comp-child-1",
+						Name:  "Component Child 1",
+						CPE23: "cpe:2.3:a:fake:component:1:child:*:*:*:*:*:*",
 						Parent: &model.Component{
 							ID: "comp",
 						},
@@ -577,9 +575,9 @@ func TestMemoryAddComponent(t *testing.T) {
 						CVEs:     []*model.CVE{},
 					},
 					"comp-child-2": {
-						ID:     "comp-child-2",
-						Name:   "Component Child 2",
-						CPEs23: []string{"cpe:2.3:a:fake:component:2:child:*:*:*:*:*:*"},
+						ID:    "comp-child-2",
+						Name:  "Component Child 2",
+						CPE23: "cpe:2.3:a:fake:component:2:child:*:*:*:*:*:*",
 						Parent: &model.Component{
 							ID: "comp",
 						},
@@ -606,7 +604,7 @@ func TestMemoryAddComponent(t *testing.T) {
 					"comp-parent": {
 						ID:     "comp-parent",
 						Name:   "Component Parent",
-						CPEs23: []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+						CPE23:  "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent: nil,
 						Children: []*model.Component{
 							{
@@ -616,9 +614,9 @@ func TestMemoryAddComponent(t *testing.T) {
 						CVEs: []*model.CVE{},
 					},
 					"comp": {
-						ID:     "comp",
-						Name:   "Component",
-						CPEs23: []string{},
+						ID:    "comp",
+						Name:  "Component",
+						CPE23: "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent: &model.Component{
 							ID: "comp-parent",
 						},
@@ -628,6 +626,7 @@ func TestMemoryAddComponent(t *testing.T) {
 				},
 				CompVPIndex: map[string]map[string]struct{}{
 					"fake:component": {
+						"comp":        {},
 						"comp-parent": {},
 					},
 				},
@@ -635,9 +634,9 @@ func TestMemoryAddComponent(t *testing.T) {
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
 			Input: db.AddComponentInput{
-				ID:     "comp-new-parent",
-				Name:   "Component New Parent",
-				CPEs23: []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+				ID:    "comp-new-parent",
+				Name:  "Component New Parent",
+				CPE23: "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 				Children: []db.AddComponentChildInput{
 					{
 						ID: "comp",
@@ -650,15 +649,15 @@ func TestMemoryAddComponent(t *testing.T) {
 					"comp-parent": {
 						ID:       "comp-parent",
 						Name:     "Component Parent",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
 					},
 					"comp": {
-						ID:     "comp",
-						Name:   "Component",
-						CPEs23: []string{},
+						ID:    "comp",
+						Name:  "Component",
+						CPE23: "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent: &model.Component{
 							ID: "comp-new-parent",
 						},
@@ -668,7 +667,7 @@ func TestMemoryAddComponent(t *testing.T) {
 					"comp-new-parent": {
 						ID:     "comp-new-parent",
 						Name:   "Component New Parent",
-						CPEs23: []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+						CPE23:  "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent: nil,
 						Children: []*model.Component{
 							{
@@ -680,6 +679,7 @@ func TestMemoryAddComponent(t *testing.T) {
 				},
 				CompVPIndex: map[string]map[string]struct{}{
 					"fake:component": {
+						"comp":            {},
 						"comp-parent":     {},
 						"comp-new-parent": {},
 					},
@@ -721,7 +721,7 @@ func TestMemoryUpdateComponent(t *testing.T) {
 			Input: db.UpdateComponentInput{
 				ID:       "comp",
 				Name:     nil,
-				CPEs23:   nil,
+				CPE23:    nil,
 				Children: nil,
 				CVEs:     nil,
 			},
@@ -742,7 +742,7 @@ func TestMemoryUpdateComponent(t *testing.T) {
 					"comp": {
 						ID:       "comp",
 						Name:     "Component",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -757,9 +757,9 @@ func TestMemoryUpdateComponent(t *testing.T) {
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
 			Input: db.UpdateComponentInput{
-				ID:     "comp",
-				Name:   nil,
-				CPEs23: nil,
+				ID:    "comp",
+				Name:  nil,
+				CPE23: nil,
 				Parent: &db.UpdateComponentParentInput{
 					ID: "comp-parent",
 				},
@@ -775,7 +775,7 @@ func TestMemoryUpdateComponent(t *testing.T) {
 					"comp": {
 						ID:       "comp",
 						Name:     "Component",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -796,7 +796,7 @@ func TestMemoryUpdateComponent(t *testing.T) {
 					"comp": {
 						ID:       "comp",
 						Name:     "Component",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -811,9 +811,9 @@ func TestMemoryUpdateComponent(t *testing.T) {
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
 			Input: db.UpdateComponentInput{
-				ID:     "comp",
-				Name:   nil,
-				CPEs23: nil,
+				ID:    "comp",
+				Name:  nil,
+				CPE23: nil,
 				Children: []db.UpdateComponentChildInput{
 					{
 						ID: "comp-child",
@@ -830,7 +830,7 @@ func TestMemoryUpdateComponent(t *testing.T) {
 					"comp": {
 						ID:       "comp",
 						Name:     "Component",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -851,7 +851,7 @@ func TestMemoryUpdateComponent(t *testing.T) {
 					"comp": {
 						ID:       "comp",
 						Name:     "Component",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -868,7 +868,7 @@ func TestMemoryUpdateComponent(t *testing.T) {
 			Input: db.UpdateComponentInput{
 				ID:       "comp",
 				Name:     nil,
-				CPEs23:   nil,
+				CPE23:    nil,
 				Children: nil,
 				CVEs: []db.UpdateComponentCVEsInput{
 					{
@@ -885,7 +885,7 @@ func TestMemoryUpdateComponent(t *testing.T) {
 					"comp": {
 						ID:       "comp",
 						Name:     "Component",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -906,7 +906,7 @@ func TestMemoryUpdateComponent(t *testing.T) {
 					"comp": {
 						ID:       "comp",
 						Name:     "Component",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -923,7 +923,7 @@ func TestMemoryUpdateComponent(t *testing.T) {
 			Input: db.UpdateComponentInput{
 				ID:       "comp",
 				Name:     ptr("New Component"),
-				CPEs23:   nil,
+				CPE23:    nil,
 				Children: nil,
 				CVEs:     nil,
 			},
@@ -933,7 +933,7 @@ func TestMemoryUpdateComponent(t *testing.T) {
 					"comp": {
 						ID:       "comp",
 						Name:     "New Component",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -948,16 +948,13 @@ func TestMemoryUpdateComponent(t *testing.T) {
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
 		},
-		"new-cpes23": {
+		"new-cpe23": {
 			Memory: &db.Memory{
 				Components: map[string]*model.Component{
 					"comp": {
-						ID:   "comp",
-						Name: "Component",
-						CPEs23: []string{
-							"cpe:2.3:a:fake:component:1:*:*:*:*:*:*:*",
-							"cpe:2.3:a:fake\\_other:component:2:*:*:*:*:*:*:*",
-						},
+						ID:       "comp",
+						Name:     "Component",
+						CPE23:    "cpe:2.3:a:fake:component:1:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -967,20 +964,14 @@ func TestMemoryUpdateComponent(t *testing.T) {
 					"fake:component": {
 						"comp": {},
 					},
-					"fake\\_other:component": {
-						"comp": {},
-					},
 				},
 				CVEs:       map[string]*model.CVE{},
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
 			Input: db.UpdateComponentInput{
-				ID:   "comp",
-				Name: nil,
-				CPEs23: []string{
-					"cpe:2.3:a:fake\\_other:component:2:*:*:*:*:*:*:*",
-					"cpe:2.3:a:fake\\_new:component:3:*:*:*:*:*:*:*",
-				},
+				ID:       "comp",
+				Name:     nil,
+				CPE23:    ptr("cpe:2.3:a:fake\\_other:component:2:*:*:*:*:*:*:*"),
 				Parent:   nil,
 				Children: nil,
 				CVEs:     nil,
@@ -989,12 +980,9 @@ func TestMemoryUpdateComponent(t *testing.T) {
 			ExpectedMemory: &db.Memory{
 				Components: map[string]*model.Component{
 					"comp": {
-						ID:   "comp",
-						Name: "Component",
-						CPEs23: []string{
-							"cpe:2.3:a:fake\\_other:component:2:*:*:*:*:*:*:*",
-							"cpe:2.3:a:fake\\_new:component:3:*:*:*:*:*:*:*",
-						},
+						ID:       "comp",
+						Name:     "Component",
+						CPE23:    "cpe:2.3:a:fake\\_other:component:2:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -1002,9 +990,6 @@ func TestMemoryUpdateComponent(t *testing.T) {
 				},
 				CompVPIndex: map[string]map[string]struct{}{
 					"fake\\_other:component": {
-						"comp": {},
-					},
-					"fake\\_new:component": {
 						"comp": {},
 					},
 				},
@@ -1018,7 +1003,7 @@ func TestMemoryUpdateComponent(t *testing.T) {
 					"comp": {
 						ID:       "comp",
 						Name:     "Component",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -1026,7 +1011,7 @@ func TestMemoryUpdateComponent(t *testing.T) {
 					"comp-parent": {
 						ID:       "comp-parent",
 						Name:     "Component Parent",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:*:parent:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:*:parent:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -1042,9 +1027,9 @@ func TestMemoryUpdateComponent(t *testing.T) {
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
 			Input: db.UpdateComponentInput{
-				ID:     "comp",
-				Name:   nil,
-				CPEs23: nil,
+				ID:    "comp",
+				Name:  nil,
+				CPE23: nil,
 				Parent: &db.UpdateComponentParentInput{
 					ID: "comp-parent",
 				},
@@ -1055,9 +1040,9 @@ func TestMemoryUpdateComponent(t *testing.T) {
 			ExpectedMemory: &db.Memory{
 				Components: map[string]*model.Component{
 					"comp": {
-						ID:     "comp",
-						Name:   "Component",
-						CPEs23: []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+						ID:    "comp",
+						Name:  "Component",
+						CPE23: "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent: &model.Component{
 							ID: "comp-parent",
 						},
@@ -1067,7 +1052,7 @@ func TestMemoryUpdateComponent(t *testing.T) {
 					"comp-parent": {
 						ID:     "comp-parent",
 						Name:   "Component Parent",
-						CPEs23: []string{"cpe:2.3:a:fake:component:*:parent:*:*:*:*:*:*"},
+						CPE23:  "cpe:2.3:a:fake:component:*:parent:*:*:*:*:*:*",
 						Parent: nil,
 						Children: []*model.Component{
 							{
@@ -1093,7 +1078,7 @@ func TestMemoryUpdateComponent(t *testing.T) {
 					"comp-parent": {
 						ID:     "comp-parent",
 						Name:   "Component Parent",
-						CPEs23: []string{"cpe:2.3:a:fake:component:*:parent:*:*:*:*:*:*"},
+						CPE23:  "cpe:2.3:a:fake:component:*:parent:*:*:*:*:*:*",
 						Parent: nil,
 						Children: []*model.Component{
 							{
@@ -1103,9 +1088,9 @@ func TestMemoryUpdateComponent(t *testing.T) {
 						CVEs: []*model.CVE{},
 					},
 					"comp": {
-						ID:     "comp",
-						Name:   "Component",
-						CPEs23: []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+						ID:    "comp",
+						Name:  "Component",
+						CPE23: "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent: &model.Component{
 							ID: "comp-parent",
 						},
@@ -1115,7 +1100,7 @@ func TestMemoryUpdateComponent(t *testing.T) {
 					"comp-future-parent": {
 						ID:       "comp-future-parent",
 						Name:     "Component Future Parent",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:*:parent:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:*:parent:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -1132,9 +1117,9 @@ func TestMemoryUpdateComponent(t *testing.T) {
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
 			Input: db.UpdateComponentInput{
-				ID:     "comp",
-				Name:   nil,
-				CPEs23: nil,
+				ID:    "comp",
+				Name:  nil,
+				CPE23: nil,
 				Parent: &db.UpdateComponentParentInput{
 					ID: "comp-future-parent",
 				},
@@ -1147,15 +1132,15 @@ func TestMemoryUpdateComponent(t *testing.T) {
 					"comp-parent": {
 						ID:       "comp-parent",
 						Name:     "Component Parent",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:*:parent:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:*:parent:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
 					},
 					"comp": {
-						ID:     "comp",
-						Name:   "Component",
-						CPEs23: []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+						ID:    "comp",
+						Name:  "Component",
+						CPE23: "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent: &model.Component{
 							ID: "comp-future-parent",
 						},
@@ -1165,7 +1150,7 @@ func TestMemoryUpdateComponent(t *testing.T) {
 					"comp-future-parent": {
 						ID:     "comp-future-parent",
 						Name:   "Component Future Parent",
-						CPEs23: []string{"cpe:2.3:a:fake:component:*:parent:*:*:*:*:*:*"},
+						CPE23:  "cpe:2.3:a:fake:component:*:parent:*:*:*:*:*:*",
 						Parent: nil,
 						Children: []*model.Component{
 							{
@@ -1192,7 +1177,7 @@ func TestMemoryUpdateComponent(t *testing.T) {
 					"comp": {
 						ID:     "comp",
 						Name:   "Component",
-						CPEs23: []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+						CPE23:  "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent: nil,
 						Children: []*model.Component{
 							{
@@ -1204,9 +1189,9 @@ func TestMemoryUpdateComponent(t *testing.T) {
 						CVEs: []*model.CVE{},
 					},
 					"comp-child-1": {
-						ID:     "comp-child-1",
-						Name:   "Component Child 1",
-						CPEs23: []string{"cpe:2.3:a:fake:component:1:child:*:*:*:*:*:*"},
+						ID:    "comp-child-1",
+						Name:  "Component Child 1",
+						CPE23: "cpe:2.3:a:fake:component:1:child:*:*:*:*:*:*",
 						Parent: &model.Component{
 							ID: "comp",
 						},
@@ -1216,15 +1201,15 @@ func TestMemoryUpdateComponent(t *testing.T) {
 					"comp-child-2": {
 						ID:       "comp-child-2",
 						Name:     "Component Child 2",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:2:child:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:2:child:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
 					},
 					"comp-child-3": {
-						ID:     "comp-child-3",
-						Name:   "Component Child 3",
-						CPEs23: []string{"cpe:2.3:a:fake:component:3:child:*:*:*:*:*:*"},
+						ID:    "comp-child-3",
+						Name:  "Component Child 3",
+						CPE23: "cpe:2.3:a:fake:component:3:child:*:*:*:*:*:*",
 						Parent: &model.Component{
 							ID: "comp",
 						},
@@ -1246,7 +1231,7 @@ func TestMemoryUpdateComponent(t *testing.T) {
 			Input: db.UpdateComponentInput{
 				ID:     "comp",
 				Name:   nil,
-				CPEs23: nil,
+				CPE23:  nil,
 				Parent: nil,
 				Children: []db.UpdateComponentChildInput{
 					{
@@ -1263,7 +1248,7 @@ func TestMemoryUpdateComponent(t *testing.T) {
 					"comp": {
 						ID:     "comp",
 						Name:   "Component",
-						CPEs23: []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+						CPE23:  "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent: nil,
 						Children: []*model.Component{
 							{
@@ -1277,15 +1262,15 @@ func TestMemoryUpdateComponent(t *testing.T) {
 					"comp-child-1": {
 						ID:       "comp-child-1",
 						Name:     "Component Child 1",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:1:child:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:1:child:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
 					},
 					"comp-child-2": {
-						ID:     "comp-child-2",
-						Name:   "Component Child 2",
-						CPEs23: []string{"cpe:2.3:a:fake:component:2:child:*:*:*:*:*:*"},
+						ID:    "comp-child-2",
+						Name:  "Component Child 2",
+						CPE23: "cpe:2.3:a:fake:component:2:child:*:*:*:*:*:*",
 						Parent: &model.Component{
 							ID: "comp",
 						},
@@ -1293,9 +1278,9 @@ func TestMemoryUpdateComponent(t *testing.T) {
 						CVEs:     []*model.CVE{},
 					},
 					"comp-child-3": {
-						ID:     "comp-child-3",
-						Name:   "Component Child 3",
-						CPEs23: []string{"cpe:2.3:a:fake:component:3:child:*:*:*:*:*:*"},
+						ID:    "comp-child-3",
+						Name:  "Component Child 3",
+						CPE23: "cpe:2.3:a:fake:component:3:child:*:*:*:*:*:*",
 						Parent: &model.Component{
 							ID: "comp",
 						},
@@ -1321,7 +1306,7 @@ func TestMemoryUpdateComponent(t *testing.T) {
 					"comp": {
 						ID:       "comp",
 						Name:     "Component",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs: []*model.CVE{
@@ -1434,7 +1419,7 @@ func TestMemoryUpdateComponent(t *testing.T) {
 			Input: db.UpdateComponentInput{
 				ID:       "comp",
 				Name:     nil,
-				CPEs23:   nil,
+				CPE23:    nil,
 				Parent:   nil,
 				Children: nil,
 				CVEs: []db.UpdateComponentCVEsInput{
@@ -1451,7 +1436,7 @@ func TestMemoryUpdateComponent(t *testing.T) {
 					"comp": {
 						ID:       "comp",
 						Name:     "Component",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs: []*model.CVE{
@@ -1612,7 +1597,7 @@ func TestMemoryDeleteComponent(t *testing.T) {
 					"comp-parent": {
 						ID:     "comp-parent",
 						Name:   "Component Parent",
-						CPEs23: []string{"cpe:2.3:a:fake:component:*:parent:*:*:*:*:*:*"},
+						CPE23:  "cpe:2.3:a:fake:component:*:parent:*:*:*:*:*:*",
 						Parent: nil,
 						Children: []*model.Component{
 							{
@@ -1622,9 +1607,9 @@ func TestMemoryDeleteComponent(t *testing.T) {
 						CVEs: []*model.CVE{},
 					},
 					"comp": {
-						ID:     "comp",
-						Name:   "Component",
-						CPEs23: []string{"cpe:2.3:a:fake:component\\_goodbye:*:*:*:*:*:*:*:*"},
+						ID:    "comp",
+						Name:  "Component",
+						CPE23: "cpe:2.3:a:fake:component\\_goodbye:*:*:*:*:*:*:*:*",
 						Parent: &model.Component{
 							ID: "comp-parent",
 						},
@@ -1640,9 +1625,9 @@ func TestMemoryDeleteComponent(t *testing.T) {
 						},
 					},
 					"comp-child": {
-						ID:     "comp-child",
-						Name:   "Component Child",
-						CPEs23: []string{"cpe:2.3:a:fake:component:*:child:*:*:*:*:*:*"},
+						ID:    "comp-child",
+						Name:  "Component Child",
+						CPE23: "cpe:2.3:a:fake:component:*:child:*:*:*:*:*:*",
 						Parent: &model.Component{
 							ID: "comp",
 						},
@@ -1705,7 +1690,7 @@ func TestMemoryDeleteComponent(t *testing.T) {
 					"comp-parent": {
 						ID:       "comp-parent",
 						Name:     "Component Parent",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:*:parent:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:*:parent:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -1713,7 +1698,7 @@ func TestMemoryDeleteComponent(t *testing.T) {
 					"comp-child": {
 						ID:       "comp-child",
 						Name:     "Component Child",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:*:child:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:*:child:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -3120,7 +3105,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 					"comp-1": {
 						ID:       "comp-1",
 						Name:     "Component 1",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:1:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:1:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs: []*model.CVE{
@@ -3132,7 +3117,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 					"comp-2": {
 						ID:       "comp-2",
 						Name:     "Component 2",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:2:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:2:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -3140,7 +3125,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 					"comp-3": {
 						ID:       "comp-3",
 						Name:     "Component 3",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:3:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:3:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs: []*model.CVE{
@@ -3220,7 +3205,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 					"comp-1": {
 						ID:       "comp-1",
 						Name:     "Component 1",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:1:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:1:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -3228,7 +3213,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 					"comp-2": {
 						ID:       "comp-2",
 						Name:     "Component 2",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:2:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:2:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs: []*model.CVE{
@@ -3240,7 +3225,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 					"comp-3": {
 						ID:       "comp-3",
 						Name:     "Component 3",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:3:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:3:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs: []*model.CVE{
@@ -3416,7 +3401,7 @@ func TestMemoryDeleteCVE(t *testing.T) {
 					"comp": {
 						ID:       "comp",
 						Name:     "Component",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs: []*model.CVE{
@@ -3479,7 +3464,7 @@ func TestMemoryDeleteCVE(t *testing.T) {
 					"comp": {
 						ID:       "comp",
 						Name:     "Component",
-						CPEs23:   []string{"cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*"},
+						CPE23:    "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
@@ -3523,20 +3508,24 @@ func TestGetComponentCVEs(t *testing.T) {
 					"comp": {
 						ID:       "comp",
 						Name:     "Component",
-						CPEs23:   []string{},
+						CPE23:    "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
 					},
 				},
-				CompVPIndex: map[string]map[string]struct{}{},
-				CVEs:        map[string]*model.CVE{},
-				CVEVPIndex:  map[string]map[string]struct{}{},
+				CompVPIndex: map[string]map[string]struct{}{
+					"fake:component": {
+						"comp": {},
+					},
+				},
+				CVEs:       map[string]*model.CVE{},
+				CVEVPIndex: map[string]map[string]struct{}{},
 			},
 			Component: &model.Component{
 				ID:       "comp",
 				Name:     "Component",
-				CPEs23:   []string{},
+				CPE23:    "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 				Parent:   nil,
 				Children: []*model.Component{},
 				CVEs:     []*model.CVE{},
@@ -3547,15 +3536,19 @@ func TestGetComponentCVEs(t *testing.T) {
 					"comp": {
 						ID:       "comp",
 						Name:     "Component",
-						CPEs23:   []string{},
+						CPE23:    "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs:     []*model.CVE{},
 					},
 				},
-				CompVPIndex: map[string]map[string]struct{}{},
-				CVEs:        map[string]*model.CVE{},
-				CVEVPIndex:  map[string]map[string]struct{}{},
+				CompVPIndex: map[string]map[string]struct{}{
+					"fake:component": {
+						"comp": {},
+					},
+				},
+				CVEs:       map[string]*model.CVE{},
+				CVEVPIndex: map[string]map[string]struct{}{},
 			},
 		},
 		"multiple-cves": {
@@ -3564,7 +3557,7 @@ func TestGetComponentCVEs(t *testing.T) {
 					"comp": {
 						ID:       "comp",
 						Name:     "Component",
-						CPEs23:   []string{},
+						CPE23:    "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs: []*model.CVE{
@@ -3576,7 +3569,11 @@ func TestGetComponentCVEs(t *testing.T) {
 						},
 					},
 				},
-				CompVPIndex: map[string]map[string]struct{}{},
+				CompVPIndex: map[string]map[string]struct{}{
+					"fake:component": {
+						"comp": {},
+					},
+				},
 				CVEs: map[string]*model.CVE{
 					"cve-1": {
 						ID:              "cve-1",
@@ -3614,7 +3611,7 @@ func TestGetComponentCVEs(t *testing.T) {
 			Component: &model.Component{
 				ID:       "comp",
 				Name:     "Component",
-				CPEs23:   []string{},
+				CPE23:    "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 				Parent:   nil,
 				Children: []*model.Component{},
 				CVEs: []*model.CVE{
@@ -3661,7 +3658,7 @@ func TestGetComponentCVEs(t *testing.T) {
 					"comp": {
 						ID:       "comp",
 						Name:     "Component",
-						CPEs23:   []string{},
+						CPE23:    "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs: []*model.CVE{
@@ -3673,7 +3670,11 @@ func TestGetComponentCVEs(t *testing.T) {
 						},
 					},
 				},
-				CompVPIndex: map[string]map[string]struct{}{},
+				CompVPIndex: map[string]map[string]struct{}{
+					"fake:component": {
+						"comp": {},
+					},
+				},
 				CVEs: map[string]*model.CVE{
 					"cve-1": {
 						ID:              "cve-1",
@@ -3790,7 +3791,7 @@ func TestGetCVEComponents(t *testing.T) {
 					"comp-1": {
 						ID:       "comp-1",
 						Name:     "Component 1",
-						CPEs23:   []string{},
+						CPE23:    "cpe:2.3:a:fake:component:1:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs: []*model.CVE{
@@ -3802,7 +3803,7 @@ func TestGetCVEComponents(t *testing.T) {
 					"comp-2": {
 						ID:       "comp-2",
 						Name:     "Component 2",
-						CPEs23:   []string{},
+						CPE23:    "cpe:2.3:a:fake:component:2:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs: []*model.CVE{
@@ -3812,7 +3813,12 @@ func TestGetCVEComponents(t *testing.T) {
 						},
 					},
 				},
-				CompVPIndex: map[string]map[string]struct{}{},
+				CompVPIndex: map[string]map[string]struct{}{
+					"fake:component": {
+						"comp-1": {},
+						"comp-2": {},
+					},
+				},
 				CVEs: map[string]*model.CVE{
 					"cve": {
 						ID:              "cve",
@@ -3855,7 +3861,7 @@ func TestGetCVEComponents(t *testing.T) {
 				{
 					ID:       "comp-1",
 					Name:     "Component 1",
-					CPEs23:   []string{},
+					CPE23:    "cpe:2.3:a:fake:component:1:*:*:*:*:*:*:*",
 					Parent:   nil,
 					Children: []*model.Component{},
 					CVEs: []*model.CVE{
@@ -3866,7 +3872,7 @@ func TestGetCVEComponents(t *testing.T) {
 				}, {
 					ID:       "comp-2",
 					Name:     "Component 2",
-					CPEs23:   []string{},
+					CPE23:    "cpe:2.3:a:fake:component:2:*:*:*:*:*:*:*",
 					Parent:   nil,
 					Children: []*model.Component{},
 					CVEs: []*model.CVE{
@@ -3881,7 +3887,7 @@ func TestGetCVEComponents(t *testing.T) {
 					"comp-1": {
 						ID:       "comp-1",
 						Name:     "Component 1",
-						CPEs23:   []string{},
+						CPE23:    "cpe:2.3:a:fake:component:1:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs: []*model.CVE{
@@ -3893,7 +3899,7 @@ func TestGetCVEComponents(t *testing.T) {
 					"comp-2": {
 						ID:       "comp-2",
 						Name:     "Component 2",
-						CPEs23:   []string{},
+						CPE23:    "cpe:2.3:a:fake:component:2:*:*:*:*:*:*:*",
 						Parent:   nil,
 						Children: []*model.Component{},
 						CVEs: []*model.CVE{
@@ -3903,7 +3909,12 @@ func TestGetCVEComponents(t *testing.T) {
 						},
 					},
 				},
-				CompVPIndex: map[string]map[string]struct{}{},
+				CompVPIndex: map[string]map[string]struct{}{
+					"fake:component": {
+						"comp-1": {},
+						"comp-2": {},
+					},
+				},
 				CVEs: map[string]*model.CVE{
 					"cve": {
 						ID:              "cve",

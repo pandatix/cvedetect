@@ -129,20 +129,18 @@ func (mem *Memory) AddComponent(input AddComponentInput) error {
 	mem.Components[input.ID] = &model.Component{
 		ID:       input.ID,
 		Name:     input.Name,
-		CPEs23:   input.CPEs23,
+		CPE23:    input.CPE23,
 		Parent:   parent,
 		Children: children,
 		CVEs:     []*model.CVE{},
 	}
 	// => Index map
-	for _, cpe23 := range input.CPEs23 {
-		wfn, _ := naming.UnbindFS(cpe23)
-		idx := wfn.GetString("vendor") + ":" + wfn.GetString("product")
-		if _, ok := mem.CompVPIndex[idx]; !ok {
-			mem.CompVPIndex[idx] = map[string]struct{}{}
-		}
-		mem.CompVPIndex[idx][input.ID] = struct{}{}
+	wfn, _ := naming.UnbindFS(input.CPE23)
+	idx := wfn.GetString("vendor") + ":" + wfn.GetString("product")
+	if _, ok := mem.CompVPIndex[idx]; !ok {
+		mem.CompVPIndex[idx] = map[string]struct{}{}
 	}
+	mem.CompVPIndex[idx][input.ID] = struct{}{}
 
 	return nil
 }
@@ -193,46 +191,27 @@ func (mem *Memory) UpdateComponent(input UpdateComponentInput) error {
 	if input.Name != nil {
 		comp.Name = *input.Name
 	}
-	// => CPEs23
-	if input.CPEs23 != nil {
-		// Update indexes
-		for _, inputCPE23 := range input.CPEs23 {
-			found := false
-			for _, cpe23 := range comp.CPEs23 {
-				if inputCPE23 == cpe23 {
-					found = true
-					break
-				}
+	// => CPE23
+	if input.CPE23 != nil {
+		// Update index
+		wfnOld, _ := naming.UnbindFS(comp.CPE23)
+		wfnNew, _ := naming.UnbindFS(*input.CPE23)
+		idxOld := wfnOld.GetString("vendor") + ":" + wfnOld.GetString("product")
+		idxNew := wfnNew.GetString("vendor") + ":" + wfnNew.GetString("product")
+		if idxNew != idxOld {
+			// Delete old index
+			delete(mem.CompVPIndex[idxOld], comp.ID)
+			if len(mem.CompVPIndex[idxOld]) == 0 {
+				delete(mem.CompVPIndex, idxOld)
 			}
-			if !found {
-				// Add to index
-				wfn, _ := naming.UnbindFS(inputCPE23)
-				idx := wfn.GetString("vendor") + ":" + wfn.GetString("product")
-				if _, ok := mem.CompVPIndex[idx]; !ok {
-					mem.CompVPIndex[idx] = map[string]struct{}{}
-				}
-				mem.CompVPIndex[idx][comp.ID] = struct{}{}
+
+			// Add new index
+			if _, ok := mem.CompVPIndex[idxNew]; !ok {
+				mem.CompVPIndex[idxNew] = map[string]struct{}{}
 			}
+			mem.CompVPIndex[idxNew][comp.ID] = struct{}{}
 		}
-		for _, cpe23 := range comp.CPEs23 {
-			remains := false
-			for _, inputCPE23 := range input.CPEs23 {
-				if cpe23 == inputCPE23 {
-					remains = true
-					break
-				}
-			}
-			if !remains {
-				// Remove from index
-				wfn, _ := naming.UnbindFS(cpe23)
-				idx := wfn.GetString("vendor") + ":" + wfn.GetString("product")
-				delete(mem.CompVPIndex[idx], comp.ID)
-				if len(mem.CompVPIndex[idx]) == 0 {
-					delete(mem.CompVPIndex, idx)
-				}
-			}
-		}
-		comp.CPEs23 = input.CPEs23
+		comp.CPE23 = *input.CPE23
 	}
 	// => Parent
 	if input.Parent != nil {
@@ -364,13 +343,11 @@ func (mem *Memory) DeleteComponent(input DeleteComponentInput) error {
 		cve.Components = removeComponent(cve.Components, comp)
 	}
 	// => Index
-	for _, cpe23 := range comp.CPEs23 {
-		wfn, _ := naming.UnbindFS(cpe23)
-		idx := wfn.GetString("vendor") + ":" + wfn.GetString("product")
-		delete(mem.CompVPIndex[idx], comp.ID)
-		if len(mem.CompVPIndex[idx]) == 0 {
-			delete(mem.CompVPIndex, idx)
-		}
+	wfn, _ := naming.UnbindFS(comp.CPE23)
+	idx := wfn.GetString("vendor") + ":" + wfn.GetString("product")
+	delete(mem.CompVPIndex[idx], comp.ID)
+	if len(mem.CompVPIndex[idx]) == 0 {
+		delete(mem.CompVPIndex, idx)
 	}
 	delete(mem.Components, comp.ID)
 
@@ -726,8 +703,6 @@ func getNodeCPEs23(node *model.Node) []string {
 }
 
 func copyComponent(comp *model.Component) *model.Component {
-	cpes23 := make([]string, len(comp.CPEs23))
-	copy(cpes23, comp.CPEs23)
 	children := make([]*model.Component, len(comp.Children))
 	for i, child := range comp.Children {
 		children[i] = &model.Component{
@@ -749,7 +724,7 @@ func copyComponent(comp *model.Component) *model.Component {
 	return &model.Component{
 		ID:       comp.ID,
 		Name:     comp.Name,
-		CPEs23:   cpes23,
+		CPE23:    comp.CPE23,
 		Parent:   parent,
 		Children: children,
 		CVEs:     cves,

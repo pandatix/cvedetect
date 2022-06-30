@@ -29,13 +29,11 @@ var Component = graphql.NewObject(graphql.ObjectConfig{
 				return nil, nil
 			},
 		},
-		"cpes23": {
-			Type: graphql.NewNonNull(&graphql.List{
-				OfType: graphql.NewNonNull(scalar.CPE23),
-			}),
+		"cpe23": {
+			Type: graphql.NewNonNull(scalar.CPE23),
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				if comp, ok := p.Source.(*model.Component); ok {
-					return comp.CPEs23, nil
+					return comp.CPE23, nil
 				}
 				return nil, nil
 			},
@@ -79,10 +77,8 @@ var AddComponentInput = graphql.NewInputObject(graphql.InputObjectConfig{
 		"name": {
 			Type: graphql.NewNonNull(graphql.String),
 		},
-		"cpes23": {
-			Type: graphql.NewNonNull(&graphql.List{
-				OfType: graphql.NewNonNull(scalar.CPE23),
-			}),
+		"cpe23": {
+			Type: graphql.NewNonNull(scalar.CPE23),
 		},
 		"parent": {
 			Type: AddComponentParentInput,
@@ -122,10 +118,8 @@ var UpdateComponentInput = graphql.NewInputObject(graphql.InputObjectConfig{
 		"name": {
 			Type: graphql.String,
 		},
-		"cpes23": {
-			Type: &graphql.List{
-				OfType: graphql.NewNonNull(scalar.CPE23),
-			},
+		"cpe23": {
+			Type: scalar.CPE23,
 		},
 		"parent": {
 			Type: UpdateComponentParentInput,

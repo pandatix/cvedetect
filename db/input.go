@@ -15,7 +15,7 @@ type QueryComponentInput struct {
 type AddComponentInput struct {
 	ID       string                   `json:"id"`
 	Name     string                   `json:"name"`
-	CPEs23   []string                 `json:"cpes23"`
+	CPE23    string                   `json:"cpe23"`
 	Parent   *AddComponentParent      `json:"parent,omitempty"`
 	Children []AddComponentChildInput `json:"children"`
 }
@@ -31,7 +31,7 @@ type AddComponentChildInput struct {
 type UpdateComponentInput struct {
 	ID       string                      `json:"id"`
 	Name     *string                     `json:"name,omitempty"`
-	CPEs23   []string                    `json:"cpes23,omitempty"`
+	CPE23    *string                     `json:"cpe23,omitempty"`
 	Parent   *UpdateComponentParentInput `json:"parent,omitempty"`
 	Children []UpdateComponentChildInput `json:"children,omitempty"`
 	CVEs     []UpdateComponentCVEsInput  `json:"cves,omitempty"`

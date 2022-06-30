@@ -63,12 +63,9 @@ func createComp(client HTTPClient, url string, comp component) error {
 		  }
 		`,
 		Variables: map[string]any{
-			"input": struct {
-				Name   string   `json:"name"`
-				CPEs23 []string `json:"cpes23"`
-			}{
-				Name:   comp.Name,
-				CPEs23: comp.CPEs23,
+			"input": map[string]any{
+				"name":  comp.Name,
+				"cpe23": comp.CPE23,
 			},
 		},
 	}
@@ -105,6 +102,6 @@ type root struct {
 }
 
 type component struct {
-	Name   string   `yaml:"name"`
-	CPEs23 []string `yaml:"cpes23"`
+	Name  string `yaml:"name"`
+	CPE23 string `yaml:"cpe23"`
 }

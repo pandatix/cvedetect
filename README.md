@@ -82,7 +82,7 @@ mutation AddComponent($input: AddComponentInput!) {
     addComponent(input: $input) {
         id
         name
-        cpes23
+        cpe23
         cves {
             id
             description
@@ -110,7 +110,7 @@ mutation AddComponent($input: AddComponentInput!) {
 ```json
 {
     "name": "Gitea",
-    "cpes23": ["cpe:2.3:a:gitea:gitea:1.12.6:*:*:*:*:docker:amd64:*"]
+    "cpe23": "cpe:2.3:a:gitea:gitea:1.12.6:*:*:*:*:docker:amd64:*"
 }
 ```
 
@@ -118,5 +118,5 @@ The previous has the equivalent curl command.
 
 ```bash
 curl -X POST http://localhost:8080/graphql \
-    -d '{"query":"mutation AddComponent($input:AddComponentInput!){addComponent(input:$input){id name cpes23 cves{id description configurations{negate operator cpeMatches{vulnerable cpe23 versionStartIncluding versionStartExcluding versionEndIncluding versionEndExcluding}}cvss31{vector baseScore}}}}","variables":{"input":{"name":"Gitea","cpes23":["cpe:2.3:a:gitea:gitea:1.12.6:*:*:*:*:docker:amd64:*"]}}}'
+    -d '{"query":"mutation AddComponent($input:AddComponentInput!){addComponent(input:$input){id name cpe23 cves{id description configurations{negate operator cpeMatches{vulnerable cpe23 versionStartIncluding versionStartExcluding versionEndIncluding versionEndExcluding}}cvss31{vector baseScore}}}}","variables":{"input":{"name":"Gitea","cpe23":"cpe:2.3:a:gitea:gitea:1.12.6:*:*:*:*:docker:amd64:*"}}}'
 ```

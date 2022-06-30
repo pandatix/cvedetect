@@ -80,11 +80,9 @@ func TestMDC1(t *testing.T) {
 	}{
 		"CVE-2021-28378-matching": {
 			Component: &model.Component{
-				ID:   "comp",
-				Name: "Gitea",
-				CPEs23: []string{
-					"cpe:2.3:a:gitea:gitea:1.12.6:*:*:*:*:*:*:*",
-				},
+				ID:       "comp",
+				Name:     "Gitea",
+				CPE23:    "cpe:2.3:a:gitea:gitea:1.12.6:*:*:*:*:*:*:*",
 				Parent:   nil,
 				Children: []*model.Component{},
 				CVEs:     []*model.CVE{},
@@ -94,11 +92,9 @@ func TestMDC1(t *testing.T) {
 		},
 		"CVE-2021-28378-not-matching": {
 			Component: &model.Component{
-				ID:   "comp",
-				Name: "Gitea",
-				CPEs23: []string{
-					"cpe:2.3:a:gitea:gitea:1.13.4:*:*:*:*:*:*:*",
-				},
+				ID:       "comp",
+				Name:     "Gitea",
+				CPE23:    "cpe:2.3:a:gitea:gitea:1.13.4:*:*:*:*:*:*:*",
 				Parent:   nil,
 				Children: []*model.Component{},
 				CVEs:     []*model.CVE{},
@@ -108,11 +104,9 @@ func TestMDC1(t *testing.T) {
 		},
 		"CVE-2022-1058": {
 			Component: &model.Component{
-				ID:   "comp",
-				Name: "Gitea",
-				CPEs23: []string{
-					"cpe:2.3:a:gitea:gitea:1.15.4:*:*:*:*:*:*:*",
-				},
+				ID:       "comp",
+				Name:     "Gitea",
+				CPE23:    "cpe:2.3:a:gitea:gitea:1.15.4:*:*:*:*:*:*:*",
 				Parent:   nil,
 				Children: []*model.Component{},
 				CVEs:     []*model.CVE{},
@@ -122,11 +116,9 @@ func TestMDC1(t *testing.T) {
 		},
 		"Log4Shell-extract": {
 			Component: &model.Component{
-				ID:   "comp",
-				Name: "Siemens SSPA-T3000 SES3000",
-				CPEs23: []string{
-					"cpe:2.3:o:siemens:sppa-t3000_ses3000_firmware:*:*:*:*:*:*:*:*",
-				},
+				ID:       "comp",
+				Name:     "Siemens SSPA-T3000 SES3000",
+				CPE23:    "cpe:2.3:o:siemens:sppa-t3000_ses3000_firmware:*:*:*:*:*:*:*:*",
 				Parent:   nil,
 				Children: []*model.Component{},
 				CVEs:     []*model.CVE{},
@@ -182,11 +174,9 @@ func TestMDC1(t *testing.T) {
 		},
 		"negate-no-subset": {
 			Component: &model.Component{
-				ID:   "comp",
-				Name: "Fake Component",
-				CPEs23: []string{
-					"cpe:2.3:a:fake:component:4.2.5:r2:*:online:linux:amd64:*:*",
-				},
+				ID:       "comp",
+				Name:     "Fake Component",
+				CPE23:    "cpe:2.3:a:fake:component:4.2.5:r2:*:online:linux:amd64:*:*",
 				Parent:   nil,
 				Children: []*model.Component{},
 				CVEs:     []*model.CVE{},

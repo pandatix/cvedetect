@@ -15,12 +15,10 @@ import (
 // Such check should be performed on each node for an alone-vulnerable
 // detection, before a tree mode using the MDCN [TES-22] algorithm.
 func MDC1(comp *model.Component, cve *model.CVE) bool {
-	for _, cpe23 := range comp.CPEs23 {
-		for _, conf := range cve.Configurations {
-			pos, _ := mdc1(cpe23, conf)
-			if pos.Children != nil || pos.Matchers != nil {
-				return true
-			}
+	for _, conf := range cve.Configurations {
+		pos, _ := mdc1(comp.CPE23, conf)
+		if pos.Children != nil || pos.Matchers != nil {
+			return true
 		}
 	}
 	return false

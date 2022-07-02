@@ -185,6 +185,7 @@ func run(ctx *cli.Context) error {
 			for i, ref := range item.CVE.References.ReferenceData {
 				references[i] = db.AddCVEReferenceInput{
 					URL:       ref.URL,
+					Name:      *ref.Name,
 					Refsource: *ref.Refsource,
 					Tags:      *ref.Tags,
 				}

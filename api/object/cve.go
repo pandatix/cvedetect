@@ -251,6 +251,15 @@ var Reference = graphql.NewObject(graphql.ObjectConfig{
 				return nil, nil
 			},
 		},
+		"name": {
+			Type: graphql.NewNonNull(graphql.String),
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				if ref, ok := p.Source.(*model.Reference); ok {
+					return ref.Name, nil
+				}
+				return nil, nil
+			},
+		},
 		"refsource": {
 			Type: graphql.NewNonNull(graphql.String),
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
@@ -371,6 +380,9 @@ var AddCVEReferencesInput = graphql.NewInputObject(graphql.InputObjectConfig{
 		"url": {
 			Type: graphql.NewNonNull(graphql.String),
 		},
+		"name": {
+			Type: graphql.NewNonNull(graphql.String),
+		},
 		"refsource": {
 			Type: graphql.NewNonNull(graphql.String),
 		},
@@ -455,6 +467,9 @@ var UpdateCVEReferencesInput = graphql.NewInputObject(graphql.InputObjectConfig{
 	Name: "UpdateCVEReferencesInput",
 	Fields: graphql.InputObjectConfigFieldMap{
 		"url": {
+			Type: graphql.NewNonNull(graphql.String),
+		},
+		"name": {
 			Type: graphql.NewNonNull(graphql.String),
 		},
 		"refsource": {

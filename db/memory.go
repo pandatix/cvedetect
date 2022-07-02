@@ -414,6 +414,7 @@ func (mem *Memory) AddCVE(input AddCVEInput) error {
 		copy(tags, ref.Tags)
 		references[i] = &model.Reference{
 			URL:       ref.URL,
+			Name:      ref.Name,
 			Refsource: ref.Refsource,
 			Tags:      tags,
 		}
@@ -584,6 +585,7 @@ func (mem *Memory) UpdateCVE(input UpdateCVEInput) error {
 			copy(tags, ref.Tags)
 			cve.References[i] = &model.Reference{
 				URL:       ref.URL,
+				Name:      ref.Name,
 				Refsource: ref.Refsource,
 				Tags:      tags,
 			}
@@ -748,6 +750,7 @@ func copyCVE(cve *model.CVE) *model.CVE {
 		copy(tags, ref.Tags)
 		references[i] = &model.Reference{
 			URL:       ref.URL,
+			Name:      ref.Name,
 			Refsource: ref.Refsource,
 			Tags:      tags,
 		}

@@ -33,6 +33,7 @@ type CPEMatch struct {
 
 type Reference struct {
 	URL       string   `json:"url"`
+	Name      string   `json:"name"`
 	Refsource string   `json:"refsource"`
 	Tags      []string `json:"tags"`
 }

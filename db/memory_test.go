@@ -2482,6 +2482,7 @@ func TestMemoryAddCVE(t *testing.T) {
 				References: []db.AddCVEReferenceInput{
 					{
 						URL:       "https://example.com",
+						Name:      "Example reference",
 						Refsource: "MISC",
 						Tags:      []string{"Patch"},
 					},
@@ -2521,6 +2522,7 @@ func TestMemoryAddCVE(t *testing.T) {
 						References: []*model.Reference{
 							{
 								URL:       "https://example.com",
+								Name:      "Example reference",
 								Refsource: "MISC",
 								Tags:      []string{"Patch"},
 							},
@@ -3301,6 +3303,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						References: []*model.Reference{
 							{
 								URL:       "https://example.com",
+								Name:      "Example reference",
 								Refsource: "MISC",
 								Tags:      []string{"Third Party Advisory"},
 							},
@@ -3320,6 +3323,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				References: []db.UpdateCVEReferencesInput{
 					{
 						URL:       "https://new-example.com",
+						Name:      "Example reference",
 						Refsource: "MISC",
 						Tags:      []string{"Exploit", "Patch"},
 					},
@@ -3342,6 +3346,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						References: []*model.Reference{
 							{
 								URL:       "https://new-example.com",
+								Name:      "Example reference",
 								Refsource: "MISC",
 								Tags:      []string{"Exploit", "Patch"},
 							},

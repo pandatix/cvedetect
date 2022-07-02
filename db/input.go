@@ -93,6 +93,7 @@ type AddCVENodeCPEMatchInput struct {
 
 type AddCVEReferenceInput struct {
 	URL       string   `json:"url"`
+	Name      string   `json:"name"`
 	Refsource string   `json:"refsource"`
 	Tags      []string `json:"tags"`
 }
@@ -131,6 +132,7 @@ type UpdateCVEComponentInput struct {
 
 type UpdateCVEReferencesInput struct {
 	URL       string   `json:"url"`
+	Name      string   `json:"name"`
 	Refsource string   `json:"refsource"`
 	Tags      []string `json:"tags"`
 }

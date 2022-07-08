@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"sync"
 
+	"github.com/knqyf263/go-cpe/matching"
 	"github.com/knqyf263/go-cpe/naming"
 	"github.com/pandatix/cvedetect/model"
 )
@@ -56,11 +57,29 @@ func (mem *Memory) QueryComponents(input QueryComponentInput) []*model.Component
 	mem.mx.RLock()
 	defer mem.mx.RUnlock()
 
+	// Select components to query
 	var mp map[string]*model.Component = mem.Components
 	if input.VP != nil {
-		mp = make(map[string]*model.Component, len(mem.CompVPIndex[*input.VP]))
-		for compID := range mem.CompVPIndex[*input.VP] {
-			mp[compID] = mem.Components[compID]
+		v, p := splitVP(*input.VP)
+		if containsWildcard(v) || containsWildcard(p) {
+			// Select using subset
+			inWFN, _ := naming.UnbindFS("cpe:2.3:a:" + *input.VP + "*:*:*:*:*:*:*:*")
+			mp = map[string]*model.Component{}
+			for vp, compsIDs := range mem.CompVPIndex {
+				// XXX workaround as matching.compare is not directly accessible.
+				compWFN, _ := naming.UnbindFS("cpe:2.3:a:" + vp + "*:*:*:*:*:*:*:*")
+				if matching.IsSuperset(inWFN, compWFN) {
+					for compID := range compsIDs {
+						mp[compID] = mem.Components[compID]
+					}
+				}
+			}
+		} else {
+			// Select directly
+			mp = make(map[string]*model.Component, len(mem.CompVPIndex[*input.VP]))
+			for compID := range mem.CompVPIndex[*input.VP] {
+				mp[compID] = mem.Components[compID]
+			}
 		}
 	}
 
@@ -375,9 +394,26 @@ func (mem *Memory) QueryCVEs(input QueryCVEInput) []*model.CVE {
 
 	var mp map[string]*model.CVE = mem.CVEs
 	if input.VP != nil {
-		mp = make(map[string]*model.CVE, len(mem.CVEVPIndex[*input.VP]))
-		for cveID := range mem.CVEVPIndex[*input.VP] {
-			mp[cveID] = mem.CVEs[cveID]
+		v, p := splitVP(*input.VP)
+		if containsWildcard(v) || containsWildcard(p) {
+			// Select using subset
+			inWFN, _ := naming.UnbindFS("cpe:2.3:a:" + *input.VP + "*:*:*:*:*:*:*:*")
+			mp = map[string]*model.CVE{}
+			for vp, cvesIDs := range mem.CVEVPIndex {
+				// XXX workaround as matching.compare is not directly accessible.
+				compWFN, _ := naming.UnbindFS("cpe:2.3:a:" + vp + "*:*:*:*:*:*:*:*")
+				if matching.IsSuperset(inWFN, compWFN) {
+					for cveID := range cvesIDs {
+						mp[cveID] = mem.CVEs[cveID]
+					}
+				}
+			}
+		} else {
+			// Select directly
+			mp = make(map[string]*model.CVE, len(mem.CVEVPIndex[*input.VP]))
+			for cveID := range mem.CVEVPIndex[*input.VP] {
+				mp[cveID] = mem.CVEs[cveID]
+			}
 		}
 	}
 

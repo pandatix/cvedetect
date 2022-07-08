@@ -346,6 +346,88 @@ func TestMemoryQueryComponents(t *testing.T) {
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
 		},
+		"indexed-vp-wildcard-components": {
+			Memory: &db.Memory{
+				Components: map[string]*model.Component{
+					"comp-1": {
+						ID:       "comp-1",
+						Name:     "Component 1",
+						CPE23:    "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
+						Parent:   nil,
+						Children: []*model.Component{},
+						CVEs:     []*model.CVE{},
+					},
+					"comp-2": {
+						ID:       "comp-2",
+						Name:     "Component 2",
+						CPE23:    "cpe:2.3:a:other:component:*:*:*:*:*:*:*:*",
+						Parent:   nil,
+						Children: []*model.Component{},
+						CVEs:     []*model.CVE{},
+					},
+				},
+				CompVPIndex: map[string]map[string]struct{}{
+					"fake:component": {
+						"comp-1": {},
+					},
+					"other:component": {
+						"comp-2": {},
+					},
+				},
+				CVEs:       map[string]*model.CVE{},
+				CVEVPIndex: map[string]map[string]struct{}{},
+			},
+			Input: db.QueryComponentInput{
+				VP: ptr("*:component"),
+			},
+			ExpectedComponents: []*model.Component{
+				{
+					ID:       "comp-1",
+					Name:     "Component 1",
+					CPE23:    "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
+					Parent:   nil,
+					Children: []*model.Component{},
+					CVEs:     []*model.CVE{},
+				}, {
+					ID:       "comp-2",
+					Name:     "Component 2",
+					CPE23:    "cpe:2.3:a:other:component:*:*:*:*:*:*:*:*",
+					Parent:   nil,
+					Children: []*model.Component{},
+					CVEs:     []*model.CVE{},
+				},
+			},
+			ExpectedMemory: &db.Memory{
+				Components: map[string]*model.Component{
+					"comp-1": {
+						ID:       "comp-1",
+						Name:     "Component 1",
+						CPE23:    "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
+						Parent:   nil,
+						Children: []*model.Component{},
+						CVEs:     []*model.CVE{},
+					},
+					"comp-2": {
+						ID:       "comp-2",
+						Name:     "Component 2",
+						CPE23:    "cpe:2.3:a:other:component:*:*:*:*:*:*:*:*",
+						Parent:   nil,
+						Children: []*model.Component{},
+						CVEs:     []*model.CVE{},
+					},
+				},
+				CompVPIndex: map[string]map[string]struct{}{
+					"fake:component": {
+						"comp-1": {},
+					},
+					"other:component": {
+						"comp-2": {},
+					},
+				},
+				CVEs:       map[string]*model.CVE{},
+				CVEVPIndex: map[string]map[string]struct{}{},
+			},
+		},
 	}
 
 	for testname, tt := range tests {
@@ -2312,6 +2394,208 @@ func TestMemoryQueryCVEs(t *testing.T) {
 						"cve-1": {},
 					},
 					"fake\\_:component": {
+						"cve-2": {},
+					},
+				},
+			},
+		},
+		"indexed-vp-wildcard-components": {
+			Memory: &db.Memory{
+				Components:  map[string]*model.Component{},
+				CompVPIndex: map[string]map[string]struct{}{},
+				CVEs: map[string]*model.CVE{
+					"cve-1": {
+						ID:              "cve-1",
+						Description:     "CVE description 1",
+						PublicationDate: timeParse("2020-05-06T09:35Z"),
+						LastUpdate:      timeParse("2020-05-06T09:35Z"),
+						CVSS20Vector:    nil,
+						CVSS30Vector:    nil,
+						CVSS31Vector:    nil,
+						Configurations: []*model.Node{
+							{
+								Negate:   nil,
+								Operator: "OR",
+								Children: []*model.Node{},
+								CPEMatches: []*model.CPEMatch{
+									{
+										Vulnerable:            true,
+										CPE23:                 "cpe:2.3:a:fake:product:*:*:*:*:*:*:*:*",
+										VersionStartIncluding: nil,
+										VersionStartExcluding: nil,
+										VersionEndIncluding:   nil,
+										VersionEndExcluding:   nil,
+									},
+								},
+							},
+						},
+						Components: []*model.Component{},
+						References: []*model.Reference{},
+					},
+					"cve-2": {
+						ID:              "cve-2",
+						Description:     "CVE description 2",
+						PublicationDate: timeParse("2020-05-06T09:35Z"),
+						LastUpdate:      timeParse("2020-05-06T09:35Z"),
+						CVSS20Vector:    nil,
+						CVSS30Vector:    nil,
+						CVSS31Vector:    nil,
+						Configurations: []*model.Node{
+							{
+								Negate:   nil,
+								Operator: "OR",
+								Children: []*model.Node{},
+								CPEMatches: []*model.CPEMatch{
+									{
+										Vulnerable:            true,
+										CPE23:                 "cpe:2.3:a:other:product:*:*:*:*:*:*:*:*",
+										VersionStartIncluding: nil,
+										VersionStartExcluding: nil,
+										VersionEndIncluding:   nil,
+										VersionEndExcluding:   nil,
+									},
+								},
+							},
+						},
+						Components: []*model.Component{},
+						References: []*model.Reference{},
+					},
+				},
+				CVEVPIndex: map[string]map[string]struct{}{
+					"fake:product": {
+						"cve-1": {},
+					},
+					"other:product": {
+						"cve-2": {},
+					},
+				},
+			},
+			Input: db.QueryCVEInput{
+				VP: ptr("*:product"),
+			},
+			ExpectedCVEs: []*model.CVE{
+				{
+					ID:              "cve-1",
+					Description:     "CVE description 1",
+					PublicationDate: timeParse("2020-05-06T09:35Z"),
+					LastUpdate:      timeParse("2020-05-06T09:35Z"),
+					CVSS20Vector:    nil,
+					CVSS30Vector:    nil,
+					CVSS31Vector:    nil,
+					Configurations: []*model.Node{
+						{
+							Negate:   nil,
+							Operator: "OR",
+							Children: []*model.Node{},
+							CPEMatches: []*model.CPEMatch{
+								{
+									Vulnerable:            true,
+									CPE23:                 "cpe:2.3:a:fake:product:*:*:*:*:*:*:*:*",
+									VersionStartIncluding: nil,
+									VersionStartExcluding: nil,
+									VersionEndIncluding:   nil,
+									VersionEndExcluding:   nil,
+								},
+							},
+						},
+					},
+					Components: []*model.Component{},
+					References: []*model.Reference{},
+				}, {
+					ID:              "cve-2",
+					Description:     "CVE description 2",
+					PublicationDate: timeParse("2020-05-06T09:35Z"),
+					LastUpdate:      timeParse("2020-05-06T09:35Z"),
+					CVSS20Vector:    nil,
+					CVSS30Vector:    nil,
+					CVSS31Vector:    nil,
+					Configurations: []*model.Node{
+						{
+							Negate:   nil,
+							Operator: "OR",
+							Children: []*model.Node{},
+							CPEMatches: []*model.CPEMatch{
+								{
+									Vulnerable:            true,
+									CPE23:                 "cpe:2.3:a:other:product:*:*:*:*:*:*:*:*",
+									VersionStartIncluding: nil,
+									VersionStartExcluding: nil,
+									VersionEndIncluding:   nil,
+									VersionEndExcluding:   nil,
+								},
+							},
+						},
+					},
+					Components: []*model.Component{},
+					References: []*model.Reference{},
+				},
+			},
+			ExpectedMemory: &db.Memory{
+				Components:  map[string]*model.Component{},
+				CompVPIndex: map[string]map[string]struct{}{},
+				CVEs: map[string]*model.CVE{
+					"cve-1": {
+						ID:              "cve-1",
+						Description:     "CVE description 1",
+						PublicationDate: timeParse("2020-05-06T09:35Z"),
+						LastUpdate:      timeParse("2020-05-06T09:35Z"),
+						CVSS20Vector:    nil,
+						CVSS30Vector:    nil,
+						CVSS31Vector:    nil,
+						Configurations: []*model.Node{
+							{
+								Negate:   nil,
+								Operator: "OR",
+								Children: []*model.Node{},
+								CPEMatches: []*model.CPEMatch{
+									{
+										Vulnerable:            true,
+										CPE23:                 "cpe:2.3:a:fake:product:*:*:*:*:*:*:*:*",
+										VersionStartIncluding: nil,
+										VersionStartExcluding: nil,
+										VersionEndIncluding:   nil,
+										VersionEndExcluding:   nil,
+									},
+								},
+							},
+						},
+						Components: []*model.Component{},
+						References: []*model.Reference{},
+					},
+					"cve-2": {
+						ID:              "cve-2",
+						Description:     "CVE description 2",
+						PublicationDate: timeParse("2020-05-06T09:35Z"),
+						LastUpdate:      timeParse("2020-05-06T09:35Z"),
+						CVSS20Vector:    nil,
+						CVSS30Vector:    nil,
+						CVSS31Vector:    nil,
+						Configurations: []*model.Node{
+							{
+								Negate:   nil,
+								Operator: "OR",
+								Children: []*model.Node{},
+								CPEMatches: []*model.CPEMatch{
+									{
+										Vulnerable:            true,
+										CPE23:                 "cpe:2.3:a:other:product:*:*:*:*:*:*:*:*",
+										VersionStartIncluding: nil,
+										VersionStartExcluding: nil,
+										VersionEndIncluding:   nil,
+										VersionEndExcluding:   nil,
+									},
+								},
+							},
+						},
+						Components: []*model.Component{},
+						References: []*model.Reference{},
+					},
+				},
+				CVEVPIndex: map[string]map[string]struct{}{
+					"fake:product": {
+						"cve-1": {},
+					},
+					"other:product": {
 						"cve-2": {},
 					},
 				},

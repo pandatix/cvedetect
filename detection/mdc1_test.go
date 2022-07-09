@@ -115,6 +115,8 @@ func TestMDC1(t *testing.T) {
 			ExpectedVuln: true,
 		},
 		"Log4Shell-extract": {
+			// This should return true under MDCN, but can't be detected
+			// using MDC=1.
 			Component: &model.Component{
 				ID:       "comp",
 				Name:     "Siemens SSPA-T3000 SES3000",
@@ -171,50 +173,6 @@ func TestMDC1(t *testing.T) {
 				Components: []*model.Component{},
 			},
 			ExpectedVuln: false,
-		},
-		"negate-no-subset": {
-			Component: &model.Component{
-				ID:       "comp",
-				Name:     "Fake Component",
-				CPE23:    "cpe:2.3:a:fake:component:4.2.5:r2:*:online:linux:amd64:*:*",
-				Parent:   nil,
-				Children: []*model.Component{},
-				CVEs:     []*model.CVE{},
-			},
-			CVE: &model.CVE{
-				ID:              "cve-unexisting",
-				Description:     "This CVE does not exist.",
-				PublicationDate: time.Now(),
-				LastUpdate:      time.Now(),
-				CVSS20Vector:    nil,
-				CVSS31Vector:    nil,
-				Configurations: []*model.Node{
-					{
-						Negate:   ptr(true),
-						Operator: "AND",
-						Children: []*model.Node{},
-						CPEMatches: []*model.CPEMatch{
-							{
-								Vulnerable:            true,
-								CPE23:                 "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
-								VersionStartIncluding: nil,
-								VersionStartExcluding: nil,
-								VersionEndIncluding:   nil,
-								VersionEndExcluding:   nil,
-							}, {
-								Vulnerable:            false,
-								CPE23:                 "cpe:2.3:a:fake:component:*:*:*:*:linux:*:*:*",
-								VersionStartIncluding: ptr("3.0.0"),
-								VersionStartExcluding: nil,
-								VersionEndIncluding:   nil,
-								VersionEndExcluding:   ptr("4.5.0"),
-							},
-						},
-					},
-				},
-				Components: []*model.Component{},
-			},
-			ExpectedVuln: true,
 		},
 	}
 

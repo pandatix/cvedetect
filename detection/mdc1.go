@@ -45,6 +45,7 @@ func mdc1(cpe23 string, conf *model.Node) (pos, neg *Node) {
 			matcher := &Matcher{
 				SuperCPE23:            cpeMatch.CPE23,
 				SubCPE23:              cpe23,
+				Vulnerable:            cpeMatch.Vulnerable,
 				VersionStartIncluding: cpPtrValue(cpeMatch.VersionStartIncluding),
 				VersionStartExcluding: cpPtrValue(cpeMatch.VersionStartExcluding),
 				VersionEndIncluding:   cpPtrValue(cpeMatch.VersionEndIncluding),
@@ -76,60 +77,62 @@ func matches(cpe23 string, cpeMatch *model.CPEMatch) bool {
 	subWfn, _ := naming.UnbindFS(cpe23)
 	supWfn, _ := naming.UnbindFS(cpeMatch.CPE23)
 
-	if matching.IsSuperset(supWfn, subWfn) {
-		// Build version interval
-		scstr := ""
-		if cpeMatch.VersionStartIncluding != nil {
-			scstr = ">= " + *cpeMatch.VersionStartIncluding
-		}
-		if cpeMatch.VersionStartExcluding != nil {
-			scstr = "> " + *cpeMatch.VersionStartExcluding
-		}
-		ecstr := ""
-		if cpeMatch.VersionEndIncluding != nil {
-			ecstr = "<= " + *cpeMatch.VersionEndIncluding
-		}
-		if cpeMatch.VersionEndExcluding != nil {
-			ecstr = "< " + *cpeMatch.VersionEndExcluding
-		}
-
-		// Check if it is necessary to check for interval inclusion
-		if scstr == "" && ecstr == "" {
-			// => No version boundary to check => supersets only
-			return cpeMatch.Vulnerable
-		}
-
-		// Build constraint string
-		cstr := ""
-		if scstr != "" {
-			cstr = scstr
-			if ecstr != "" {
-				cstr += " , " + ecstr
-			}
-		} else {
-			if ecstr != "" {
-				cstr = ecstr
-			}
-		}
-
-		// Check if included in version interval
-		ctr, err := version.NewConstraint(cstr)
-		if err != nil {
-			// XXX may increase false rate
-			return false
-		}
-		// XXX workaround as knqyf263 implemented a different "flavour" of the NIST-IR 7695... => should not try to escape characters, only validate
-		// -> Should not escape inputs, must be quoted by the NVD / user
-		rv := subWfn.GetString("version")
-		rv = strings.ReplaceAll(rv, "\\", "")
-		v, err := version.NewVersion(rv)
-		if err != nil {
-			// XXX may increase false rate
-			return false
-		}
-		return ctr.Check(v) && cpeMatch.Vulnerable
+	// Check sup is superset of sub
+	if !matching.IsSuperset(supWfn, subWfn) {
+		return false
 	}
-	return false
+
+	// Build version interval
+	scstr := ""
+	if cpeMatch.VersionStartIncluding != nil {
+		scstr = ">= " + *cpeMatch.VersionStartIncluding
+	}
+	if cpeMatch.VersionStartExcluding != nil {
+		scstr = "> " + *cpeMatch.VersionStartExcluding
+	}
+	ecstr := ""
+	if cpeMatch.VersionEndIncluding != nil {
+		ecstr = "<= " + *cpeMatch.VersionEndIncluding
+	}
+	if cpeMatch.VersionEndExcluding != nil {
+		ecstr = "< " + *cpeMatch.VersionEndExcluding
+	}
+
+	// Check if it is necessary to check for interval inclusion
+	if scstr == "" && ecstr == "" {
+		// => No version boundary to check: supersets only is true
+		return true
+	}
+
+	// Build constraint string
+	cstr := ""
+	if scstr != "" {
+		cstr = scstr
+		if ecstr != "" {
+			cstr += " , " + ecstr
+		}
+	} else {
+		if ecstr != "" {
+			cstr = ecstr
+		}
+	}
+
+	// Check if included in version interval
+	ctr, err := version.NewConstraint(cstr)
+	if err != nil {
+		// XXX may increase false rate
+		return false
+	}
+	// XXX workaround as knqyf263 implemented a different "flavour" of the NIST-IR 7695... => should not try to escape characters, only validate
+	// -> Should not escape inputs, must be quoted by the NVD / user
+	rv := subWfn.GetString("version")
+	rv = strings.ReplaceAll(rv, "\\", "")
+	v, err := version.NewVersion(rv)
+	if err != nil {
+		// XXX may increase false rate
+		return false
+	}
+	return ctr.Check(v)
 }
 
 func flush(node *Node) {

@@ -1,16 +1,119 @@
 package detection
 
-import "github.com/knqyf263/go-cpe/naming"
+import (
+	"errors"
+	"strings"
+
+	"github.com/knqyf263/go-cpe/naming"
+)
+
+var (
+	ErrTooShortMatcher = errors.New("too short matcher string")
+	ErrInvalidBounds   = errors.New("invalid surrounding bounds")
+	ErrInvalidContent  = errors.New("invalid matcher content")
+)
+
+// ParseMatcher parses a single Matcher string and returns an object
+// representing it, or an error.
+func ParseMatcher(input string) (*Matcher, error) {
+	// Check bounds
+	if len(input) < 2 {
+		return nil, ErrTooShortMatcher
+	}
+	if input[0] != '(' || input[len(input)-1] != ')' {
+		return nil, ErrInvalidBounds
+	}
+
+	// Extract sectors
+	input = input[1 : len(input)-1]
+	sectors := strings.Split(input, " , ")
+	if len(sectors) != 3 {
+		return nil, ErrInvalidContent
+	}
+	matcher := &Matcher{}
+
+	// Parse first sector
+	pts := strings.Split(sectors[0], " ")
+	if len(pts) != 4 { // 4 because "<vulnerable> <supercpe> incl <subcpe>"
+		return nil, ErrInvalidContent
+	}
+	// => Vulnerable
+	switch pts[0] {
+	case "v":
+		matcher.Vulnerable = true
+	case "i":
+		matcher.Vulnerable = false
+	default:
+		return nil, ErrInvalidContent
+	}
+	// => SuperCPE23
+	if _, err := naming.UnbindFS(pts[1]); err != nil {
+		return nil, ErrInvalidContent
+	}
+	matcher.SuperCPE23 = pts[1]
+	// => incl
+	if pts[2] != "incl" {
+		return nil, ErrInvalidContent
+	}
+	// => SubCPE23
+	if _, err := naming.UnbindFS(pts[3]); err != nil {
+		return nil, ErrInvalidContent
+	}
+	matcher.SubCPE23 = pts[3]
+
+	// Parse second sector (start versions)
+	pts = strings.Split(sectors[1], " ")
+	if len(pts) == 1 {
+		if pts[0] != "" {
+			return nil, ErrInvalidContent
+		}
+	} else {
+		if len(pts) != 2 {
+			return nil, ErrInvalidContent
+		}
+		switch pts[1] {
+		case "<":
+			matcher.VersionStartExcluding = &pts[0]
+		case "<=":
+			matcher.VersionStartIncluding = &pts[0]
+		default:
+			return nil, ErrInvalidContent
+		}
+	}
+
+	// Parse third sector (end versions)
+	pts = strings.Split(sectors[2], " ")
+	if len(pts) == 1 {
+		if pts[0] != "" {
+			return nil, ErrInvalidContent
+		}
+	} else {
+		if len(pts) != 2 {
+			return nil, ErrInvalidContent
+		}
+		switch pts[0] {
+		case "<":
+			matcher.VersionEndExcluding = &pts[1]
+		case "<=":
+			matcher.VersionEndIncluding = &pts[1]
+		default:
+			return nil, ErrInvalidContent
+		}
+	}
+
+	return matcher, nil
+}
 
 // Node represents a circuit path of a CVE configuration.
 // It could be used to explain what matched, or what did not.
-// It is defined in [TES-22].
+// It is defined in [Tes-22].
 // Remember that it does not handle the semantic of effectively
 // vulnerable or not, as it is only a tool to represent wether it
 // matched or not. Such semantic is handled by how the Node is used.
 // It could be used to perform tracability on detections.
 // It looks like a NVD configuration, because it represents an
 // evaluation of a circuit.
+// The root of a Node tree is called a Circuit.
 type Node struct {
 	Operator string
 	Children []*Node
@@ -18,7 +121,7 @@ type Node struct {
 }
 
 func (n Node) String() string {
-	s := "("
+	s := ""
 	// Set operator
 	if n.Operator == "OR" {
 		s += "|"
@@ -37,7 +140,7 @@ func (n Node) String() string {
 			s += matcher.String()
 		}
 	}
-	return s + ")"
+	return "(" + s + ")"
 }
 
 // Matcher defines a single-node matching explanation.
@@ -52,7 +155,16 @@ type Matcher struct {
 	// the actual version used for bound check is stored in it.
 	SubCPE23 string
 
-	// The following are directly inherited from the NVD.
+	// Vulnerable defines whether this Matcher is one of the
+	// vulnerable one or not.
+	// If true, it implies that this Matcher triggered a part or
+	// all of the detection.
+	// This concept does not exist in MDC1, as the notion of
+	// context does not exist too.
+	Vulnerable bool
+
+	// The following defines the version bounds in which you must
+	// find the SubCPE23's version.
 
 	VersionStartIncluding *string
 	VersionStartExcluding *string
@@ -61,28 +173,46 @@ type Matcher struct {
 }
 
 func (m Matcher) String() string {
-	s := "(" + m.SuperCPE23 + " incl " + m.SubCPE23 + " , "
-	// Build inferior bound
-	infB := ""
-	if m.VersionStartIncluding != nil {
-		infB = *m.VersionStartIncluding + " <= "
+	s := ""
+
+	// Set first section
+	if m.Vulnerable {
+		s += "v "
+	} else {
+		s += "i "
 	}
-	if m.VersionStartExcluding != nil {
-		infB = *m.VersionStartExcluding + " < "
+	s += m.SuperCPE23 + " incl " + m.SubCPE23 + " , "
+
+	// XXX this workaround is due to NIST-IR 7695 that escapes dot, and necessary for readibility and version comparison
+	wfn, _ := naming.UnbindFS(m.SubCPE23)
+	ver := wfn.GetString("version")
+	ver = strings.ReplaceAll(ver, "\\.", ".")
+
+	// Set version bounds sections (second and third)
+	startB := startBounds(m.VersionStartIncluding, m.VersionStartExcluding, ver)
+	endB := endBounds(m.VersionEndIncluding, m.VersionEndExcluding, ver)
+	s += startB + " , " + endB
+
+	// Output in boundaries
+	return "(" + s + ")"
+}
+
+func startBounds(inc, exc *string, ver string) string {
+	if inc != nil {
+		return *inc + " <="
 	}
-	// Build superior bound
-	supB := ""
-	if m.VersionEndIncluding != nil {
-		supB = " <= " + *m.VersionEndIncluding
+	if exc != nil {
+		return *exc + " <"
 	}
-	if m.VersionEndExcluding != nil {
-		supB = " < " + *m.VersionEndExcluding
+	return ""
+}
+
+func endBounds(inc, exc *string, ver string) string {
+	if inc != nil {
+		return "<= " + *inc
 	}
-	if infB != "" || supB != "" {
-		// Build the version part
-		wfn, _ := naming.UnbindFS(m.SubCPE23)
-		s += infB + wfn.GetString("version") + supB
+	if exc != nil {
+		return "< " + *exc
 	}
-	// Check if
-	return s + ")"
+	return ""
 }

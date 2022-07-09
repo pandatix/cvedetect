@@ -106,7 +106,6 @@ func ParseMatcher(input string) (*Matcher, error) {
 
 // Node represents a circuit path of a CVE configuration.
 // It could be used to explain what matched, or what did not.
-// It is defined in [Tes-22].
 // Remember that it does not handle the semantic of effectively
 // vulnerable or not, as it is only a tool to represent wether it
 // matched or not. Such semantic is handled by how the Node is used.

@@ -28,7 +28,7 @@ func main() {
 	app := cli.App{
 		Name:        "CVE-Detect",
 		Version:     "v0.1.0-alpha",
-		Description: "Implementation of TES-22 CVE detection algorithms, using a web server exposing a GraphQL API.",
+		Description: "Implementation of personnal researches on CVE detection, exposing a GraphQL API to work with.",
 		Flags: []cli.Flag{
 			cli.HelpFlag,
 			cli.VersionFlag,

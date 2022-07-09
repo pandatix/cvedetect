@@ -10,10 +10,10 @@ import (
 )
 
 // MDC1 performs a CVE's configurtion check for a Component using
-// the MDC1 [TES-22] algorithm. As it is based on a CPE and
+// the MDC1 algorithm. As it is based on a CPE and
 // configurations, it wraps the actual algorithm.
 // Such check should be performed on each node for an alone-vulnerable
-// detection, before a tree mode using the MDCN [TES-22] algorithm.
+// detection, before a tree mode using the MDCN algorithm.
 func MDC1(comp *model.Component, cve *model.CVE) bool {
 	for _, conf := range cve.Configurations {
 		pos, _ := mdc1(comp.CPE23, conf)

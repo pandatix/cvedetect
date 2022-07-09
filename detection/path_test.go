@@ -11,7 +11,7 @@ func ptr[T any](t T) *T {
 	return &t
 }
 
-var testsNodeString = map[string]struct {
+var testsNode = map[string]struct {
 	Node   *detection.Node
 	String string
 }{
@@ -115,7 +115,7 @@ var testsNodeString = map[string]struct {
 					Children: nil,
 					Matchers: []*detection.Matcher{
 						{
-							SuperCPE23:            "cpe:2.3:a:gitea:gitea:*:*:*:*:docker:*:*",
+							SuperCPE23:            "cpe:2.3:a:gitea:gitea:*:*:*:*:*:docker:*:*",
 							SubCPE23:              "cpe:2.3:a:gitea:gitea:1\\.12\\.6:*:*:*:*:*:*:*",
 							Vulnerable:            true,
 							VersionStartIncluding: nil,
@@ -128,7 +128,7 @@ var testsNodeString = map[string]struct {
 			},
 			Matchers: nil,
 		},
-		String: `(&(|(v cpe:2.3:a:gitea:gitea:*:*:*:*:*:*:*:* incl cpe:2.3:a:gitea:gitea:1\.12\.6:*:*:*:*:docker:*:* , 1.12.0 <= , <= 1.12.6)(i cpe:2.3:a:gitea:gitea:*:*:*:*:*:*:*:* incl cpe:2.3:a:gitea:gitea:1\.13\.2:*:*:*:*:docker:*:* , 1.13.0 <= , < 1.13.4))(|(v cpe:2.3:a:gitea:gitea:*:*:*:*:docker:*:* incl cpe:2.3:a:gitea:gitea:1\.12\.6:*:*:*:*:*:*:* ,  , )))`,
+		String: `(&(|(v cpe:2.3:a:gitea:gitea:*:*:*:*:*:*:*:* incl cpe:2.3:a:gitea:gitea:1\.12\.6:*:*:*:*:docker:*:* , 1.12.0 <= , <= 1.12.6)(i cpe:2.3:a:gitea:gitea:*:*:*:*:*:*:*:* incl cpe:2.3:a:gitea:gitea:1\.13\.2:*:*:*:*:docker:*:* , 1.13.0 <= , < 1.13.4))(|(v cpe:2.3:a:gitea:gitea:*:*:*:*:*:docker:*:* incl cpe:2.3:a:gitea:gitea:1\.12\.6:*:*:*:*:*:*:* ,  , )))`,
 	},
 	"negative-circuit": {
 		// This case shows how to use a Circuit to represent a non-matching
@@ -138,7 +138,7 @@ var testsNodeString = map[string]struct {
 		// to understand what info it gives, because it means nothing.
 		Node: &detection.Node{
 			Operator: "OR",
-			Children: []*detection.Node{},
+			Children: nil,
 			Matchers: []*detection.Matcher{
 				{
 					SuperCPE23:            "cpe:2.3:a:gitea:gitea:*:*:*:*:*:docker:*:*",
@@ -155,28 +155,13 @@ var testsNodeString = map[string]struct {
 	},
 }
 
-func TestNodeString(t *testing.T) {
-	t.Parallel()
-
-	for testname, tt := range testsNodeString {
-		t.Run(testname, func(t *testing.T) {
-			assert := assert.New(t)
-
-			str := tt.Node.String()
-
-			assert.Equal(tt.String, str)
-		})
-	}
-}
-
-var testsParseMatcher = map[string]struct {
-	Input           string
-	ExpectedMatcher *detection.Matcher
-	ExpectedErr     error
+var testsMatcher = map[string]struct {
+	Matcher *detection.Matcher
+	String  string
 }{
 	"standard-matcher": {
-		Input: "(v cpe:2.3:a:gitea:gitea:*:*:*:*:*:*:*:* incl cpe:2.3:a:gitea:gitea:1\\.12\\.4:*:*:*:*:*:*:* , 1.12.0 <= , < 1.12.6)",
-		ExpectedMatcher: &detection.Matcher{
+		String: "(v cpe:2.3:a:gitea:gitea:*:*:*:*:*:*:*:* incl cpe:2.3:a:gitea:gitea:1\\.12\\.4:*:*:*:*:*:*:* , 1.12.0 <= , < 1.12.6)",
+		Matcher: &detection.Matcher{
 			SuperCPE23:            "cpe:2.3:a:gitea:gitea:*:*:*:*:*:*:*:*",
 			SubCPE23:              "cpe:2.3:a:gitea:gitea:1\\.12\\.4:*:*:*:*:*:*:*",
 			Vulnerable:            true,
@@ -185,11 +170,10 @@ var testsParseMatcher = map[string]struct {
 			VersionEndIncluding:   nil,
 			VersionEndExcluding:   ptr("1.12.6"),
 		},
-		ExpectedErr: nil,
 	},
 	"no-version-bounds": {
-		Input: "(v cpe:2.3:a:gitea:gitea:*:*:*:*:*:*:*:* incl cpe:2.3:a:gitea:gitea:1\\.12\\.4:*:*:*:*:*:*:* ,  , )",
-		ExpectedMatcher: &detection.Matcher{
+		String: "(v cpe:2.3:a:gitea:gitea:*:*:*:*:*:*:*:* incl cpe:2.3:a:gitea:gitea:1\\.12\\.4:*:*:*:*:*:*:* ,  , )",
+		Matcher: &detection.Matcher{
 			SuperCPE23:            "cpe:2.3:a:gitea:gitea:*:*:*:*:*:*:*:*",
 			SubCPE23:              "cpe:2.3:a:gitea:gitea:1\\.12\\.4:*:*:*:*:*:*:*",
 			Vulnerable:            true,
@@ -201,10 +185,72 @@ var testsParseMatcher = map[string]struct {
 	},
 }
 
+func TestNodeString(t *testing.T) {
+	t.Parallel()
+
+	// Actual test
+	for testname, tt := range testsNode {
+		t.Run(testname, func(t *testing.T) {
+			assert := assert.New(t)
+
+			str := tt.Node.String()
+
+			assert.Equal(tt.String, str)
+		})
+	}
+}
+
+func TestParseNode(t *testing.T) {
+	t.Parallel()
+
+	// Prepare specific and common tests
+	type test struct {
+		Input        string
+		ExpectedNode *detection.Node
+		ExpectedErr  error
+	}
+	var tests = map[string]test{}
+	for testname, tt := range testsNode {
+		tests[testname] = test{
+			Input:        tt.String,
+			ExpectedNode: tt.Node,
+			ExpectedErr:  nil,
+		}
+	}
+
+	// Actual tests
+	for testname, tt := range tests {
+		t.Run(testname, func(t *testing.T) {
+			assert := assert.New(t)
+
+			node, err := detection.ParseNode(tt.Input)
+
+			assert.Equal(tt.ExpectedNode, node)
+			assert.Equal(tt.ExpectedErr, err)
+		})
+	}
+}
+
 func TestParseMatcher(t *testing.T) {
 	t.Parallel()
 
-	for testname, tt := range testsParseMatcher {
+	// Prepare specific and common tests
+	type test struct {
+		Input           string
+		ExpectedMatcher *detection.Matcher
+		ExpectedErr     error
+	}
+	var tests = map[string]test{}
+	for testname, tt := range testsMatcher {
+		tests[testname] = test{
+			Input:           tt.String,
+			ExpectedMatcher: tt.Matcher,
+			ExpectedErr:     nil,
+		}
+	}
+
+	// Actual tests
+	for testname, tt := range tests {
 		t.Run(testname, func(t *testing.T) {
 			assert := assert.New(t)
 

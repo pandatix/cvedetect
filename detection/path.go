@@ -9,9 +9,109 @@ import (
 
 var (
 	ErrTooShortMatcher = errors.New("too short matcher string")
+	ErrTooShortNode    = errors.New("too short node string")
 	ErrInvalidBounds   = errors.New("invalid surrounding bounds")
 	ErrInvalidContent  = errors.New("invalid matcher content")
+	ErrMalformedGroup  = errors.New("malformed groups")
+	ErrMalformedTree   = errors.New("malformed tree structure: have children and matches")
 )
+
+func ParseNode(input string) (*Node, error) {
+	// Check bounds
+	if len(input) < 2 {
+		return nil, ErrTooShortNode
+	}
+	if input[0] != '(' || input[len(input)-1] != ')' {
+		return nil, ErrInvalidBounds
+	}
+	node := &Node{}
+
+	// Extract operator
+	switch input[1] {
+	case '|':
+		node.Operator = "OR"
+	case '&':
+		node.Operator = "AND"
+	default:
+		return nil, ErrInvalidContent
+	}
+
+	// Focus on bounded groups
+	input = input[2 : len(input)-1]
+	grps, err := parseGroups(input)
+	if err != nil {
+		return nil, err
+	}
+	children := []*Node{}
+	matchers := []*Matcher{}
+	for _, grp := range grps {
+		// Test if grp is a Node
+		child, err := ParseNode(grp)
+		if err == nil {
+			children = append(children, child)
+			continue
+		}
+		// If not a Node, must be a Matcher
+		matcher, err := ParseMatcher(grp)
+		if err != nil {
+			return nil, err
+		}
+		matchers = append(matchers, matcher)
+	}
+
+	// Check tree
+	// => Can't have children and matchers at same time
+	if len(children) != 0 && len(matchers) != 0 {
+		return nil, ErrMalformedTree
+	}
+	node.Children = children
+	node.Matchers = matchers
+	if len(node.Children) == 0 {
+		node.Children = nil
+	}
+	if len(node.Matchers) == 0 {
+		node.Matchers = nil
+	}
+
+	return node, nil
+}
+
+// (          -> malformed groups
+// ()         -> ()
+// ()()       -> () ()
+// (()())     -> (()())
+// (())(()()) -> (()) (()())
+func parseGroups(input string) ([]string, error) {
+	grps := []string{}
+	curr := ""
+	b := 0
+	escaped := false
+	for i := 0; i < len(input); i++ {
+		switch input[i] {
+		case '(':
+			if !escaped {
+				b++
+			}
+		case ')':
+			if !escaped {
+				b--
+			}
+		}
+		curr += string(input[i])
+		if b == 0 {
+			grps = append(grps, curr)
+			curr = ""
+		}
+		escaped = false
+		if input[i] == '\\' {
+			escaped = true
+		}
+	}
+	if curr != "" {
+		return nil, ErrMalformedGroup
+	}
+	return grps, nil
+}
 
 // ParseMatcher parses a single Matcher string and returns an object
 // representing it, or an error.

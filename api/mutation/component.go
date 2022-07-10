@@ -1,7 +1,6 @@
 package mutation
 
 import (
-	"github.com/knqyf263/go-cpe/naming"
 	"github.com/pandatix/cvedetect/db"
 	"github.com/pandatix/cvedetect/detection"
 	"github.com/pandatix/cvedetect/model"
@@ -61,8 +60,7 @@ func DeleteComponent(mem *db.Memory, input db.DeleteComponentInput) (*model.Comp
 
 func compDetect(mem *db.Memory, cpe23 string, compID string) error {
 	// Get related CVEs
-	wfn, _ := naming.UnbindFS(cpe23)
-	vp := wfn.GetString("vendor") + ":" + wfn.GetString("product")
+	vp := getVP(cpe23)
 	cves := mem.QueryCVEs(db.QueryCVEInput{
 		VP: &vp,
 	})

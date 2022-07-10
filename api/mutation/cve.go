@@ -1,7 +1,6 @@
 package mutation
 
 import (
-	"github.com/knqyf263/go-cpe/naming"
 	"github.com/pandatix/cvedetect/db"
 	"github.com/pandatix/cvedetect/detection"
 	"github.com/pandatix/cvedetect/model"
@@ -84,8 +83,7 @@ func cveDetect(mem *db.Memory, cveID string) error {
 	cpes23 := getCVECPEs23(mem, cveID)
 	vpMap := map[string]struct{}{}
 	for _, cpe23 := range cpes23 {
-		wfn, _ := naming.UnbindFS(cpe23)
-		vpMap[wfn.GetString("vendor")+":"+wfn.GetString("product")] = struct{}{}
+		vpMap[getVP(cpe23)] = struct{}{}
 	}
 
 	// Get related components

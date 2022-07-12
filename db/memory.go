@@ -154,12 +154,11 @@ func (mem *Memory) AddComponent(input AddComponentInput) error {
 		CVEs:     []*model.CVE{},
 	}
 	// => Index map
-	wfn, _ := naming.UnbindFS(input.CPE23)
-	idx := wfn.GetString("vendor") + ":" + wfn.GetString("product")
-	if _, ok := mem.CompVPIndex[idx]; !ok {
-		mem.CompVPIndex[idx] = map[string]struct{}{}
+	vp := getVP(input.CPE23)
+	if _, ok := mem.CompVPIndex[vp]; !ok {
+		mem.CompVPIndex[vp] = map[string]struct{}{}
 	}
-	mem.CompVPIndex[idx][input.ID] = struct{}{}
+	mem.CompVPIndex[vp][input.ID] = struct{}{}
 
 	return nil
 }
@@ -213,22 +212,20 @@ func (mem *Memory) UpdateComponent(input UpdateComponentInput) error {
 	// => CPE23
 	if input.CPE23 != nil {
 		// Update index
-		wfnOld, _ := naming.UnbindFS(comp.CPE23)
-		wfnNew, _ := naming.UnbindFS(*input.CPE23)
-		idxOld := wfnOld.GetString("vendor") + ":" + wfnOld.GetString("product")
-		idxNew := wfnNew.GetString("vendor") + ":" + wfnNew.GetString("product")
-		if idxNew != idxOld {
+		vpOld := getVP(comp.CPE23)
+		vpNew := getVP(*input.CPE23)
+		if vpNew != vpOld {
 			// Delete old index
-			delete(mem.CompVPIndex[idxOld], comp.ID)
-			if len(mem.CompVPIndex[idxOld]) == 0 {
-				delete(mem.CompVPIndex, idxOld)
+			delete(mem.CompVPIndex[vpOld], comp.ID)
+			if len(mem.CompVPIndex[vpOld]) == 0 {
+				delete(mem.CompVPIndex, vpOld)
 			}
 
 			// Add new index
-			if _, ok := mem.CompVPIndex[idxNew]; !ok {
-				mem.CompVPIndex[idxNew] = map[string]struct{}{}
+			if _, ok := mem.CompVPIndex[vpNew]; !ok {
+				mem.CompVPIndex[vpNew] = map[string]struct{}{}
 			}
-			mem.CompVPIndex[idxNew][comp.ID] = struct{}{}
+			mem.CompVPIndex[vpNew][comp.ID] = struct{}{}
 		}
 		comp.CPE23 = *input.CPE23
 	}
@@ -362,11 +359,10 @@ func (mem *Memory) DeleteComponent(input DeleteComponentInput) error {
 		cve.Components = removeComponent(cve.Components, comp)
 	}
 	// => Index
-	wfn, _ := naming.UnbindFS(comp.CPE23)
-	idx := wfn.GetString("vendor") + ":" + wfn.GetString("product")
-	delete(mem.CompVPIndex[idx], comp.ID)
-	if len(mem.CompVPIndex[idx]) == 0 {
-		delete(mem.CompVPIndex, idx)
+	vp := getVP(comp.CPE23)
+	delete(mem.CompVPIndex[vp], comp.ID)
+	if len(mem.CompVPIndex[vp]) == 0 {
+		delete(mem.CompVPIndex, vp)
 	}
 	delete(mem.Components, comp.ID)
 
@@ -470,12 +466,11 @@ func (mem *Memory) AddCVE(input AddCVEInput) error {
 	// => Index
 	cpes23 := getAllCPEs23(configurations)
 	for _, cpe23 := range cpes23 {
-		wfn, _ := naming.UnbindFS(cpe23)
-		idx := wfn.GetString("vendor") + ":" + wfn.GetString("product")
-		if _, ok := mem.CVEVPIndex[idx]; !ok {
-			mem.CVEVPIndex[idx] = map[string]struct{}{}
+		vp := getVP(cpe23)
+		if _, ok := mem.CVEVPIndex[vp]; !ok {
+			mem.CVEVPIndex[vp] = map[string]struct{}{}
 		}
-		mem.CVEVPIndex[idx][input.ID] = struct{}{}
+		mem.CVEVPIndex[vp][input.ID] = struct{}{}
 	}
 
 	return nil
@@ -536,37 +531,35 @@ func (mem *Memory) UpdateCVE(input UpdateCVEInput) error {
 		newCVECPEs23 := getAllCPEs23(configurations)
 		for _, inputCPE23 := range newCVECPEs23 {
 			found := false
+			inputCPE23vp := getVP(inputCPE23)
 			for _, cpe23 := range cveCPEs23 {
-				if inputCPE23 == cpe23 {
+				if inputCPE23vp == getVP(cpe23) {
 					found = true
 					break
 				}
 			}
 			if !found {
 				// Add to index
-				wfn, _ := naming.UnbindFS(inputCPE23)
-				idx := wfn.GetString("vendor") + ":" + wfn.GetString("product")
-				if _, ok := mem.CVEVPIndex[idx]; !ok {
-					mem.CVEVPIndex[idx] = map[string]struct{}{}
+				if _, ok := mem.CVEVPIndex[inputCPE23vp]; !ok {
+					mem.CVEVPIndex[inputCPE23vp] = map[string]struct{}{}
 				}
-				mem.CVEVPIndex[idx][cve.ID] = struct{}{}
+				mem.CVEVPIndex[inputCPE23vp][cve.ID] = struct{}{}
 			}
 		}
 		for _, cpe23 := range cveCPEs23 {
 			remains := false
+			cpe23vp := getVP(cpe23)
 			for _, inputCPE23 := range newCVECPEs23 {
-				if cpe23 == inputCPE23 {
+				if cpe23vp == getVP(inputCPE23) {
 					remains = true
 					break
 				}
 			}
 			if !remains {
 				// Remove from index
-				wfn, _ := naming.UnbindFS(cpe23)
-				idx := wfn.GetString("vendor") + ":" + wfn.GetString("product")
-				delete(mem.CVEVPIndex[idx], cve.ID)
-				if len(mem.CVEVPIndex[idx]) == 0 {
-					delete(mem.CVEVPIndex, idx)
+				delete(mem.CVEVPIndex[cpe23vp], cve.ID)
+				if len(mem.CVEVPIndex[cpe23vp]) == 0 {
+					delete(mem.CVEVPIndex, cpe23vp)
 				}
 			}
 		}
@@ -653,11 +646,10 @@ func (mem *Memory) DeleteCVE(input DeleteCVEInput) error {
 	// => Index
 	cpes23 := getAllCPEs23(cve.Configurations)
 	for _, cpe23 := range cpes23 {
-		wfn, _ := naming.UnbindFS(cpe23)
-		idx := wfn.GetString("vendor") + ":" + wfn.GetString("product")
-		delete(mem.CVEVPIndex[idx], cve.ID)
-		if len(mem.CVEVPIndex[idx]) == 0 {
-			delete(mem.CVEVPIndex, idx)
+		vp := getVP(cpe23)
+		delete(mem.CVEVPIndex[vp], cve.ID)
+		if len(mem.CVEVPIndex[vp]) == 0 {
+			delete(mem.CVEVPIndex, vp)
 		}
 	}
 	delete(mem.CVEs, input.ID)

@@ -1,5 +1,7 @@
 package db
 
+import "github.com/knqyf263/go-cpe/naming"
+
 // containsWildcard returns true if str contains a wildcard,
 // according to the NIST-IR 7695 "CPE v2.3 Naming specification".
 func containsWildcard(str string) bool {
@@ -29,4 +31,12 @@ func splitVP(vp string) (string, string) {
 		}
 	}
 	panic("can't find cut position")
+}
+
+func getVP(cpe23 string) string {
+	wfn, err := naming.UnbindFS(cpe23)
+	if err != nil {
+		panic(err)
+	}
+	return wfn.GetString("vendor") + ":" + wfn.GetString("product")
 }

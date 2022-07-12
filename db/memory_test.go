@@ -3316,7 +3316,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						CPEMatches: []db.UpdateCVENodeCPEMatchInput{
 							{
 								Vulnerable:            false,
-								CPE23:                 "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
+								CPE23:                 "cpe:2.3:a:fake:component:0.9.6:*:*:*:*:*:*:*",
 								VersionStartIncluding: nil,
 								VersionStartExcluding: nil,
 								VersionEndIncluding:   nil,
@@ -3355,7 +3355,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 								CPEMatches: []*model.CPEMatch{
 									{
 										Vulnerable:            false,
-										CPE23:                 "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
+										CPE23:                 "cpe:2.3:a:fake:component:0.9.6:*:*:*:*:*:*:*",
 										VersionStartIncluding: nil,
 										VersionStartExcluding: nil,
 										VersionEndIncluding:   nil,

@@ -40,7 +40,9 @@ func main() {
 	// Add Components
 	client := &http.Client{}
 	for _, comp := range r.Components {
-		createComp(client, *urlPtr, comp)
+		if err := createComp(client, *urlPtr, comp); err != nil {
+			log.Fatal(err)
+		}
 	}
 }
 

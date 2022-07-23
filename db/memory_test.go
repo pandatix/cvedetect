@@ -37,7 +37,7 @@ func alter(a any) {
 
 func unsem(mem *db.Memory) (dst any) {
 	b, _ := json.Marshal(mem)
-	json.Unmarshal(b, &dst)
+	_ = json.Unmarshal(b, &dst)
 	return
 }
 

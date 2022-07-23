@@ -6,5 +6,5 @@ import "encoding/json"
 // marshal/unmarshal operations.
 func Cast(src any, dst any) {
 	b, _ := json.Marshal(src)
-	json.Unmarshal(b, &dst)
+	_ = json.Unmarshal(b, &dst)
 }

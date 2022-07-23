@@ -693,7 +693,7 @@ func (mem *Memory) GetCVEComponents(cve *model.CVE) []*model.Component {
 func loadInputConf(conf any) *model.Node {
 	node := &model.Node{}
 	b, _ := json.Marshal(conf)
-	json.Unmarshal(b, node)
+	_ = json.Unmarshal(b, node)
 	fillNilSlc(node)
 	return node
 }

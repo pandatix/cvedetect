@@ -152,7 +152,7 @@ func run(ctx *cli.Context) error {
 		}
 
 		// Import in DB
-		for _, item := range *content.CVEItems {
+		for _, item := range content.CVEItems {
 			// Extract CVSS 2.0 vector
 			var cvss20vector *string = nil
 			if item.Impact != nil &&
@@ -175,8 +175,8 @@ func run(ctx *cli.Context) error {
 			// Extract configurations
 			var inputConfs []db.AddCVENodeInput = nil
 			if item.Configurations != nil {
-				inputConfs = make([]db.AddCVENodeInput, len(*item.Configurations.Nodes))
-				for i, node := range *item.Configurations.Nodes {
+				inputConfs = make([]db.AddCVENodeInput, len(item.Configurations.Nodes))
+				for i, node := range item.Configurations.Nodes {
 					inputConfs[i] = loadNode(node)
 				}
 			}
@@ -187,7 +187,7 @@ func run(ctx *cli.Context) error {
 					URL:       ref.URL,
 					Name:      *ref.Name,
 					Refsource: *ref.Refsource,
-					Tags:      *ref.Tags,
+					Tags:      ref.Tags,
 				}
 			}
 			// Import CVE
@@ -231,15 +231,15 @@ func timeParse(ts string) time.Time {
 func loadNode(node nvdapi.Node) db.AddCVENodeInput {
 	var children []db.AddCVENodeInput = nil
 	if node.Children != nil {
-		children = make([]db.AddCVENodeInput, len(*node.Children))
-		for i, child := range *node.Children {
+		children = make([]db.AddCVENodeInput, len(node.Children))
+		for i, child := range node.Children {
 			children[i] = loadNode(child)
 		}
 	}
 	var cpeMatches []db.AddCVENodeCPEMatchInput = nil
 	if node.CPEMatch != nil {
-		cpeMatches = make([]db.AddCVENodeCPEMatchInput, len(*node.CPEMatch))
-		for i, cpeMatch := range *node.CPEMatch {
+		cpeMatches = make([]db.AddCVENodeCPEMatchInput, len(node.CPEMatch))
+		for i, cpeMatch := range node.CPEMatch {
 			cpeMatches[i] = db.AddCVENodeCPEMatchInput{
 				Vulnerable:            cpeMatch.Vulnerable,
 				CPE23:                 cpeMatch.CPE23URI,

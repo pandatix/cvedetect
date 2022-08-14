@@ -8,9 +8,9 @@ require (
 	github.com/hashicorp/go-version v1.6.0
 	github.com/knqyf263/go-cpe v0.0.0-20201213041631-54f6ab28673f
 	github.com/pandatix/go-cvss v0.3.0
-	github.com/pandatix/nvdapi v0.5.1
+	github.com/pandatix/nvdapi v0.5.0
 	github.com/stretchr/testify v1.8.0
-	github.com/urfave/cli/v2 v2.11.2
+	github.com/urfave/cli/v2 v2.11.1
 	gopkg.in/yaml.v3 v3.0.1
 )
 

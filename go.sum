@@ -15,8 +15,14 @@ github.com/knqyf263/go-cpe v0.0.0-20201213041631-54f6ab28673f h1:vZP1dTKPOR7zSAb
 github.com/knqyf263/go-cpe v0.0.0-20201213041631-54f6ab28673f/go.mod h1:4cVhzV/TndScEg4xMtSo3TTz3cMFhEAvhAA4igAyXZY=
 github.com/pandatix/go-cvss v0.3.0 h1:d4/giXDkeqP8KHPqFGGsNpwy9uH839e0pTj0N/d7Aqk=
 github.com/pandatix/go-cvss v0.3.0/go.mod h1:nua4jtS0ao84L0jPCXrLmedc4+vXZMoJKBXYWB+HcQ4=
+github.com/pandatix/go-cvss v0.4.0 h1:ICSGSpFL/vZrMcp+gDidsmkKUxAZpF5RPcLOsq8G/Ys=
+github.com/pandatix/go-cvss v0.4.0/go.mod h1:7cu0TdcSUSyI8YB81OCx29RQlR7jXWqGLHywnII79SE=
+github.com/pandatix/nvdapi v0.3.1 h1:HoUq8b95aaQV0El89Tooiso5VFMsW79BNYDfWsTvMVQ=
+github.com/pandatix/nvdapi v0.3.1/go.mod h1:5ID6FVbc/og5pR+amUn9kM8KOMrfjLxgQDYEd3kJ0Ks=
 github.com/pandatix/nvdapi v0.5.0 h1:GAaJKEEs3FsEYEK4k/mOoJu7Wrl3mKlm+LFcLigQ/aw=
 github.com/pandatix/nvdapi v0.5.0/go.mod h1:cTgbSc0zxI5xz+uWz1DzQFlrwJlSuy8Hr5dmZkkbvVU=
+github.com/pandatix/nvdapi v0.5.1 h1:cwoY5mxZ8uCOVvKFY6w5fG8UkTpoOB762Fy4zo2RSnA=
+github.com/pandatix/nvdapi v0.5.1/go.mod h1:cTgbSc0zxI5xz+uWz1DzQFlrwJlSuy8Hr5dmZkkbvVU=
 github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
@@ -31,6 +37,8 @@ github.com/stretchr/testify v1.8.0 h1:pSgiaMZlXftHpm5L7V1+rVB+AZJydKsMxsQBIJw4PK
 github.com/stretchr/testify v1.8.0/go.mod h1:yNjHg4UonilssWZ8iaSj1OCr/vHnekPRkoO+kdMU+MU=
 github.com/urfave/cli/v2 v2.11.1 h1:UKK6SP7fV3eKOefbS87iT9YHefv7iB/53ih6e+GNAsE=
 github.com/urfave/cli/v2 v2.11.1/go.mod h1:f8iq5LtQ/bLxafbdBSLPPNsgaW0l/2fYYEHhAyPlwvo=
+github.com/urfave/cli/v2 v2.16.3 h1:gHoFIwpPjoyIMbJp/VFd+/vuD0dAgFK4B6DpEMFJfQk=
+github.com/urfave/cli/v2 v2.16.3/go.mod h1:1CNUng3PtjQMtRzJO4FMXBQvkGtuYRxxiR9xMa7jMwI=
 github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 h1:bAn7/zixMGCfxrRTfdpNzjtPYqr8smhKouy9mxVdGPU=
 github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673/go.mod h1:N3UwUGtsrSj3ccvlPHLoLsHnpR27oXr4ZE984MbSER8=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=

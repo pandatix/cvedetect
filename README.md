@@ -1,5 +1,7 @@
 # CVE-Detect
 
+[![Coverage Status](https://coveralls.io/repos/github/pandatix/cvedetect/badge.svg?branch=master)](https://coveralls.io/github/pandatix/cvedetect?branch=master)
+
 CVE-Detect gives a sample app that detect CVEs on components trees.
 
 It's based on researches on CPE v2.3 future Release 5, NVD analysis, CVE detections and automated inventory AI.

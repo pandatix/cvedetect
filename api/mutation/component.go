@@ -44,7 +44,7 @@ func UpdateComponent(mem *db.Memory, input db.UpdateComponentInput) (*model.Comp
 
 func DeleteComponent(mem *db.Memory, input db.DeleteComponentInput) (*model.Component, error) {
 	// Pre-fetch component that will be deleted
-	//lint:ignore S1016 for now it matches, but it's semantically not related
+	//nolint:gosimple // For now it matches, but it's semantically not related
 	comp, err := mem.GetComponent(db.GetComponentInput{
 		ID: input.ID,
 	})

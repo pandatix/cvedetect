@@ -42,7 +42,7 @@ func UpdateCVE(mem *db.Memory, input db.UpdateCVEInput) (*model.CVE, error) {
 
 func DeleteCVE(mem *db.Memory, input db.DeleteCVEInput) (*model.CVE, error) {
 	// Pre-fetch CVE that will be deleted
-	//lint:ignore S1016 for now it matches, but it's semantically not related
+	//nolint:gosimple // For now it matches, but it's semantically not related
 	cve, err := mem.GetCVE(db.GetCVEInput{
 		ID: input.ID,
 	})

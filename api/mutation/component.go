@@ -3,6 +3,7 @@ package mutation
 import (
 	"github.com/pandatix/cvedetect/db"
 	"github.com/pandatix/cvedetect/detection"
+	"github.com/pandatix/cvedetect/internal"
 	"github.com/pandatix/cvedetect/model"
 )
 
@@ -60,7 +61,7 @@ func DeleteComponent(mem *db.Memory, input db.DeleteComponentInput) (*model.Comp
 
 func compDetect(mem *db.Memory, cpe23 string, compID string) error {
 	// Get related CVEs
-	vp := getVP(cpe23)
+	vp := internal.GetVP(cpe23)
 	cves := mem.QueryCVEs(db.QueryCVEInput{
 		VP: &vp,
 	})

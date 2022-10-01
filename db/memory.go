@@ -6,6 +6,7 @@ import (
 
 	"github.com/knqyf263/go-cpe/matching"
 	"github.com/knqyf263/go-cpe/naming"
+	"github.com/pandatix/cvedetect/internal"
 	"github.com/pandatix/cvedetect/model"
 )
 
@@ -154,7 +155,7 @@ func (mem *Memory) AddComponent(input AddComponentInput) error {
 		CVEs:     []*model.CVE{},
 	}
 	// => Index map
-	vp := getVP(input.CPE23)
+	vp := internal.GetVP(input.CPE23)
 	if _, ok := mem.CompVPIndex[vp]; !ok {
 		mem.CompVPIndex[vp] = map[string]struct{}{}
 	}
@@ -212,8 +213,8 @@ func (mem *Memory) UpdateComponent(input UpdateComponentInput) error {
 	// => CPE23
 	if input.CPE23 != nil {
 		// Update index
-		vpOld := getVP(comp.CPE23)
-		vpNew := getVP(*input.CPE23)
+		vpOld := internal.GetVP(comp.CPE23)
+		vpNew := internal.GetVP(*input.CPE23)
 		if vpNew != vpOld {
 			// Delete old index
 			delete(mem.CompVPIndex[vpOld], comp.ID)
@@ -359,7 +360,7 @@ func (mem *Memory) DeleteComponent(input DeleteComponentInput) error {
 		cve.Components = removeComponent(cve.Components, comp)
 	}
 	// => Index
-	vp := getVP(comp.CPE23)
+	vp := internal.GetVP(comp.CPE23)
 	delete(mem.CompVPIndex[vp], comp.ID)
 	if len(mem.CompVPIndex[vp]) == 0 {
 		delete(mem.CompVPIndex, vp)
@@ -466,7 +467,7 @@ func (mem *Memory) AddCVE(input AddCVEInput) error {
 	// => Index
 	cpes23 := getAllCPEs23(configurations)
 	for _, cpe23 := range cpes23 {
-		vp := getVP(cpe23)
+		vp := internal.GetVP(cpe23)
 		if _, ok := mem.CVEVPIndex[vp]; !ok {
 			mem.CVEVPIndex[vp] = map[string]struct{}{}
 		}
@@ -531,9 +532,9 @@ func (mem *Memory) UpdateCVE(input UpdateCVEInput) error {
 		newCVECPEs23 := getAllCPEs23(configurations)
 		for _, inputCPE23 := range newCVECPEs23 {
 			found := false
-			inputCPE23vp := getVP(inputCPE23)
+			inputCPE23vp := internal.GetVP(inputCPE23)
 			for _, cpe23 := range cveCPEs23 {
-				if inputCPE23vp == getVP(cpe23) {
+				if inputCPE23vp == internal.GetVP(cpe23) {
 					found = true
 					break
 				}
@@ -548,9 +549,9 @@ func (mem *Memory) UpdateCVE(input UpdateCVEInput) error {
 		}
 		for _, cpe23 := range cveCPEs23 {
 			remains := false
-			cpe23vp := getVP(cpe23)
+			cpe23vp := internal.GetVP(cpe23)
 			for _, inputCPE23 := range newCVECPEs23 {
-				if cpe23vp == getVP(inputCPE23) {
+				if cpe23vp == internal.GetVP(inputCPE23) {
 					remains = true
 					break
 				}
@@ -646,7 +647,7 @@ func (mem *Memory) DeleteCVE(input DeleteCVEInput) error {
 	// => Index
 	cpes23 := getAllCPEs23(cve.Configurations)
 	for _, cpe23 := range cpes23 {
-		vp := getVP(cpe23)
+		vp := internal.GetVP(cpe23)
 		delete(mem.CVEVPIndex[vp], cve.ID)
 		if len(mem.CVEVPIndex[vp]) == 0 {
 			delete(mem.CVEVPIndex, vp)

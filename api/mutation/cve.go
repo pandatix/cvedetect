@@ -3,6 +3,7 @@ package mutation
 import (
 	"github.com/pandatix/cvedetect/db"
 	"github.com/pandatix/cvedetect/detection"
+	"github.com/pandatix/cvedetect/internal"
 	"github.com/pandatix/cvedetect/model"
 )
 
@@ -83,7 +84,7 @@ func cveDetect(mem *db.Memory, cveID string) error {
 	cpes23 := getCVECPEs23(mem, cveID)
 	vpMap := map[string]struct{}{}
 	for _, cpe23 := range cpes23 {
-		vpMap[getVP(cpe23)] = struct{}{}
+		vpMap[internal.GetVP(cpe23)] = struct{}{}
 	}
 
 	// Get related components

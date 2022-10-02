@@ -88,10 +88,10 @@ func cveDetect(mem *db.Memory, cveID string) error {
 		vpMap[internal.GetVP(cpe23)] = struct{}{}
 	}
 
-	// Get related components
-	comps := []*model.Component{}
+	// Get related assets
+	assets := []*model.Asset{}
 	for vp := range vpMap {
-		comps = append(comps, mem.QueryComponents(db.QueryComponentInput{
+		assets = append(assets, mem.QueryAssets(db.QueryAssetInput{
 			VP: &vp,
 		})...)
 	}
@@ -100,19 +100,19 @@ func cveDetect(mem *db.Memory, cveID string) error {
 	cve, _ := mem.GetCVE(db.GetCVEInput{
 		ID: cveID,
 	})
-	matchingComps := []db.UpdateCVEComponentInput{}
-	for _, comp := range comps {
-		if detection.MDC1(comp, cve) {
-			matchingComps = append(matchingComps, db.UpdateCVEComponentInput{
-				ID: comp.ID,
+	matchingAssets := []db.UpdateCVEAssetInput{}
+	for _, asset := range assets {
+		if detection.MDC1(asset, cve) {
+			matchingAssets = append(matchingAssets, db.UpdateCVEAssetInput{
+				ID: asset.ID,
 			})
 		}
 	}
 
-	// Update CVE to add matching Components
+	// Update CVE to add matching Assets
 	if err := mem.UpdateCVE(db.UpdateCVEInput{
-		ID:         cveID,
-		Components: matchingComps,
+		ID:     cveID,
+		Assets: matchingAssets,
 	}); err != nil {
 		return err
 	}

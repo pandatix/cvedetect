@@ -12,49 +12,49 @@ import (
 var MutationObject = graphql.NewObject(graphql.ObjectConfig{
 	Name: "Mutation",
 	Fields: graphql.Fields{
-		"addComponent": {
-			Description: "Add a Component.",
-			Type:        graphql.NewNonNull(object.Component),
+		"addAsset": {
+			Description: "Add a Asset.",
+			Type:        graphql.NewNonNull(object.Asset),
 			Args: graphql.FieldConfigArgument{
 				"input": {
-					Type: graphql.NewNonNull(object.AddComponentInput),
+					Type: graphql.NewNonNull(object.AddAssetInput),
 				},
 			},
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				input := db.AddComponentInput{}
+				input := db.AddAssetInput{}
 				Cast(p.Args["input"], &input)
 
 				input.ID = uuid.NewString()
 
-				return mutation.AddComponent(apidb.Mem, input)
+				return mutation.AddAsset(apidb.Mem, input)
 			},
 		},
-		"updateComponent": {
-			Description: "Update a Component.",
-			Type:        graphql.NewNonNull(object.Component),
+		"updateAsset": {
+			Description: "Update a Asset.",
+			Type:        graphql.NewNonNull(object.Asset),
 			Args: graphql.FieldConfigArgument{
 				"input": {
-					Type: graphql.NewNonNull(object.UpdateComponentInput),
+					Type: graphql.NewNonNull(object.UpdateAssetInput),
 				},
 			},
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				input := db.UpdateComponentInput{}
+				input := db.UpdateAssetInput{}
 				Cast(p.Args["input"], &input)
-				return mutation.UpdateComponent(apidb.Mem, input)
+				return mutation.UpdateAsset(apidb.Mem, input)
 			},
 		},
-		"deleteComponent": {
-			Description: "Delete a Component.",
-			Type:        graphql.NewNonNull(object.Component),
+		"deleteAsset": {
+			Description: "Delete a Asset.",
+			Type:        graphql.NewNonNull(object.Asset),
 			Args: graphql.FieldConfigArgument{
 				"input": {
-					Type: graphql.NewNonNull(object.DeleteComponentInput),
+					Type: graphql.NewNonNull(object.DeleteAssetInput),
 				},
 			},
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				input := db.DeleteComponentInput{}
+				input := db.DeleteAssetInput{}
 				Cast(p.Args["input"], &input)
-				return mutation.DeleteComponent(apidb.Mem, input)
+				return mutation.DeleteAsset(apidb.Mem, input)
 			},
 		},
 		"addCVE": {

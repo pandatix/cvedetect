@@ -243,14 +243,14 @@ func (n Node) String() string {
 }
 
 // Matcher defines a single-node matching explanation.
-// In case it is used to represent a CVE-Component match,
+// In case it is used to represent a CVE-Asset match,
 // it explains that the SuperCPE23 contains the SubCPE23,
 // and if version bounds are defined, why.
 type Matcher struct {
 	// SuperCPE23 is the CPE v2.3 containing the SubCPE23.
 	SuperCPE23 string
 	// SubCPE23 is the CPE v2.3 that is contained by SuperCPE23.
-	// As it is defined, it is the Component one. This imply that
+	// As it is defined, it is the Asset one. This imply that
 	// the actual version used for bound check is stored in it.
 	SubCPE23 string
 
@@ -282,7 +282,7 @@ func (m Matcher) String() string {
 	}
 	s += m.SuperCPE23 + " incl " + m.SubCPE23 + " , "
 
-	// XXX this workaround is due to NIST-IR 7695 that escapes dot, and necessary for readibility and version comparison
+	// XXX this workaround is due to NIST-IR 7695 that escapes dot, and necessary for readibility and version assetarison
 	wfn, _ := naming.UnbindFS(m.SubCPE23)
 	ver := wfn.GetString("version")
 	ver = strings.ReplaceAll(ver, "\\.", ".")

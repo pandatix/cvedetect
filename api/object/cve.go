@@ -493,13 +493,13 @@ var DeleteCVEInput = graphql.NewInputObject(graphql.InputObjectConfig{
 })
 
 func init() {
-	CVE.AddFieldConfig("components", &graphql.Field{
+	CVE.AddFieldConfig("assets", &graphql.Field{
 		Type: graphql.NewNonNull(&graphql.List{
-			OfType: graphql.NewNonNull(Component),
+			OfType: graphql.NewNonNull(Asset),
 		}),
 		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 			if cve, ok := p.Source.(*model.CVE); ok {
-				return apidb.Mem.GetCVEComponents(cve), nil
+				return apidb.Mem.GetCVEAssets(cve), nil
 			}
 			return nil, nil
 		},

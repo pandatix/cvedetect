@@ -11,7 +11,7 @@ type CVE struct {
 	CVSS30Vector    *string      `json:"cvss30Vector,omitempty"`
 	CVSS31Vector    *string      `json:"cvss31Vector,omitempty"`
 	Configurations  []*Node      `json:"configurations"`
-	Components      []*Component `json:"components"`
+	Assets          []*Asset     `json:"assets"`
 	References      []*Reference `json:"references"`
 }
 

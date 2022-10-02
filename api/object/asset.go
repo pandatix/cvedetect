@@ -7,15 +7,15 @@ import (
 	"github.com/pandatix/cvedetect/model"
 )
 
-var Component = graphql.NewObject(graphql.ObjectConfig{
-	Name:        "Component",
-	Description: "Component is an IT component as defined by NIST-IR 7695.",
+var Asset = graphql.NewObject(graphql.ObjectConfig{
+	Name:        "Asset",
+	Description: "Asset is an IT asset as defined by NIST-IR 7695.",
 	Fields: graphql.Fields{
 		"id": {
 			Type: graphql.NewNonNull(graphql.String),
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				if comp, ok := p.Source.(*model.Component); ok {
-					return comp.ID, nil
+				if asset, ok := p.Source.(*model.Asset); ok {
+					return asset.ID, nil
 				}
 				return nil, nil
 			},
@@ -23,8 +23,8 @@ var Component = graphql.NewObject(graphql.ObjectConfig{
 		"name": {
 			Type: graphql.NewNonNull(graphql.String),
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				if comp, ok := p.Source.(*model.Component); ok {
-					return comp.Name, nil
+				if asset, ok := p.Source.(*model.Asset); ok {
+					return asset.Name, nil
 				}
 				return nil, nil
 			},
@@ -32,8 +32,8 @@ var Component = graphql.NewObject(graphql.ObjectConfig{
 		"cpe23": {
 			Type: graphql.NewNonNull(scalar.CPE23),
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				if comp, ok := p.Source.(*model.Component); ok {
-					return comp.CPE23, nil
+				if asset, ok := p.Source.(*model.Asset); ok {
+					return asset.CPE23, nil
 				}
 				return nil, nil
 			},
@@ -43,8 +43,8 @@ var Component = graphql.NewObject(graphql.ObjectConfig{
 				OfType: graphql.NewNonNull(CVE),
 			}),
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				if comp, ok := p.Source.(*model.Component); ok {
-					return apidb.Mem.GetComponentCVEs(comp), nil
+				if asset, ok := p.Source.(*model.Asset); ok {
+					return apidb.Mem.GetAssetCVEs(asset), nil
 				}
 				return nil, nil
 			},
@@ -52,8 +52,8 @@ var Component = graphql.NewObject(graphql.ObjectConfig{
 	},
 })
 
-var GetComponentInput = graphql.NewInputObject(graphql.InputObjectConfig{
-	Name: "GetComponentInput",
+var GetAssetInput = graphql.NewInputObject(graphql.InputObjectConfig{
+	Name: "GetAssetInput",
 	Fields: graphql.InputObjectConfigFieldMap{
 		"id": {
 			Type: graphql.NewNonNull(graphql.String),
@@ -61,8 +61,8 @@ var GetComponentInput = graphql.NewInputObject(graphql.InputObjectConfig{
 	},
 })
 
-var QueryComponentsInput = graphql.NewInputObject(graphql.InputObjectConfig{
-	Name: "QueryComponentsInput",
+var QueryAssetsInput = graphql.NewInputObject(graphql.InputObjectConfig{
+	Name: "QueryAssetsInput",
 	Fields: graphql.InputObjectConfigFieldMap{
 		"vp": {
 			Type:        graphql.String,
@@ -71,8 +71,8 @@ var QueryComponentsInput = graphql.NewInputObject(graphql.InputObjectConfig{
 	},
 })
 
-var AddComponentInput = graphql.NewInputObject(graphql.InputObjectConfig{
-	Name: "AddComponentInput",
+var AddAssetInput = graphql.NewInputObject(graphql.InputObjectConfig{
+	Name: "AddAssetInput",
 	Fields: graphql.InputObjectConfigFieldMap{
 		"name": {
 			Type: graphql.NewNonNull(graphql.String),
@@ -81,18 +81,18 @@ var AddComponentInput = graphql.NewInputObject(graphql.InputObjectConfig{
 			Type: graphql.NewNonNull(scalar.CPE23),
 		},
 		"parent": {
-			Type: AddComponentParentInput,
+			Type: AddAssetParentInput,
 		},
 		"children": {
 			Type: &graphql.List{
-				OfType: graphql.NewNonNull(AddComponentChildInput),
+				OfType: graphql.NewNonNull(AddAssetChildInput),
 			},
 		},
 	},
 })
 
-var AddComponentParentInput = graphql.NewInputObject(graphql.InputObjectConfig{
-	Name: "AddComponentParentInput",
+var AddAssetParentInput = graphql.NewInputObject(graphql.InputObjectConfig{
+	Name: "AddAssetParentInput",
 	Fields: graphql.InputObjectConfigFieldMap{
 		"id": {
 			Type: graphql.NewNonNull(graphql.String),
@@ -100,8 +100,8 @@ var AddComponentParentInput = graphql.NewInputObject(graphql.InputObjectConfig{
 	},
 })
 
-var AddComponentChildInput = graphql.NewInputObject(graphql.InputObjectConfig{
-	Name: "AddComponentChildInput",
+var AddAssetChildInput = graphql.NewInputObject(graphql.InputObjectConfig{
+	Name: "AddAssetChildInput",
 	Fields: graphql.InputObjectConfigFieldMap{
 		"id": {
 			Type: graphql.NewNonNull(graphql.String),
@@ -109,8 +109,8 @@ var AddComponentChildInput = graphql.NewInputObject(graphql.InputObjectConfig{
 	},
 })
 
-var UpdateComponentInput = graphql.NewInputObject(graphql.InputObjectConfig{
-	Name: "UpdateComponentInput",
+var UpdateAssetInput = graphql.NewInputObject(graphql.InputObjectConfig{
+	Name: "UpdateAssetInput",
 	Fields: graphql.InputObjectConfigFieldMap{
 		"id": {
 			Type: graphql.NewNonNull(graphql.String),
@@ -122,18 +122,18 @@ var UpdateComponentInput = graphql.NewInputObject(graphql.InputObjectConfig{
 			Type: scalar.CPE23,
 		},
 		"parent": {
-			Type: UpdateComponentParentInput,
+			Type: UpdateAssetParentInput,
 		},
 		"children": {
 			Type: &graphql.List{
-				OfType: graphql.NewNonNull(UpdateComponentChildInput),
+				OfType: graphql.NewNonNull(UpdateAssetChildInput),
 			},
 		},
 	},
 })
 
-var UpdateComponentParentInput = graphql.NewInputObject(graphql.InputObjectConfig{
-	Name: "UpdateComponentParentInput",
+var UpdateAssetParentInput = graphql.NewInputObject(graphql.InputObjectConfig{
+	Name: "UpdateAssetParentInput",
 	Fields: graphql.InputObjectConfigFieldMap{
 		"id": {
 			Type: graphql.NewNonNull(graphql.String),
@@ -141,8 +141,8 @@ var UpdateComponentParentInput = graphql.NewInputObject(graphql.InputObjectConfi
 	},
 })
 
-var UpdateComponentChildInput = graphql.NewInputObject(graphql.InputObjectConfig{
-	Name: "UpdateComponentChildInput",
+var UpdateAssetChildInput = graphql.NewInputObject(graphql.InputObjectConfig{
+	Name: "UpdateAssetChildInput",
 	Fields: graphql.InputObjectConfigFieldMap{
 		"id": {
 			Type: graphql.NewNonNull(graphql.String),
@@ -150,8 +150,8 @@ var UpdateComponentChildInput = graphql.NewInputObject(graphql.InputObjectConfig
 	},
 })
 
-var DeleteComponentInput = graphql.NewInputObject(graphql.InputObjectConfig{
-	Name: "DeleteComponentInput",
+var DeleteAssetInput = graphql.NewInputObject(graphql.InputObjectConfig{
+	Name: "DeleteAssetInput",
 	Fields: graphql.InputObjectConfigFieldMap{
 		"id": {
 			Type: graphql.NewNonNull(graphql.String),
@@ -160,22 +160,22 @@ var DeleteComponentInput = graphql.NewInputObject(graphql.InputObjectConfig{
 })
 
 func init() {
-	Component.AddFieldConfig("chilren", &graphql.Field{
+	Asset.AddFieldConfig("chilren", &graphql.Field{
 		Type: graphql.NewNonNull(&graphql.List{
-			OfType: graphql.NewNonNull(Component),
+			OfType: graphql.NewNonNull(Asset),
 		}),
 		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-			if comp, ok := p.Source.(*model.Component); ok {
-				return comp.Children, nil
+			if asset, ok := p.Source.(*model.Asset); ok {
+				return asset.Children, nil
 			}
 			return nil, nil
 		},
 	})
-	Component.AddFieldConfig("parent", &graphql.Field{
-		Type: Component,
+	Asset.AddFieldConfig("parent", &graphql.Field{
+		Type: Asset,
 		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-			if comp, ok := p.Source.(*model.Component); ok {
-				return comp.Parent, nil
+			if asset, ok := p.Source.(*model.Asset); ok {
+				return asset.Parent, nil
 			}
 			return nil, nil
 		},

@@ -2,54 +2,54 @@ package db
 
 import "time"
 
-// Component
+// Asset
 
-type GetComponentInput struct {
+type GetAssetInput struct {
 	ID string `json:"id"`
 }
 
-type QueryComponentInput struct {
+type QueryAssetInput struct {
 	VP *string `json:"vp,omitempty"`
 }
 
-type AddComponentInput struct {
-	ID       string                   `json:"id"`
-	Name     string                   `json:"name"`
-	CPE23    string                   `json:"cpe23"`
-	Parent   *AddComponentParent      `json:"parent,omitempty"`
-	Children []AddComponentChildInput `json:"children"`
+type AddAssetInput struct {
+	ID       string               `json:"id"`
+	Name     string               `json:"name"`
+	CPE23    string               `json:"cpe23"`
+	Parent   *AddAssetParent      `json:"parent,omitempty"`
+	Children []AddAssetChildInput `json:"children"`
 }
 
-type AddComponentParent struct {
+type AddAssetParent struct {
 	ID string `json:"id"`
 }
 
-type AddComponentChildInput struct {
+type AddAssetChildInput struct {
 	ID string `json:"id"`
 }
 
-type UpdateComponentInput struct {
-	ID       string                      `json:"id"`
-	Name     *string                     `json:"name,omitempty"`
-	CPE23    *string                     `json:"cpe23,omitempty"`
-	Parent   *UpdateComponentParentInput `json:"parent,omitempty"`
-	Children []UpdateComponentChildInput `json:"children,omitempty"`
-	CVEs     []UpdateComponentCVEsInput  `json:"cves,omitempty"`
+type UpdateAssetInput struct {
+	ID       string                  `json:"id"`
+	Name     *string                 `json:"name,omitempty"`
+	CPE23    *string                 `json:"cpe23,omitempty"`
+	Parent   *UpdateAssetParentInput `json:"parent,omitempty"`
+	Children []UpdateAssetChildInput `json:"children,omitempty"`
+	CVEs     []UpdateAssetCVEsInput  `json:"cves,omitempty"`
 }
 
-type UpdateComponentParentInput struct {
+type UpdateAssetParentInput struct {
 	ID string `json:"id"`
 }
 
-type UpdateComponentChildInput struct {
+type UpdateAssetChildInput struct {
 	ID string `json:"id"`
 }
 
-type UpdateComponentCVEsInput struct {
+type UpdateAssetCVEsInput struct {
 	ID string `json:"id"`
 }
 
-type DeleteComponentInput struct {
+type DeleteAssetInput struct {
 	ID string `json:"id"`
 }
 
@@ -106,7 +106,7 @@ type UpdateCVEInput struct {
 	CVSS30Vector   *string                    `json:"cvss30Vector,omitempty"`
 	CVSS31Vector   *string                    `json:"cvss31Vector,omitempty"`
 	Configurations []UpdateCVENodeInput       `json:"configurations"`
-	Components     []UpdateCVEComponentInput  `json:"components"`
+	Assets         []UpdateCVEAssetInput      `json:"assets"`
 	References     []UpdateCVEReferencesInput `json:"references"`
 }
 
@@ -126,7 +126,7 @@ type UpdateCVENodeCPEMatchInput struct {
 	VersionEndExcluding   *string `json:"versionEndExcluding,omitempty"`
 }
 
-type UpdateCVEComponentInput struct {
+type UpdateCVEAssetInput struct {
 	ID string `json:"id"`
 }
 

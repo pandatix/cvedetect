@@ -14,7 +14,7 @@ import (
 
 func main() {
 	fPtr := flag.String("file", "", "YAML file path to import")
-	urlPtr := flag.String("url", "", "URL to reach to import components")
+	urlPtr := flag.String("url", "", "URL to reach to import assets")
 
 	flag.Parse()
 
@@ -37,10 +37,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Add Components
+	// Add Assets
 	client := &http.Client{}
-	for _, comp := range r.Components {
-		if err := createComp(client, *urlPtr, comp); err != nil {
+	for _, asset := range r.Assets {
+		if err := createAsset(client, *urlPtr, asset); err != nil {
 			log.Fatal(err)
 		}
 	}
@@ -52,22 +52,22 @@ type HTTPClient interface {
 
 var _ HTTPClient = (*http.Client)(nil)
 
-func createComp(client HTTPClient, url string, comp component) error {
+func createAsset(client HTTPClient, url string, asset asset) error {
 	var gql = struct {
 		Query     string         `json:"query"`
 		Variables map[string]any `json:"variables"`
 	}{
 		Query: `
-		  mutation AddComponent($input: AddComponentInput!) {
-			addComponent(input: $input) {
+		  mutation AddAsset($input: AddAssetInput!) {
+			addAsset(input: $input) {
 			  id
 			}
 		  }
 		`,
 		Variables: map[string]any{
 			"input": map[string]any{
-				"name":  comp.Name,
-				"cpe23": comp.CPE23,
+				"name":  asset.Name,
+				"cpe23": asset.CPE23,
 			},
 		},
 	}
@@ -83,9 +83,9 @@ func createComp(client HTTPClient, url string, comp component) error {
 	defer res.Body.Close()
 	var gqlRes = struct {
 		Data *struct {
-			AddComponent struct {
+			AddAsset struct {
 				ID string `json:"id"`
-			} `json:"addComponent"`
+			} `json:"addAsset"`
 		} `json:"data,omitempty"`
 		Errors []any `json:"errors,omitempty"`
 	}{}
@@ -95,15 +95,15 @@ func createComp(client HTTPClient, url string, comp component) error {
 	if gqlRes.Errors != nil {
 		return fmt.Errorf("%v", gqlRes.Errors...)
 	}
-	fmt.Printf("Imported %s with id %s\n", comp.Name, gqlRes.Data.AddComponent.ID)
+	fmt.Printf("Imported %s with id %s\n", asset.Name, gqlRes.Data.AddAsset.ID)
 	return nil
 }
 
 type root struct {
-	Components []component `yaml:"components"`
+	Assets []asset `yaml:"assets"`
 }
 
-type component struct {
+type asset struct {
 	Name  string `yaml:"name"`
 	CPE23 string `yaml:"cpe23"`
 }

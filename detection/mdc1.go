@@ -9,14 +9,14 @@ import (
 	"github.com/pandatix/cvedetect/model"
 )
 
-// MDC1 performs a CVE's configurtion check for a Component using
+// MDC1 performs a CVE's configuration check for an asset using
 // the MDC1 algorithm. As it is based on a CPE and
 // configurations, it wraps the actual algorithm.
 // Such check should be performed on each node for an alone-vulnerable
 // detection, before a tree mode using the MDCN algorithm.
-func MDC1(comp *model.Component, cve *model.CVE) bool {
+func MDC1(asset *model.Asset, cve *model.CVE) bool {
 	for _, conf := range cve.Configurations {
-		pos, _ := mdc1(comp.CPE23, conf)
+		pos, _ := mdc1(asset.CPE23, conf)
 		if pos.Children != nil || pos.Matchers != nil {
 			return true
 		}

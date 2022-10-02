@@ -13,12 +13,12 @@ import (
 type Memory struct {
 	mx sync.RWMutex
 
-	// Components indexes *model.Component on to the ID
-	Components map[string]*model.Component
-	// CompVPIndex indexes *model.Component on the vendor:product
+	// Assets indexes *model.Asset on to the ID
+	Assets map[string]*model.Asset
+	// AssetVPIndex indexes *model.Asset on the vendor:product
 	// couple of the CPEs.
-	// Second map indexes by the Component's ID.
-	CompVPIndex map[string]map[string]struct{}
+	// Second map indexes by the Asset's ID.
+	AssetVPIndex map[string]map[string]struct{}
 
 	// CVEs indexes *model.CVE on to the ID
 	CVEs map[string]*model.CVE
@@ -30,123 +30,123 @@ type Memory struct {
 
 func NewMemory() *Memory {
 	return &Memory{
-		mx:          sync.RWMutex{},
-		Components:  map[string]*model.Component{},
-		CompVPIndex: map[string]map[string]struct{}{},
-		CVEs:        map[string]*model.CVE{},
-		CVEVPIndex:  map[string]map[string]struct{}{},
+		mx:           sync.RWMutex{},
+		Assets:       map[string]*model.Asset{},
+		AssetVPIndex: map[string]map[string]struct{}{},
+		CVEs:         map[string]*model.CVE{},
+		CVEVPIndex:   map[string]map[string]struct{}{},
 	}
 }
 
-func (mem *Memory) GetComponent(input GetComponentInput) (*model.Component, error) {
+func (mem *Memory) GetAsset(input GetAssetInput) (*model.Asset, error) {
 	mem.mx.RLock()
 	defer mem.mx.RUnlock()
 
 	// Check for consistency
-	comp, ok := mem.Components[input.ID]
+	asset, ok := mem.Assets[input.ID]
 	if !ok {
 		return nil, &ErrNotExist{
-			K: KeyComponent,
+			K: KeyAsset,
 			V: input.ID,
 		}
 	}
 
-	return copyComponent(comp), nil
+	return copyAsset(asset), nil
 }
 
-func (mem *Memory) QueryComponents(input QueryComponentInput) []*model.Component {
+func (mem *Memory) QueryAssets(input QueryAssetInput) []*model.Asset {
 	mem.mx.RLock()
 	defer mem.mx.RUnlock()
 
-	// Select components to query
-	var mp map[string]*model.Component = mem.Components
+	// Select assets to query
+	var mp map[string]*model.Asset = mem.Assets
 	if input.VP != nil {
 		v, p := splitVP(*input.VP)
 		if containsWildcard(v) || containsWildcard(p) {
 			// Select using subset
 			inWFN, _ := naming.UnbindFS("cpe:2.3:a:" + *input.VP + "*:*:*:*:*:*:*:*")
-			mp = map[string]*model.Component{}
-			for vp, compsIDs := range mem.CompVPIndex {
-				// XXX workaround as matching.compare is not directly accessible.
-				compWFN, _ := naming.UnbindFS("cpe:2.3:a:" + vp + "*:*:*:*:*:*:*:*")
-				if matching.IsSuperset(inWFN, compWFN) {
-					for compID := range compsIDs {
-						mp[compID] = mem.Components[compID]
+			mp = map[string]*model.Asset{}
+			for vp, assetsIDs := range mem.AssetVPIndex {
+				// XXX workaround as matching.assetare is not directly accessible.
+				assetWFN, _ := naming.UnbindFS("cpe:2.3:a:" + vp + "*:*:*:*:*:*:*:*")
+				if matching.IsSuperset(inWFN, assetWFN) {
+					for assetID := range assetsIDs {
+						mp[assetID] = mem.Assets[assetID]
 					}
 				}
 			}
 		} else {
 			// Select directly
-			mp = make(map[string]*model.Component, len(mem.CompVPIndex[*input.VP]))
-			for compID := range mem.CompVPIndex[*input.VP] {
-				mp[compID] = mem.Components[compID]
+			mp = make(map[string]*model.Asset, len(mem.AssetVPIndex[*input.VP]))
+			for assetID := range mem.AssetVPIndex[*input.VP] {
+				mp[assetID] = mem.Assets[assetID]
 			}
 		}
 	}
 
-	comps := make([]*model.Component, len(mp))
+	assets := make([]*model.Asset, len(mp))
 	i := 0
-	for _, comp := range mp {
-		comps[i] = copyComponent(comp)
+	for _, asset := range mp {
+		assets[i] = copyAsset(asset)
 		i++
 	}
-	return comps
+	return assets
 }
 
-func (mem *Memory) AddComponent(input AddComponentInput) error {
+func (mem *Memory) AddAsset(input AddAssetInput) error {
 	mem.mx.Lock()
 	defer mem.mx.Unlock()
 
 	// Check for consistency
-	if _, ok := mem.Components[input.ID]; ok {
+	if _, ok := mem.Assets[input.ID]; ok {
 		return &ErrAlreadyExist{
-			K: KeyComponent,
+			K: KeyAsset,
 			V: input.ID,
 		}
 	}
 	if input.Parent != nil {
-		if _, ok := mem.Components[input.Parent.ID]; !ok {
+		if _, ok := mem.Assets[input.Parent.ID]; !ok {
 			return &ErrNotExist{
-				K: KeyComponent,
+				K: KeyAsset,
 				V: input.Parent.ID,
 			}
 		}
 	}
 	for _, child := range input.Children {
-		if _, ok := mem.Components[child.ID]; !ok {
+		if _, ok := mem.Assets[child.ID]; !ok {
 			return &ErrNotExist{
-				K: KeyComponent,
+				K: KeyAsset,
 				V: child.ID,
 			}
 		}
 	}
 
 	// Save data
-	// => Components map
-	children := make([]*model.Component, len(input.Children))
+	// => Assets map
+	children := make([]*model.Asset, len(input.Children))
 	for i, child := range input.Children {
-		children[i] = &model.Component{
+		children[i] = &model.Asset{
 			ID: child.ID,
 		}
 
 		// Set child's parent relation
-		child := mem.Components[child.ID]
+		child := mem.Assets[child.ID]
 		if child.Parent != nil {
 			// Drop existing parent relation
-			parent := mem.Components[child.Parent.ID]
-			parent.Children = removeComponent(parent.Children, child)
+			parent := mem.Assets[child.Parent.ID]
+			parent.Children = removeAsset(parent.Children, child)
 		}
-		child.Parent = &model.Component{
+		child.Parent = &model.Asset{
 			ID: input.ID,
 		}
 	}
-	var parent *model.Component = nil
+	var parent *model.Asset = nil
 	if input.Parent != nil {
-		parent = &model.Component{
+		parent = &model.Asset{
 			ID: input.Parent.ID,
 		}
 	}
-	mem.Components[input.ID] = &model.Component{
+	mem.Assets[input.ID] = &model.Asset{
 		ID:       input.ID,
 		Name:     input.Name,
 		CPE23:    input.CPE23,
@@ -156,41 +156,41 @@ func (mem *Memory) AddComponent(input AddComponentInput) error {
 	}
 	// => Index map
 	vp := internal.GetVP(input.CPE23)
-	if _, ok := mem.CompVPIndex[vp]; !ok {
-		mem.CompVPIndex[vp] = map[string]struct{}{}
+	if _, ok := mem.AssetVPIndex[vp]; !ok {
+		mem.AssetVPIndex[vp] = map[string]struct{}{}
 	}
-	mem.CompVPIndex[vp][input.ID] = struct{}{}
+	mem.AssetVPIndex[vp][input.ID] = struct{}{}
 
 	return nil
 }
 
-func (mem *Memory) UpdateComponent(input UpdateComponentInput) error {
+func (mem *Memory) UpdateAsset(input UpdateAssetInput) error {
 	mem.mx.Lock()
 	defer mem.mx.Unlock()
 
 	// Check for consistency
-	// => Component
-	comp, ok := mem.Components[input.ID]
+	// => Asset
+	asset, ok := mem.Assets[input.ID]
 	if !ok {
 		return &ErrNotExist{
-			K: KeyComponent,
+			K: KeyAsset,
 			V: input.ID,
 		}
 	}
 	// => Parent
 	if input.Parent != nil {
-		if _, ok := mem.Components[input.Parent.ID]; !ok {
+		if _, ok := mem.Assets[input.Parent.ID]; !ok {
 			return &ErrNotExist{
-				K: KeyComponent,
+				K: KeyAsset,
 				V: input.Parent.ID,
 			}
 		}
 	}
 	// => Children
 	for _, child := range input.Children {
-		if _, ok := mem.Components[child.ID]; !ok {
+		if _, ok := mem.Assets[child.ID]; !ok {
 			return &ErrNotExist{
-				K: KeyComponent,
+				K: KeyAsset,
 				V: child.ID,
 			}
 		}
@@ -208,53 +208,53 @@ func (mem *Memory) UpdateComponent(input UpdateComponentInput) error {
 	// Save data
 	// => Name
 	if input.Name != nil {
-		comp.Name = *input.Name
+		asset.Name = *input.Name
 	}
 	// => CPE23
 	if input.CPE23 != nil {
 		// Update index
-		vpOld := internal.GetVP(comp.CPE23)
+		vpOld := internal.GetVP(asset.CPE23)
 		vpNew := internal.GetVP(*input.CPE23)
 		if vpNew != vpOld {
 			// Delete old index
-			delete(mem.CompVPIndex[vpOld], comp.ID)
-			if len(mem.CompVPIndex[vpOld]) == 0 {
-				delete(mem.CompVPIndex, vpOld)
+			delete(mem.AssetVPIndex[vpOld], asset.ID)
+			if len(mem.AssetVPIndex[vpOld]) == 0 {
+				delete(mem.AssetVPIndex, vpOld)
 			}
 
 			// Add new index
-			if _, ok := mem.CompVPIndex[vpNew]; !ok {
-				mem.CompVPIndex[vpNew] = map[string]struct{}{}
+			if _, ok := mem.AssetVPIndex[vpNew]; !ok {
+				mem.AssetVPIndex[vpNew] = map[string]struct{}{}
 			}
-			mem.CompVPIndex[vpNew][comp.ID] = struct{}{}
+			mem.AssetVPIndex[vpNew][asset.ID] = struct{}{}
 		}
-		comp.CPE23 = *input.CPE23
+		asset.CPE23 = *input.CPE23
 	}
 	// => Parent
 	if input.Parent != nil {
-		if comp.Parent != nil {
+		if asset.Parent != nil {
 			// Drop existing parent relation
-			parent := mem.Components[comp.Parent.ID]
-			parent.Children = removeComponent(parent.Children, comp)
+			parent := mem.Assets[asset.Parent.ID]
+			parent.Children = removeAsset(parent.Children, asset)
 		}
-		comp.Parent = &model.Component{
+		asset.Parent = &model.Asset{
 			ID: input.Parent.ID,
 		}
-		newParent := mem.Components[input.Parent.ID]
-		newParent.Children = append(newParent.Children, &model.Component{
-			ID: comp.ID,
+		newParent := mem.Assets[input.Parent.ID]
+		newParent.Children = append(newParent.Children, &model.Asset{
+			ID: asset.ID,
 		})
 	}
 	// => Children
 	if input.Children != nil {
-		newChildren := make([]*model.Component, len(input.Children))
+		newChildren := make([]*model.Asset, len(input.Children))
 		for i, child := range input.Children {
-			newChildren[i] = &model.Component{
+			newChildren[i] = &model.Asset{
 				ID: child.ID,
 			}
 		}
 		// Update children
-		for _, child := range comp.Children {
+		for _, child := range asset.Children {
 			remains := false
 			for _, inputChild := range input.Children {
 				if child.ID == inputChild.ID {
@@ -264,26 +264,26 @@ func (mem *Memory) UpdateComponent(input UpdateComponentInput) error {
 			}
 			if !remains {
 				// Delete link
-				child := mem.Components[child.ID]
+				child := mem.Assets[child.ID]
 				child.Parent = nil
 			}
 		}
 		for _, inputChild := range input.Children {
 			found := false
-			for _, child := range comp.Children {
+			for _, child := range asset.Children {
 				if inputChild.ID == child.ID {
 					found = true
 					break
 				}
 			}
 			if !found {
-				child := mem.Components[inputChild.ID]
-				child.Parent = &model.Component{
-					ID: comp.ID,
+				child := mem.Assets[inputChild.ID]
+				child.Parent = &model.Asset{
+					ID: asset.ID,
 				}
 			}
 		}
-		comp.Children = newChildren
+		asset.Children = newChildren
 	}
 	// => CVEs
 	if input.CVEs != nil {
@@ -294,7 +294,7 @@ func (mem *Memory) UpdateComponent(input UpdateComponentInput) error {
 			}
 		}
 		// Update links
-		for _, cve := range comp.CVEs {
+		for _, cve := range asset.CVEs {
 			remains := false
 			for _, inputCVE := range input.CVEs {
 				if cve.ID == inputCVE.ID {
@@ -305,12 +305,12 @@ func (mem *Memory) UpdateComponent(input UpdateComponentInput) error {
 			if !remains {
 				// Delete link
 				cve := mem.CVEs[cve.ID]
-				cve.Components = removeComponent(cve.Components, comp)
+				cve.Assets = removeAsset(cve.Assets, asset)
 			}
 		}
 		for _, inputCVE := range input.CVEs {
 			found := false
-			for _, cve := range comp.CVEs {
+			for _, cve := range asset.CVEs {
 				if inputCVE.ID == cve.ID {
 					found = true
 					break
@@ -319,53 +319,53 @@ func (mem *Memory) UpdateComponent(input UpdateComponentInput) error {
 			if !found {
 				// Add link
 				cve := mem.CVEs[inputCVE.ID]
-				cve.Components = append(cve.Components, &model.Component{
-					ID: comp.ID,
+				cve.Assets = append(cve.Assets, &model.Asset{
+					ID: asset.ID,
 				})
 			}
 		}
-		comp.CVEs = newCVES
+		asset.CVEs = newCVES
 	}
 
 	return nil
 }
 
-func (mem *Memory) DeleteComponent(input DeleteComponentInput) error {
+func (mem *Memory) DeleteAsset(input DeleteAssetInput) error {
 	mem.mx.Lock()
 	defer mem.mx.Unlock()
 
 	// Check for consistency
-	comp, ok := mem.Components[input.ID]
+	asset, ok := mem.Assets[input.ID]
 	if !ok {
 		return &ErrNotExist{
-			K: KeyComponent,
+			K: KeyAsset,
 			V: input.ID,
 		}
 	}
 
 	// Save data
 	// => Parent
-	if comp.Parent != nil {
-		parent := mem.Components[comp.Parent.ID]
-		parent.Children = removeComponent(parent.Children, comp)
+	if asset.Parent != nil {
+		parent := mem.Assets[asset.Parent.ID]
+		parent.Children = removeAsset(parent.Children, asset)
 	}
 	// => Children
-	for _, compChild := range comp.Children {
-		child := mem.Components[compChild.ID]
+	for _, assetChild := range asset.Children {
+		child := mem.Assets[assetChild.ID]
 		child.Parent = nil
 	}
 	// => CVEs
-	for _, compCve := range comp.CVEs {
-		cve := mem.CVEs[compCve.ID]
-		cve.Components = removeComponent(cve.Components, comp)
+	for _, assetCve := range asset.CVEs {
+		cve := mem.CVEs[assetCve.ID]
+		cve.Assets = removeAsset(cve.Assets, asset)
 	}
 	// => Index
-	vp := internal.GetVP(comp.CPE23)
-	delete(mem.CompVPIndex[vp], comp.ID)
-	if len(mem.CompVPIndex[vp]) == 0 {
-		delete(mem.CompVPIndex, vp)
+	vp := internal.GetVP(asset.CPE23)
+	delete(mem.AssetVPIndex[vp], asset.ID)
+	if len(mem.AssetVPIndex[vp]) == 0 {
+		delete(mem.AssetVPIndex, vp)
 	}
-	delete(mem.Components, comp.ID)
+	delete(mem.Assets, asset.ID)
 
 	return nil
 }
@@ -397,9 +397,9 @@ func (mem *Memory) QueryCVEs(input QueryCVEInput) []*model.CVE {
 			inWFN, _ := naming.UnbindFS("cpe:2.3:a:" + *input.VP + "*:*:*:*:*:*:*:*")
 			mp = map[string]*model.CVE{}
 			for vp, cvesIDs := range mem.CVEVPIndex {
-				// XXX workaround as matching.compare is not directly accessible.
-				compWFN, _ := naming.UnbindFS("cpe:2.3:a:" + vp + "*:*:*:*:*:*:*:*")
-				if matching.IsSuperset(inWFN, compWFN) {
+				// XXX workaround as matching.assetare is not directly accessible.
+				assetWFN, _ := naming.UnbindFS("cpe:2.3:a:" + vp + "*:*:*:*:*:*:*:*")
+				if matching.IsSuperset(inWFN, assetWFN) {
 					for cveID := range cvesIDs {
 						mp[cveID] = mem.CVEs[cveID]
 					}
@@ -461,7 +461,7 @@ func (mem *Memory) AddCVE(input AddCVEInput) error {
 		CVSS30Vector:    cpPtrValue(input.CVSS30Vector),
 		CVSS31Vector:    cpPtrValue(input.CVSS31Vector),
 		Configurations:  configurations,
-		Components:      []*model.Component{},
+		Assets:          []*model.Asset{},
 		References:      references,
 	}
 	// => Index
@@ -490,12 +490,12 @@ func (mem *Memory) UpdateCVE(input UpdateCVEInput) error {
 			V: input.ID,
 		}
 	}
-	// => Components
-	for _, comp := range input.Components {
-		if _, ok := mem.Components[comp.ID]; !ok {
+	// => Assets
+	for _, asset := range input.Assets {
+		if _, ok := mem.Assets[asset.ID]; !ok {
 			return &ErrNotExist{
-				K: KeyComponent,
-				V: comp.ID,
+				K: KeyAsset,
+				V: asset.ID,
 			}
 		}
 	}
@@ -566,46 +566,46 @@ func (mem *Memory) UpdateCVE(input UpdateCVEInput) error {
 		}
 		cve.Configurations = configurations
 	}
-	// => Components
-	if input.Components != nil {
-		newComps := make([]*model.Component, len(input.Components))
-		for i, comp := range input.Components {
-			newComps[i] = &model.Component{
-				ID: comp.ID,
+	// => Assets
+	if input.Assets != nil {
+		newAssets := make([]*model.Asset, len(input.Assets))
+		for i, asset := range input.Assets {
+			newAssets[i] = &model.Asset{
+				ID: asset.ID,
 			}
 		}
-		// Update components
-		for _, comp := range cve.Components {
+		// Update assets
+		for _, asset := range cve.Assets {
 			remains := false
-			for _, inputComp := range input.Components {
-				if comp.ID == inputComp.ID {
+			for _, inputAsset := range input.Assets {
+				if asset.ID == inputAsset.ID {
 					remains = true
 					break
 				}
 			}
 			if !remains {
 				// Remove link
-				comp := mem.Components[comp.ID]
-				comp.CVEs = removeCVE(comp.CVEs, cve)
+				asset := mem.Assets[asset.ID]
+				asset.CVEs = removeCVE(asset.CVEs, cve)
 			}
 		}
-		for _, inputComp := range input.Components {
+		for _, inputAsset := range input.Assets {
 			found := false
-			for _, comp := range cve.Components {
-				if inputComp.ID == comp.ID {
+			for _, asset := range cve.Assets {
+				if inputAsset.ID == asset.ID {
 					found = true
 					break
 				}
 			}
 			if !found {
 				// Add link
-				comp := mem.Components[inputComp.ID]
-				comp.CVEs = append(comp.CVEs, &model.CVE{
+				asset := mem.Assets[inputAsset.ID]
+				asset.CVEs = append(asset.CVEs, &model.CVE{
 					ID: cve.ID,
 				})
 			}
 		}
-		cve.Components = newComps
+		cve.Assets = newAssets
 	}
 	// => References
 	if input.References != nil {
@@ -639,10 +639,10 @@ func (mem *Memory) DeleteCVE(input DeleteCVEInput) error {
 	}
 
 	// Save data
-	// => Components
-	for _, cveComp := range cve.Components {
-		comp := mem.Components[cveComp.ID]
-		comp.CVEs = removeCVE(comp.CVEs, cve)
+	// => Assets
+	for _, cveAsset := range cve.Assets {
+		asset := mem.Assets[cveAsset.ID]
+		asset.CVEs = removeCVE(asset.CVEs, cve)
 	}
 	// => Index
 	cpes23 := getAllCPEs23(cve.Configurations)
@@ -660,33 +660,33 @@ func (mem *Memory) DeleteCVE(input DeleteCVEInput) error {
 
 // Edges resolvers
 
-// GetComponentCVEs returns a Component's CVEs.
+// GetAssetCVEs returns a Asset's CVEs.
 // As it is an edge resolver, it does not perform a check on
 // the given pointer.
-func (mem *Memory) GetComponentCVEs(comp *model.Component) []*model.CVE {
+func (mem *Memory) GetAssetCVEs(asset *model.Asset) []*model.CVE {
 	mem.mx.RLock()
 	defer mem.mx.RUnlock()
 
-	compCVEs := comp.CVEs
-	cves := make([]*model.CVE, len(compCVEs))
-	for i, cve := range compCVEs {
+	assetCVEs := asset.CVEs
+	cves := make([]*model.CVE, len(assetCVEs))
+	for i, cve := range assetCVEs {
 		cves[i] = copyCVE(mem.CVEs[cve.ID])
 	}
 	return cves
 }
 
-// GetCVEComponents returns a CVE's Components.
+// GetCVEAssets returns a CVE's Assets.
 // As it is an edge resolver, it does not perform a check on the id.
-func (mem *Memory) GetCVEComponents(cve *model.CVE) []*model.Component {
+func (mem *Memory) GetCVEAssets(cve *model.CVE) []*model.Asset {
 	mem.mx.RLock()
 	defer mem.mx.RUnlock()
 
-	cveComps := cve.Components
-	comps := make([]*model.Component, len(cveComps))
-	for i, comp := range cveComps {
-		comps[i] = copyComponent(mem.Components[comp.ID])
+	cveAssets := cve.Assets
+	assets := make([]*model.Asset, len(cveAssets))
+	for i, asset := range cveAssets {
+		assets[i] = copyAsset(mem.Assets[asset.ID])
 	}
-	return comps
+	return assets
 }
 
 // Helpers
@@ -733,29 +733,29 @@ func getNodeCPEs23(node *model.Node) []string {
 	return slc
 }
 
-func copyComponent(comp *model.Component) *model.Component {
-	children := make([]*model.Component, len(comp.Children))
-	for i, child := range comp.Children {
-		children[i] = &model.Component{
+func copyAsset(asset *model.Asset) *model.Asset {
+	children := make([]*model.Asset, len(asset.Children))
+	for i, child := range asset.Children {
+		children[i] = &model.Asset{
 			ID: child.ID,
 		}
 	}
-	cves := make([]*model.CVE, len(comp.CVEs))
-	for i, cve := range comp.CVEs {
+	cves := make([]*model.CVE, len(asset.CVEs))
+	for i, cve := range asset.CVEs {
 		cves[i] = &model.CVE{
 			ID: cve.ID,
 		}
 	}
-	parent := (*model.Component)(nil)
-	if comp.Parent != nil {
-		parent = &model.Component{
-			ID: comp.Parent.ID,
+	parent := (*model.Asset)(nil)
+	if asset.Parent != nil {
+		parent = &model.Asset{
+			ID: asset.Parent.ID,
 		}
 	}
-	return &model.Component{
-		ID:       comp.ID,
-		Name:     comp.Name,
-		CPE23:    comp.CPE23,
+	return &model.Asset{
+		ID:       asset.ID,
+		Name:     asset.Name,
+		CPE23:    asset.CPE23,
 		Parent:   parent,
 		Children: children,
 		CVEs:     cves,
@@ -767,10 +767,10 @@ func copyCVE(cve *model.CVE) *model.CVE {
 	for i, conf := range cve.Configurations {
 		configurations[i] = copyNode(conf)
 	}
-	comps := make([]*model.Component, len(cve.Components))
-	for i, comp := range cve.Components {
-		comps[i] = &model.Component{
-			ID: comp.ID,
+	assets := make([]*model.Asset, len(cve.Assets))
+	for i, asset := range cve.Assets {
+		assets[i] = &model.Asset{
+			ID: asset.ID,
 		}
 	}
 	references := make([]*model.Reference, len(cve.References))
@@ -793,7 +793,7 @@ func copyCVE(cve *model.CVE) *model.CVE {
 		CVSS30Vector:    cpPtrValue(cve.CVSS30Vector),
 		CVSS31Vector:    cpPtrValue(cve.CVSS31Vector),
 		Configurations:  configurations,
-		Components:      comps,
+		Assets:          assets,
 		References:      references,
 	}
 }
@@ -834,14 +834,14 @@ func cpPtrValue[T any](t *T) *T {
 	return &v
 }
 
-func removeComponent(slc []*model.Component, target *model.Component) []*model.Component {
-	newSlc := make([]*model.Component, len(slc)-1)
+func removeAsset(slc []*model.Asset, target *model.Asset) []*model.Asset {
+	newSlc := make([]*model.Asset, len(slc)-1)
 	i := 0
-	for _, comp := range slc {
-		if comp.ID == target.ID {
+	for _, asset := range slc {
+		if asset.ID == target.ID {
 			continue
 		}
-		newSlc[i] = comp
+		newSlc[i] = asset
 		i++
 	}
 	return newSlc

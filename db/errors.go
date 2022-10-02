@@ -5,8 +5,8 @@ import "fmt"
 type Key string
 
 var (
-	KeyCVE       Key = "cve"
-	KeyComponent Key = "component"
+	KeyCVE   Key = "cve"
+	KeyAsset Key = "asset"
 )
 
 // ErrAlreadyExist is returned when the in-memory DB already

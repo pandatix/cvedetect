@@ -24,8 +24,8 @@ var testsNode = map[string]struct {
 			Children: nil,
 			Matchers: []*detection.Matcher{
 				{
-					SuperCPE23:            "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
-					SubCPE23:              "cpe:2.3:a:fake:component:5:*:*:*:*:*:*:*",
+					SuperCPE23:            "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+					SubCPE23:              "cpe:2.3:a:fake:asset:5:*:*:*:*:*:*:*",
 					Vulnerable:            true,
 					VersionStartIncluding: nil,
 					VersionStartExcluding: nil,
@@ -34,7 +34,7 @@ var testsNode = map[string]struct {
 				},
 			},
 		},
-		String: `(|(v cpe:2.3:a:fake:component:*:*:*:*:*:*:*:* incl cpe:2.3:a:fake:component:5:*:*:*:*:*:*:* ,  , ))`,
+		String: `(|(v cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:* incl cpe:2.3:a:fake:asset:5:*:*:*:*:*:*:* ,  , ))`,
 	},
 	"one-node-one-matcher-version-interval": {
 		// This case is the most common one: it represents a MDC=1 Circuit that
@@ -47,8 +47,8 @@ var testsNode = map[string]struct {
 			Children: nil,
 			Matchers: []*detection.Matcher{
 				{
-					SuperCPE23:            "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
-					SubCPE23:              "cpe:2.3:a:fake:component:2:u2:*:*:*:*:*:*",
+					SuperCPE23:            "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+					SubCPE23:              "cpe:2.3:a:fake:asset:2:u2:*:*:*:*:*:*",
 					Vulnerable:            true,
 					VersionStartIncluding: nil,
 					VersionStartExcluding: nil,
@@ -57,7 +57,7 @@ var testsNode = map[string]struct {
 				},
 			},
 		},
-		String: `(|(v cpe:2.3:a:fake:component:*:*:*:*:*:*:*:* incl cpe:2.3:a:fake:component:2:u2:*:*:*:*:*:* ,  , < 3.5.7))`,
+		String: `(|(v cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:* incl cpe:2.3:a:fake:asset:2:u2:*:*:*:*:*:* ,  , < 3.5.7))`,
 	},
 	"one-node-one-matcher-supercpe23": {
 		// This case is common but not prevalent: it represents a MDC=1 Circuit
@@ -70,8 +70,8 @@ var testsNode = map[string]struct {
 			Children: nil,
 			Matchers: []*detection.Matcher{
 				{
-					SuperCPE23:            "cpe:2.3:a:fake:component:2:u2:*:*:*:*:x86:*",
-					SubCPE23:              "cpe:2.3:a:fake:component:2:u2:*:*:*:*:x86:*",
+					SuperCPE23:            "cpe:2.3:a:fake:asset:2:u2:*:*:*:*:x86:*",
+					SubCPE23:              "cpe:2.3:a:fake:asset:2:u2:*:*:*:*:x86:*",
 					Vulnerable:            true,
 					VersionStartIncluding: nil,
 					VersionStartExcluding: nil,
@@ -80,7 +80,7 @@ var testsNode = map[string]struct {
 				},
 			},
 		},
-		String: `(|(v cpe:2.3:a:fake:component:2:u2:*:*:*:*:x86:* incl cpe:2.3:a:fake:component:2:u2:*:*:*:*:x86:* ,  , ))`,
+		String: `(|(v cpe:2.3:a:fake:asset:2:u2:*:*:*:*:x86:* incl cpe:2.3:a:fake:asset:2:u2:*:*:*:*:x86:* ,  , ))`,
 	},
 	"and-or-version-interval": {
 		// This case is an unrealistic one, but representing a possible Circuit

@@ -11,34 +11,34 @@ import (
 var QueryObject = graphql.NewObject(graphql.ObjectConfig{
 	Name: "Query",
 	Fields: graphql.Fields{
-		"getComponent": {
-			Description: "Get a specific Component.",
-			Type:        object.Component,
+		"getAsset": {
+			Description: "Get a specific Asset.",
+			Type:        object.Asset,
 			Args: graphql.FieldConfigArgument{
 				"input": {
-					Type: graphql.NewNonNull(object.GetComponentInput),
+					Type: graphql.NewNonNull(object.GetAssetInput),
 				},
 			},
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				input := db.GetComponentInput{}
+				input := db.GetAssetInput{}
 				Cast(p.Args["input"], &input)
-				return query.GetComponent(apidb.Mem, input)
+				return query.GetAsset(apidb.Mem, input)
 			},
 		},
-		"queryComponents": {
-			Description: "Query a list of Component.",
+		"queryAssets": {
+			Description: "Query a list of Asset.",
 			Type: graphql.NewNonNull(&graphql.List{
-				OfType: graphql.NewNonNull(object.Component),
+				OfType: graphql.NewNonNull(object.Asset),
 			}),
 			Args: graphql.FieldConfigArgument{
 				"input": {
-					Type: graphql.NewNonNull(object.QueryComponentsInput),
+					Type: graphql.NewNonNull(object.QueryAssetsInput),
 				},
 			},
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				input := db.QueryComponentInput{}
+				input := db.QueryAssetInput{}
 				Cast(p.Args["input"], &input)
-				return query.QueryComponents(apidb.Mem, input)
+				return query.QueryAssets(apidb.Mem, input)
 			},
 		},
 		"getCVE": {

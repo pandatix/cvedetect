@@ -20,10 +20,10 @@ func TestAddCVE(t *testing.T) {
 	}{
 		"no-match": {
 			Memory: &db.Memory{
-				Components:  map[string]*model.Component{},
-				CompVPIndex: map[string]map[string]struct{}{},
-				CVEs:        map[string]*model.CVE{},
-				CVEVPIndex:  map[string]map[string]struct{}{},
+				Assets:       map[string]*model.Asset{},
+				AssetVPIndex: map[string]map[string]struct{}{},
+				CVEs:         map[string]*model.CVE{},
+				CVEVPIndex:   map[string]map[string]struct{}{},
 			},
 			Input: db.AddCVEInput{
 				ID:              "CVE-2021-28378",
@@ -92,34 +92,34 @@ func TestAddCVE(t *testing.T) {
 					},
 				},
 				References: []*model.Reference{},
-				Components: []*model.Component{},
+				Assets:     []*model.Asset{},
 			},
 			ExpectedErr: nil,
 		},
 		"MDC1-match": {
 			Memory: &db.Memory{
-				Components: map[string]*model.Component{
-					"comp-1": {
-						ID:       "comp-1",
-						Name:     "Component 1",
+				Assets: map[string]*model.Asset{
+					"asset-1": {
+						ID:       "asset-1",
+						Name:     "Asset 1",
 						CPE23:    "cpe:2.3:a:gitea:gitea:1.12.6:*:*:*:*:*:*:*",
 						Parent:   nil,
-						Children: []*model.Component{},
+						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
-					"comp-2": {
-						ID:       "comp-2",
-						Name:     "Component 2",
+					"asset-2": {
+						ID:       "asset-2",
+						Name:     "Asset 2",
 						CPE23:    "cpe:2.3:a:gitea:gitea:1.15.0:*:*:*:*:*:*:*",
 						Parent:   nil,
-						Children: []*model.Component{},
+						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
 				},
-				CompVPIndex: map[string]map[string]struct{}{
+				AssetVPIndex: map[string]map[string]struct{}{
 					"gitea:gitea": {
-						"comp-1": {},
-						"comp-2": {},
+						"asset-1": {},
+						"asset-2": {},
 					},
 				},
 				CVEs:       map[string]*model.CVE{},
@@ -192,9 +192,9 @@ func TestAddCVE(t *testing.T) {
 					},
 				},
 				References: []*model.Reference{},
-				Components: []*model.Component{
+				Assets: []*model.Asset{
 					{
-						ID: "comp-1",
+						ID: "asset-1",
 					},
 				},
 			},
@@ -225,13 +225,13 @@ func TestUpdateCVE(t *testing.T) {
 	}{
 		"no-remaining-matches": {
 			Memory: &db.Memory{
-				Components: map[string]*model.Component{
-					"comp": {
-						ID:       "comp",
-						Name:     "Component",
+				Assets: map[string]*model.Asset{
+					"asset": {
+						ID:       "asset",
+						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:gitea:gitea:1.12.6:*:*:*:*:*:*:*",
 						Parent:   nil,
-						Children: []*model.Component{},
+						Children: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
 								ID: "CVE-2021-28378",
@@ -239,9 +239,9 @@ func TestUpdateCVE(t *testing.T) {
 						},
 					},
 				},
-				CompVPIndex: map[string]map[string]struct{}{
+				AssetVPIndex: map[string]map[string]struct{}{
 					"gitea:gitea": {
-						"comp": {},
+						"asset": {},
 					},
 				},
 				CVEs: map[string]*model.CVE{
@@ -278,9 +278,9 @@ func TestUpdateCVE(t *testing.T) {
 							},
 						},
 						References: []*model.Reference{},
-						Components: []*model.Component{
+						Assets: []*model.Asset{
 							{
-								ID: "comp",
+								ID: "asset",
 							},
 						},
 					},
@@ -305,25 +305,25 @@ func TestUpdateCVE(t *testing.T) {
 				CVSS31Vector:    ptr("CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N"),
 				Configurations:  []*model.Node{},
 				References:      []*model.Reference{},
-				Components:      []*model.Component{},
+				Assets:          []*model.Asset{},
 			},
 			ExpectedErr: nil,
 		},
 		"new-matches": {
 			Memory: &db.Memory{
-				Components: map[string]*model.Component{
-					"comp": {
-						ID:       "comp",
-						Name:     "Component",
-						CPE23:    "cpe:2.3:a:fake:component:1.2.3:*:*:*:*:*:*:*",
+				Assets: map[string]*model.Asset{
+					"asset": {
+						ID:       "asset",
+						Name:     "Asset",
+						CPE23:    "cpe:2.3:a:fake:asset:1.2.3:*:*:*:*:*:*:*",
 						Parent:   nil,
-						Children: []*model.Component{},
+						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
 				},
-				CompVPIndex: map[string]map[string]struct{}{
-					"fake:component": {
-						"comp": {},
+				AssetVPIndex: map[string]map[string]struct{}{
+					"fake:asset": {
+						"asset": {},
 					},
 				},
 				CVEs: map[string]*model.CVE{
@@ -343,7 +343,7 @@ func TestUpdateCVE(t *testing.T) {
 								CPEMatches: []*model.CPEMatch{
 									{
 										Vulnerable:            true,
-										CPE23:                 "cpe:2.3:a:other:component:*:*:*:*:*:*:*:*",
+										CPE23:                 "cpe:2.3:a:other:asset:*:*:*:*:*:*:*:*",
 										VersionStartIncluding: nil,
 										VersionStartExcluding: nil,
 										VersionEndIncluding:   nil,
@@ -352,12 +352,12 @@ func TestUpdateCVE(t *testing.T) {
 								},
 							},
 						},
-						Components: []*model.Component{},
+						Assets:     []*model.Asset{},
 						References: []*model.Reference{},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{
-					"other:component": {
+					"other:asset": {
 						"cve": {},
 					},
 				},
@@ -372,7 +372,7 @@ func TestUpdateCVE(t *testing.T) {
 						CPEMatches: []db.UpdateCVENodeCPEMatchInput{
 							{
 								Vulnerable:            true,
-								CPE23:                 "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
+								CPE23:                 "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
 								VersionStartIncluding: nil,
 								VersionStartExcluding: nil,
 								VersionEndIncluding:   nil,
@@ -398,7 +398,7 @@ func TestUpdateCVE(t *testing.T) {
 						CPEMatches: []*model.CPEMatch{
 							{
 								Vulnerable:            true,
-								CPE23:                 "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
+								CPE23:                 "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
 								VersionStartIncluding: nil,
 								VersionStartExcluding: nil,
 								VersionEndIncluding:   nil,
@@ -407,9 +407,9 @@ func TestUpdateCVE(t *testing.T) {
 						},
 					},
 				},
-				Components: []*model.Component{
+				Assets: []*model.Asset{
 					{
-						ID: "comp",
+						ID: "asset",
 					},
 				},
 				References: []*model.Reference{},
@@ -418,13 +418,13 @@ func TestUpdateCVE(t *testing.T) {
 		},
 		"updated-matches": {
 			Memory: &db.Memory{
-				Components: map[string]*model.Component{
-					"comp": {
-						ID:       "comp",
-						Name:     "Component",
-						CPE23:    "cpe:2.3:a:fake:component:1.2.3:*:*:*:*:*:*:*",
+				Assets: map[string]*model.Asset{
+					"asset": {
+						ID:       "asset",
+						Name:     "Asset",
+						CPE23:    "cpe:2.3:a:fake:asset:1.2.3:*:*:*:*:*:*:*",
 						Parent:   nil,
-						Children: []*model.Component{},
+						Children: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
 								ID: "cve",
@@ -432,9 +432,9 @@ func TestUpdateCVE(t *testing.T) {
 						},
 					},
 				},
-				CompVPIndex: map[string]map[string]struct{}{
-					"fake:component": {
-						"comp": {},
+				AssetVPIndex: map[string]map[string]struct{}{
+					"fake:asset": {
+						"asset": {},
 					},
 				},
 				CVEs: map[string]*model.CVE{
@@ -454,7 +454,7 @@ func TestUpdateCVE(t *testing.T) {
 								CPEMatches: []*model.CPEMatch{
 									{
 										Vulnerable:            true,
-										CPE23:                 "cpe:2.3:a:fake:component:1.2.3:*:*:*:*:*:*:*",
+										CPE23:                 "cpe:2.3:a:fake:asset:1.2.3:*:*:*:*:*:*:*",
 										VersionStartIncluding: nil,
 										VersionStartExcluding: nil,
 										VersionEndIncluding:   nil,
@@ -463,16 +463,16 @@ func TestUpdateCVE(t *testing.T) {
 								},
 							},
 						},
-						Components: []*model.Component{
+						Assets: []*model.Asset{
 							{
-								ID: "comp",
+								ID: "asset",
 							},
 						},
 						References: []*model.Reference{},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{
-					"fake:component": {
+					"fake:asset": {
 						"cve": {},
 					},
 				},
@@ -487,7 +487,7 @@ func TestUpdateCVE(t *testing.T) {
 						CPEMatches: []db.UpdateCVENodeCPEMatchInput{
 							{
 								Vulnerable:            true,
-								CPE23:                 "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
+								CPE23:                 "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
 								VersionStartIncluding: nil,
 								VersionStartExcluding: nil,
 								VersionEndIncluding:   nil,
@@ -513,7 +513,7 @@ func TestUpdateCVE(t *testing.T) {
 						CPEMatches: []*model.CPEMatch{
 							{
 								Vulnerable:            true,
-								CPE23:                 "cpe:2.3:a:fake:component:*:*:*:*:*:*:*:*",
+								CPE23:                 "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
 								VersionStartIncluding: nil,
 								VersionStartExcluding: nil,
 								VersionEndIncluding:   nil,
@@ -522,9 +522,9 @@ func TestUpdateCVE(t *testing.T) {
 						},
 					},
 				},
-				Components: []*model.Component{
+				Assets: []*model.Asset{
 					{
-						ID: "comp",
+						ID: "asset",
 					},
 				},
 				References: []*model.Reference{},
@@ -556,13 +556,13 @@ func TestDeleteCVE(t *testing.T) {
 	}{
 		"drop-cve": {
 			Memory: &db.Memory{
-				Components: map[string]*model.Component{
-					"comp": {
-						ID:       "comp",
-						Name:     "Component",
-						CPE23:    "cpe:2.3:a:fake:component:1.2.3:*:*:*:*:*:*:*",
+				Assets: map[string]*model.Asset{
+					"asset": {
+						ID:       "asset",
+						Name:     "Asset",
+						CPE23:    "cpe:2.3:a:fake:asset:1.2.3:*:*:*:*:*:*:*",
 						Parent:   nil,
-						Children: []*model.Component{},
+						Children: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
 								ID: "cve",
@@ -570,9 +570,9 @@ func TestDeleteCVE(t *testing.T) {
 						},
 					},
 				},
-				CompVPIndex: map[string]map[string]struct{}{
-					"fake:component": {
-						"comp": {},
+				AssetVPIndex: map[string]map[string]struct{}{
+					"fake:asset": {
+						"asset": {},
 					},
 				},
 				CVEs: map[string]*model.CVE{
@@ -592,7 +592,7 @@ func TestDeleteCVE(t *testing.T) {
 								CPEMatches: []*model.CPEMatch{
 									{
 										Vulnerable:            true,
-										CPE23:                 "cpe:2.3:a:fake:component:1.2.3:*:*:*:*:*:*:*",
+										CPE23:                 "cpe:2.3:a:fake:asset:1.2.3:*:*:*:*:*:*:*",
 										VersionStartIncluding: nil,
 										VersionStartExcluding: nil,
 										VersionEndIncluding:   nil,
@@ -601,16 +601,16 @@ func TestDeleteCVE(t *testing.T) {
 								},
 							},
 						},
-						Components: []*model.Component{
+						Assets: []*model.Asset{
 							{
-								ID: "comp",
+								ID: "asset",
 							},
 						},
 						References: []*model.Reference{},
 					},
 				},
 				CVEVPIndex: map[string]map[string]struct{}{
-					"fake:component": {
+					"fake:asset": {
 						"cve": {},
 					},
 				},
@@ -634,7 +634,7 @@ func TestDeleteCVE(t *testing.T) {
 						CPEMatches: []*model.CPEMatch{
 							{
 								Vulnerable:            true,
-								CPE23:                 "cpe:2.3:a:fake:component:1.2.3:*:*:*:*:*:*:*",
+								CPE23:                 "cpe:2.3:a:fake:asset:1.2.3:*:*:*:*:*:*:*",
 								VersionStartIncluding: nil,
 								VersionStartExcluding: nil,
 								VersionEndIncluding:   nil,
@@ -643,9 +643,9 @@ func TestDeleteCVE(t *testing.T) {
 						},
 					},
 				},
-				Components: []*model.Component{
+				Assets: []*model.Asset{
 					{
-						ID: "comp",
+						ID: "asset",
 					},
 				},
 				References: []*model.Reference{},

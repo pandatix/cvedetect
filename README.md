@@ -1,10 +1,8 @@
-# CVE-Detect
+# cvedetect
 
 [![Coverage Status](https://coveralls.io/repos/github/pandatix/cvedetect/badge.svg?branch=master)](https://coveralls.io/github/pandatix/cvedetect?branch=master)
 
-CVE-Detect gives a sample app that detect CVEs on components trees.
-
-It's based on researches on CPE v2.3 future Release 5, NVD analysis, CVE detections and automated inventory AI.
+cvedetect is state of the art Vulnerability Assessment Tool (VAT) working on a non-cylic oriented graph of assets.
 
 ## TODO
 
@@ -13,7 +11,6 @@ It's based on researches on CPE v2.3 future Release 5, NVD analysis, CVE detecti
  - [ ] Harden inputs through scalars
  - [ ] Add score filtering (filter on base, environmental and temporal scores + attributes values)
  - [ ] Improve support of CPE v2.3 Release 4 with `github.com/pandatix/go-cpe` when released
- - [ ] Provide good tests with >85% code coverage
  - [ ] Provide API validation tests
 
 ## Disclaimer
@@ -77,11 +74,11 @@ curl -X POST http://localhost:8080/graphql \
     -d '{"query":"query QueryCVEs($input:QueryCVEInput){queryCVEs(input:$input){id description configurations{negate operator cpeMatches{vulnerable cpe23}}cvss31{vector baseScore}}}","variables":{"input":{"vp":"gitea:gitea"}}}'
 ```
 
-### Adding a Component
+### Adding an Asset
 
 ```graphql
-mutation AddComponent($input: AddComponentInput!) {
-    addComponent(input: $input) {
+mutation AddAsset($input: AddAssetInput!) {
+    addAsset(input: $input) {
         id
         name
         cpe23
@@ -120,5 +117,5 @@ The previous has the equivalent curl command.
 
 ```bash
 curl -X POST http://localhost:8080/graphql \
-    -d '{"query":"mutation AddComponent($input:AddComponentInput!){addComponent(input:$input){id name cpe23 cves{id description configurations{negate operator cpeMatches{vulnerable cpe23 versionStartIncluding versionStartExcluding versionEndIncluding versionEndExcluding}}cvss31{vector baseScore}}}}","variables":{"input":{"name":"Gitea","cpe23":"cpe:2.3:a:gitea:gitea:1.12.6:*:*:*:*:docker:amd64:*"}}}'
+    -d '{"query":"mutation AddAsset($input:AddAssetInput!){addAsset(input:$input){id name cpe23 cves{id description configurations{negate operator cpeMatches{vulnerable cpe23 versionStartIncluding versionStartExcluding versionEndIncluding versionEndExcluding}}cvss31{vector baseScore}}}}","variables":{"input":{"name":"Gitea","cpe23":"cpe:2.3:a:gitea:gitea:1.12.6:*:*:*:*:docker:amd64:*"}}}'
 ```

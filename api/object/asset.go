@@ -9,7 +9,7 @@ import (
 
 var Asset = graphql.NewObject(graphql.ObjectConfig{
 	Name:        "Asset",
-	Description: "Asset is an IT asset as defined by NIST-IR 7695.",
+	Description: "Asset could represent anything in an IT system. It could be also named \"Component\" as its achieved by the NIST-IR 7695.",
 	Fields: graphql.Fields{
 		"id": {
 			Type: graphql.NewNonNull(graphql.String),

@@ -1,6 +1,7 @@
 package mutation
 
 import (
+	"github.com/pandatix/cvedetect/api/utils"
 	"github.com/pandatix/cvedetect/db"
 	"github.com/pandatix/cvedetect/detection"
 	"github.com/pandatix/cvedetect/internal"
@@ -8,6 +9,11 @@ import (
 )
 
 func AddAsset(mem *db.Memory, input db.AddAssetInput) (*model.Asset, error) {
+	// Perform checks
+	if err := addAssetChecks(mem, input); err != nil {
+		return nil, err
+	}
+
 	// Add asset
 	if err := mem.AddAsset(input); err != nil {
 		return nil, err
@@ -25,6 +31,10 @@ func AddAsset(mem *db.Memory, input db.AddAssetInput) (*model.Asset, error) {
 }
 
 func UpdateAsset(mem *db.Memory, input db.UpdateAssetInput) (*model.Asset, error) {
+	if err := updateAssetChecks(mem, input); err != nil {
+		return nil, err
+	}
+
 	// Update asset
 	if err := mem.UpdateAsset(input); err != nil {
 		return nil, err
@@ -58,6 +68,56 @@ func DeleteAsset(mem *db.Memory, input db.DeleteAssetInput) (*model.Asset, error
 		return nil, err
 	}
 	return asset, nil
+}
+
+func addAssetChecks(mem *db.Memory, input db.AddAssetInput) error {
+	// Multigraph check
+	fakeAssetParents := make([]*model.Asset, len(input.Parents))
+	for i, inParent := range input.Parents {
+		fakeAssetParents[i] = &model.Asset{
+			ID: inParent.ID,
+		}
+	}
+	fakeAssetChildren := make([]*model.Asset, len(input.Children))
+	for i, inChild := range input.Children {
+		fakeAssetChildren[i] = &model.Asset{
+			ID: inChild.ID,
+		}
+	}
+	fakeAsset := &model.Asset{
+		Parents:  fakeAssetParents,
+		Children: fakeAssetChildren,
+	}
+	if err := utils.CheckMultigraph(fakeAsset); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func updateAssetChecks(mem *db.Memory, input db.UpdateAssetInput) error {
+	// Multigraph check
+	fakeAssetParents := make([]*model.Asset, len(input.Parents))
+	for i, inParent := range input.Parents {
+		fakeAssetParents[i] = &model.Asset{
+			ID: inParent.ID,
+		}
+	}
+	fakeAssetChildren := make([]*model.Asset, len(input.Children))
+	for i, inChild := range input.Children {
+		fakeAssetChildren[i] = &model.Asset{
+			ID: inChild.ID,
+		}
+	}
+	fakeAsset := &model.Asset{
+		Parents:  fakeAssetParents,
+		Children: fakeAssetChildren,
+	}
+	if err := utils.CheckMultigraph(fakeAsset); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func assetDetect(mem *db.Memory, cpe23 string, assetID string) error {

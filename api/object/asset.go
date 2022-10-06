@@ -80,8 +80,10 @@ var AddAssetInput = graphql.NewInputObject(graphql.InputObjectConfig{
 		"cpe23": {
 			Type: graphql.NewNonNull(scalar.CPE23),
 		},
-		"parent": {
-			Type: AddAssetParentInput,
+		"parents": {
+			Type: &graphql.List{
+				OfType: graphql.NewNonNull(AddAssetParentInput),
+			},
 		},
 		"children": {
 			Type: &graphql.List{
@@ -121,8 +123,10 @@ var UpdateAssetInput = graphql.NewInputObject(graphql.InputObjectConfig{
 		"cpe23": {
 			Type: scalar.CPE23,
 		},
-		"parent": {
-			Type: UpdateAssetParentInput,
+		"parents": {
+			Type: &graphql.List{
+				OfType: graphql.NewNonNull(UpdateAssetParentInput),
+			},
 		},
 		"children": {
 			Type: &graphql.List{
@@ -171,11 +175,13 @@ func init() {
 			return nil, nil
 		},
 	})
-	Asset.AddFieldConfig("parent", &graphql.Field{
-		Type: Asset,
+	Asset.AddFieldConfig("parents", &graphql.Field{
+		Type: graphql.NewNonNull(&graphql.List{
+			OfType: graphql.NewNonNull(Asset),
+		}),
 		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 			if asset, ok := p.Source.(*model.Asset); ok {
-				return asset.Parent, nil
+				return asset.Parents, nil
 			}
 			return nil, nil
 		},

@@ -103,7 +103,7 @@ func TestAddCVE(t *testing.T) {
 						ID:       "asset-1",
 						Name:     "Asset 1",
 						CPE23:    "cpe:2.3:a:gitea:gitea:1.12.6:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -111,7 +111,7 @@ func TestAddCVE(t *testing.T) {
 						ID:       "asset-2",
 						Name:     "Asset 2",
 						CPE23:    "cpe:2.3:a:gitea:gitea:1.15.0:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -230,7 +230,7 @@ func TestUpdateCVE(t *testing.T) {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:gitea:gitea:1.12.6:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
@@ -316,7 +316,7 @@ func TestUpdateCVE(t *testing.T) {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:fake:asset:1.2.3:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -423,7 +423,7 @@ func TestUpdateCVE(t *testing.T) {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:fake:asset:1.2.3:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
@@ -561,7 +561,7 @@ func TestDeleteCVE(t *testing.T) {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:fake:asset:1.2.3:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{

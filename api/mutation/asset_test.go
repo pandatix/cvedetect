@@ -29,14 +29,14 @@ func TestAddAsset(t *testing.T) {
 				ID:       "asset",
 				Name:     "Asset",
 				CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-				Parent:   nil,
+				Parents:  []db.AddAssetParentInput{},
 				Children: []db.AddAssetChildInput{},
 			},
 			ExpectedAsset: &model.Asset{
 				ID:       "asset",
 				Name:     "Asset",
 				CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-				Parent:   nil,
+				Parents:  []*model.Asset{},
 				Children: []*model.Asset{},
 				CVEs:     []*model.CVE{},
 			},
@@ -86,14 +86,14 @@ func TestAddAsset(t *testing.T) {
 				ID:       "asset",
 				Name:     "Asset",
 				CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-				Parent:   nil,
+				Parents:  []db.AddAssetParentInput{},
 				Children: []db.AddAssetChildInput{},
 			},
 			ExpectedAsset: &model.Asset{
 				ID:       "asset",
 				Name:     "Asset",
 				CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-				Parent:   nil,
+				Parents:  []*model.Asset{},
 				Children: []*model.Asset{},
 				CVEs: []*model.CVE{
 					{
@@ -132,7 +132,7 @@ func TestUpdateAsset(t *testing.T) {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
@@ -190,7 +190,7 @@ func TestUpdateAsset(t *testing.T) {
 				ID:       "asset",
 				Name:     nil,
 				CPE23:    ptr("cpe:2.3:a:other:asset:*:*:*:*:*:*:*:*"),
-				Parent:   nil,
+				Parents:  nil,
 				Children: nil,
 				CVEs:     nil,
 			},
@@ -198,7 +198,7 @@ func TestUpdateAsset(t *testing.T) {
 				ID:       "asset",
 				Name:     "Asset",
 				CPE23:    "cpe:2.3:a:other:asset:*:*:*:*:*:*:*:*",
-				Parent:   nil,
+				Parents:  []*model.Asset{},
 				Children: []*model.Asset{},
 				CVEs:     []*model.CVE{},
 			},
@@ -211,7 +211,7 @@ func TestUpdateAsset(t *testing.T) {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:other:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -261,7 +261,7 @@ func TestUpdateAsset(t *testing.T) {
 				ID:       "asset",
 				Name:     nil,
 				CPE23:    ptr("cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*"),
-				Parent:   nil,
+				Parents:  nil,
 				Children: nil,
 				CVEs:     nil,
 			},
@@ -269,7 +269,7 @@ func TestUpdateAsset(t *testing.T) {
 				ID:       "asset",
 				Name:     "Asset",
 				CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-				Parent:   nil,
+				Parents:  []*model.Asset{},
 				Children: []*model.Asset{},
 				CVEs: []*model.CVE{
 					{
@@ -286,7 +286,7 @@ func TestUpdateAsset(t *testing.T) {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
@@ -344,7 +344,7 @@ func TestUpdateAsset(t *testing.T) {
 				ID:       "asset",
 				Name:     nil,
 				CPE23:    ptr("cpe:2.3:a:fake:asset:1.2.3:*:*:*:*:*:*:*"),
-				Parent:   nil,
+				Parents:  nil,
 				Children: nil,
 				CVEs:     nil,
 			},
@@ -352,7 +352,7 @@ func TestUpdateAsset(t *testing.T) {
 				ID:       "asset",
 				Name:     "Asset",
 				CPE23:    "cpe:2.3:a:fake:asset:1.2.3:*:*:*:*:*:*:*",
-				Parent:   nil,
+				Parents:  []*model.Asset{},
 				Children: []*model.Asset{},
 				CVEs: []*model.CVE{
 					{
@@ -392,7 +392,7 @@ func TestDeleteAsset(t *testing.T) {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
@@ -453,7 +453,7 @@ func TestDeleteAsset(t *testing.T) {
 				ID:       "asset",
 				Name:     "Asset",
 				CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-				Parent:   nil,
+				Parents:  []*model.Asset{},
 				Children: []*model.Asset{},
 				CVEs: []*model.CVE{
 					{

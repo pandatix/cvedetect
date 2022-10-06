@@ -1,47 +1,21 @@
-package db_test
+package db
 
 import (
 	"encoding/json"
 	"testing"
 	"time"
 
-	"github.com/pandatix/cvedetect/db"
 	"github.com/pandatix/cvedetect/model"
 	"github.com/stretchr/testify/assert"
 )
 
-var flag = "!!! MODIFIED !!!"
-
-func alter(a any) {
-	switch t := a.(type) {
-	case *model.Asset:
-		t.Name += flag
-		t.CPE23 += flag
-		for i := 0; i < len(t.CVEs); i++ {
-			t.CVEs[i].ID += flag
-		}
-		for i := 0; i < len(t.Children); i++ {
-			t.Children[i].Name += flag
-		}
-
-	case *model.CVE:
-		t.ID += flag
-		for i := 0; i < len(t.Assets); i++ {
-			t.Assets[i].Name += flag
-		}
-		for i := 0; i < len(t.Configurations); i++ {
-			t.Configurations[i].Operator += flag
-		}
-	}
-}
-
-func unsem(mem *db.Memory) (dst any) {
+func unsem(mem *Memory) (dst any) {
 	b, _ := json.Marshal(mem)
 	_ = json.Unmarshal(b, &dst)
 	return
 }
 
-func assertEqual(expected, actual *db.Memory, assert *assert.Assertions) {
+func assertEqual(expected, actual *Memory, assert *assert.Assertions) {
 	exp := unsem(expected)
 	act := unsem(actual)
 
@@ -64,28 +38,28 @@ func TestMemoryGetAsset(t *testing.T) {
 	t.Parallel()
 
 	var tests = map[string]struct {
-		Memory         *db.Memory
-		Input          db.GetAssetInput
+		Memory         *Memory
+		Input          GetAssetInput
 		ExpectedAsset  *model.Asset
 		ExpectedErr    error
-		ExpectedMemory *db.Memory
+		ExpectedMemory *Memory
 	}{
 		"unexisting-asset": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				CVEs:         map[string]*model.CVE{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEVPIndex:   map[string]map[string]struct{}{},
 			},
-			Input: db.GetAssetInput{
+			Input: GetAssetInput{
 				ID: "asset",
 			},
 			ExpectedAsset: nil,
-			ExpectedErr: &db.ErrNotExist{
-				K: db.KeyAsset,
+			ExpectedErr: &ErrNotExist{
+				K: KeyAsset,
 				V: "asset",
 			},
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				CVEs:         map[string]*model.CVE{},
 				AssetVPIndex: map[string]map[string]struct{}{},
@@ -93,13 +67,13 @@ func TestMemoryGetAsset(t *testing.T) {
 			},
 		},
 		"existing-asset": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -112,25 +86,25 @@ func TestMemoryGetAsset(t *testing.T) {
 				},
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
-			Input: db.GetAssetInput{
+			Input: GetAssetInput{
 				ID: "asset",
 			},
 			ExpectedAsset: &model.Asset{
 				ID:       "asset",
 				Name:     "Asset",
 				CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-				Parent:   nil,
+				Parents:  []*model.Asset{},
 				Children: []*model.Asset{},
 				CVEs:     []*model.CVE{},
 			},
 			ExpectedErr: nil,
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -156,12 +130,10 @@ func TestMemoryGetAsset(t *testing.T) {
 			assert.Equal(tt.ExpectedErr, err)
 			assertEqual(tt.ExpectedMemory, tt.Memory, assert)
 
-			// Check return can't be modified
-			if asset != nil {
-				alter(asset)
-
-				assertEqual(tt.ExpectedMemory, tt.Memory, assert)
-			}
+			// Check modified input/output does not affect database
+			alter(tt.Input)
+			alter(asset)
+			assertEqual(tt.ExpectedMemory, tt.Memory, assert)
 		})
 	}
 }
@@ -170,23 +142,23 @@ func TestMemoryQueryAssets(t *testing.T) {
 	t.Parallel()
 
 	var tests = map[string]struct {
-		Memory         *db.Memory
-		Input          db.QueryAssetInput
+		Memory         *Memory
+		Input          QueryAssetInput
 		ExpectedAssets []*model.Asset
-		ExpectedMemory *db.Memory
+		ExpectedMemory *Memory
 	}{
 		"no-assets": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs:         map[string]*model.CVE{},
 				CVEVPIndex:   map[string]map[string]struct{}{},
 			},
-			Input: db.QueryAssetInput{
+			Input: QueryAssetInput{
 				VP: nil,
 			},
 			ExpectedAssets: []*model.Asset{},
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs:         map[string]*model.CVE{},
@@ -194,13 +166,13 @@ func TestMemoryQueryAssets(t *testing.T) {
 			},
 		},
 		"multiple-assets": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset-1": {
 						ID:       "asset-1",
 						Name:     "Asset 1",
 						CPE23:    "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -208,7 +180,7 @@ func TestMemoryQueryAssets(t *testing.T) {
 						ID:       "asset-2",
 						Name:     "Asset 2",
 						CPE23:    "cpe:2.3:a:fake:asset:2:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -222,7 +194,7 @@ func TestMemoryQueryAssets(t *testing.T) {
 				CVEs:       map[string]*model.CVE{},
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
-			Input: db.QueryAssetInput{
+			Input: QueryAssetInput{
 				VP: nil,
 			},
 			ExpectedAssets: []*model.Asset{
@@ -230,25 +202,25 @@ func TestMemoryQueryAssets(t *testing.T) {
 					ID:       "asset-1",
 					Name:     "Asset 1",
 					CPE23:    "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
-					Parent:   nil,
+					Parents:  []*model.Asset{},
 					Children: []*model.Asset{},
 					CVEs:     []*model.CVE{},
 				}, {
 					ID:       "asset-2",
 					Name:     "Asset 2",
 					CPE23:    "cpe:2.3:a:fake:asset:2:*:*:*:*:*:*:*",
-					Parent:   nil,
+					Parents:  []*model.Asset{},
 					Children: []*model.Asset{},
 					CVEs:     []*model.CVE{},
 				},
 			},
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset-1": {
 						ID:       "asset-1",
 						Name:     "Asset 1",
 						CPE23:    "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -256,7 +228,7 @@ func TestMemoryQueryAssets(t *testing.T) {
 						ID:       "asset-2",
 						Name:     "Asset 2",
 						CPE23:    "cpe:2.3:a:fake:asset:2:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -272,13 +244,13 @@ func TestMemoryQueryAssets(t *testing.T) {
 			},
 		},
 		"indexed-asset": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset-1": {
 						ID:       "asset-1",
 						Name:     "Asset 1",
 						CPE23:    "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -286,7 +258,7 @@ func TestMemoryQueryAssets(t *testing.T) {
 						ID:       "asset-2",
 						Name:     "Asset 2",
 						CPE23:    "cpe:2.3:a:fake\\_new:asset:2:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -302,7 +274,7 @@ func TestMemoryQueryAssets(t *testing.T) {
 				CVEs:       map[string]*model.CVE{},
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
-			Input: db.QueryAssetInput{
+			Input: QueryAssetInput{
 				VP: ptr("fake\\_new:asset"),
 			},
 			ExpectedAssets: []*model.Asset{
@@ -310,18 +282,18 @@ func TestMemoryQueryAssets(t *testing.T) {
 					ID:       "asset-2",
 					Name:     "Asset 2",
 					CPE23:    "cpe:2.3:a:fake\\_new:asset:2:*:*:*:*:*:*:*",
-					Parent:   nil,
+					Parents:  []*model.Asset{},
 					Children: []*model.Asset{},
 					CVEs:     []*model.CVE{},
 				},
 			},
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset-1": {
 						ID:       "asset-1",
 						Name:     "Asset 1",
 						CPE23:    "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -329,7 +301,7 @@ func TestMemoryQueryAssets(t *testing.T) {
 						ID:       "asset-2",
 						Name:     "Asset 2",
 						CPE23:    "cpe:2.3:a:fake\\_new:asset:2:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -347,13 +319,13 @@ func TestMemoryQueryAssets(t *testing.T) {
 			},
 		},
 		"indexed-vp-wildcard-assets": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset-1": {
 						ID:       "asset-1",
 						Name:     "Asset 1",
 						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -361,7 +333,7 @@ func TestMemoryQueryAssets(t *testing.T) {
 						ID:       "asset-2",
 						Name:     "Asset 2",
 						CPE23:    "cpe:2.3:a:other:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -377,7 +349,7 @@ func TestMemoryQueryAssets(t *testing.T) {
 				CVEs:       map[string]*model.CVE{},
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
-			Input: db.QueryAssetInput{
+			Input: QueryAssetInput{
 				VP: ptr("*:asset"),
 			},
 			ExpectedAssets: []*model.Asset{
@@ -385,25 +357,25 @@ func TestMemoryQueryAssets(t *testing.T) {
 					ID:       "asset-1",
 					Name:     "Asset 1",
 					CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-					Parent:   nil,
+					Parents:  []*model.Asset{},
 					Children: []*model.Asset{},
 					CVEs:     []*model.CVE{},
 				}, {
 					ID:       "asset-2",
 					Name:     "Asset 2",
 					CPE23:    "cpe:2.3:a:other:asset:*:*:*:*:*:*:*:*",
-					Parent:   nil,
+					Parents:  []*model.Asset{},
 					Children: []*model.Asset{},
 					CVEs:     []*model.CVE{},
 				},
 			},
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset-1": {
 						ID:       "asset-1",
 						Name:     "Asset 1",
 						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -411,7 +383,7 @@ func TestMemoryQueryAssets(t *testing.T) {
 						ID:       "asset-2",
 						Name:     "Asset 2",
 						CPE23:    "cpe:2.3:a:other:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -438,10 +410,9 @@ func TestMemoryQueryAssets(t *testing.T) {
 
 			assert.ElementsMatch(tt.ExpectedAssets, assets)
 
-			// Check return can't be modified
-			for i := 0; i < len(assets); i++ {
-				alter(assets[i])
-			}
+			// Check modified input/output does not affect database
+			alter(tt.Input)
+			alter(assets)
 			assertEqual(tt.ExpectedMemory, tt.Memory, assert)
 		})
 	}
@@ -451,19 +422,19 @@ func TestMemoryAddAsset(t *testing.T) {
 	t.Parallel()
 
 	var tests = map[string]struct {
-		Memory         *db.Memory
-		Input          db.AddAssetInput
+		Memory         *Memory
+		Input          AddAssetInput
 		ExpectedErr    error
-		ExpectedMemory *db.Memory
+		ExpectedMemory *Memory
 	}{
 		"asset-exist": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -476,23 +447,23 @@ func TestMemoryAddAsset(t *testing.T) {
 				CVEs:       map[string]*model.CVE{},
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
-			Input: db.AddAssetInput{
+			Input: AddAssetInput{
 				ID:       "asset",
 				Name:     "Asset",
 				CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
 				Children: nil,
 			},
-			ExpectedErr: &db.ErrAlreadyExist{
-				K: db.KeyAsset,
+			ExpectedErr: &ErrAlreadyExist{
+				K: KeyAsset,
 				V: "asset",
 			},
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -507,26 +478,28 @@ func TestMemoryAddAsset(t *testing.T) {
 			},
 		},
 		"parent-not-exist": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs:         map[string]*model.CVE{},
 				CVEVPIndex:   map[string]map[string]struct{}{},
 			},
-			Input: db.AddAssetInput{
+			Input: AddAssetInput{
 				ID:    "asset",
 				Name:  "Asset",
 				CPE23: "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-				Parent: &db.AddAssetParent{
-					ID: "unexisting-asset",
+				Parents: []AddAssetParentInput{
+					{
+						ID: "unexisting-asset",
+					},
 				},
-				Children: []db.AddAssetChildInput{},
+				Children: []AddAssetChildInput{},
 			},
-			ExpectedErr: &db.ErrNotExist{
-				K: db.KeyAsset,
+			ExpectedErr: &ErrNotExist{
+				K: KeyAsset,
 				V: "unexisting-asset",
 			},
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs:         map[string]*model.CVE{},
@@ -534,27 +507,27 @@ func TestMemoryAddAsset(t *testing.T) {
 			},
 		},
 		"child-not-exist": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs:         map[string]*model.CVE{},
 				CVEVPIndex:   map[string]map[string]struct{}{},
 			},
-			Input: db.AddAssetInput{
+			Input: AddAssetInput{
 				ID:    "asset",
 				Name:  "Asset",
 				CPE23: "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-				Children: []db.AddAssetChildInput{
+				Children: []AddAssetChildInput{
 					{
 						ID: "unexisting-asset",
 					},
 				},
 			},
-			ExpectedErr: &db.ErrNotExist{
-				K: db.KeyAsset,
+			ExpectedErr: &ErrNotExist{
+				K: KeyAsset,
 				V: "unexisting-asset",
 			},
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs:         map[string]*model.CVE{},
@@ -562,21 +535,21 @@ func TestMemoryAddAsset(t *testing.T) {
 			},
 		},
 		"new-asset": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset-parent": {
 						ID:       "asset-parent",
 						Name:     "Asset Parent",
 						CPE23:    "cpe:2.3:a:fake:asset:*:parent:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
 					"asset-child-1": {
-						ID:     "asset-child-1",
-						Name:   "Asset Child 1",
-						CPE23:  "cpe:2.3:a:fake:asset:1:child:*:*:*:*:*:*",
-						Parent: nil,
+						ID:      "asset-child-1",
+						Name:    "Asset Child 1",
+						CPE23:   "cpe:2.3:a:fake:asset:1:child:*:*:*:*:*:*",
+						Parents: []*model.Asset{},
 						Children: []*model.Asset{
 							{
 								ID: "asset-child-2",
@@ -588,8 +561,10 @@ func TestMemoryAddAsset(t *testing.T) {
 						ID:    "asset-child-2",
 						Name:  "Asset Child 2",
 						CPE23: "cpe:2.3:a:fake:asset:2:child:*:*:*:*:*:*",
-						Parent: &model.Asset{
-							ID: "asset-child-1",
+						Parents: []*model.Asset{
+							{
+								ID: "asset-child-1",
+							},
 						},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
@@ -604,14 +579,16 @@ func TestMemoryAddAsset(t *testing.T) {
 				},
 				CVEs: map[string]*model.CVE{},
 			},
-			Input: db.AddAssetInput{
+			Input: AddAssetInput{
 				ID:    "asset",
 				Name:  "Asset",
 				CPE23: "cpe:2.3:a:fake\\_new:asset:*:*:*:*:*:*:*:*",
-				Parent: &db.AddAssetParent{
-					ID: "asset-parent",
+				Parents: []AddAssetParentInput{
+					{
+						ID: "asset-parent",
+					},
 				},
-				Children: []db.AddAssetChildInput{
+				Children: []AddAssetChildInput{
 					{
 						ID: "asset-child-1",
 					}, {
@@ -620,22 +597,28 @@ func TestMemoryAddAsset(t *testing.T) {
 				},
 			},
 			ExpectedErr: nil,
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset-parent": {
-						ID:       "asset-parent",
-						Name:     "Asset Parent",
-						CPE23:    "cpe:2.3:a:fake:asset:*:parent:*:*:*:*:*:*",
-						Parent:   nil,
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:      "asset-parent",
+						Name:    "Asset Parent",
+						CPE23:   "cpe:2.3:a:fake:asset:*:parent:*:*:*:*:*:*",
+						Parents: []*model.Asset{},
+						Children: []*model.Asset{
+							{
+								ID: "asset",
+							},
+						},
+						CVEs: []*model.CVE{},
 					},
 					"asset": {
 						ID:    "asset",
 						Name:  "Asset",
 						CPE23: "cpe:2.3:a:fake\\_new:asset:*:*:*:*:*:*:*:*",
-						Parent: &model.Asset{
-							ID: "asset-parent",
+						Parents: []*model.Asset{
+							{
+								ID: "asset-parent",
+							},
 						},
 						Children: []*model.Asset{
 							{
@@ -650,18 +633,28 @@ func TestMemoryAddAsset(t *testing.T) {
 						ID:    "asset-child-1",
 						Name:  "Asset Child 1",
 						CPE23: "cpe:2.3:a:fake:asset:1:child:*:*:*:*:*:*",
-						Parent: &model.Asset{
-							ID: "asset",
+						Parents: []*model.Asset{
+							{
+								ID: "asset",
+							},
 						},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						Children: []*model.Asset{
+							{
+								ID: "asset-child-2",
+							},
+						},
+						CVEs: []*model.CVE{},
 					},
 					"asset-child-2": {
 						ID:    "asset-child-2",
 						Name:  "Asset Child 2",
 						CPE23: "cpe:2.3:a:fake:asset:2:child:*:*:*:*:*:*",
-						Parent: &model.Asset{
-							ID: "asset",
+						Parents: []*model.Asset{
+							{
+								ID: "asset-child-1",
+							}, {
+								ID: "asset",
+							},
 						},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
@@ -681,13 +674,13 @@ func TestMemoryAddAsset(t *testing.T) {
 			},
 		},
 		"asset-parent-already-exist": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset-parent": {
-						ID:     "asset-parent",
-						Name:   "Asset Parent",
-						CPE23:  "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent: nil,
+						ID:      "asset-parent",
+						Name:    "Asset Parent",
+						CPE23:   "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Parents: []*model.Asset{},
 						Children: []*model.Asset{
 							{
 								ID: "asset",
@@ -699,8 +692,10 @@ func TestMemoryAddAsset(t *testing.T) {
 						ID:    "asset",
 						Name:  "Asset",
 						CPE23: "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent: &model.Asset{
-							ID: "asset-parent",
+						Parents: []*model.Asset{
+							{
+								ID: "asset-parent",
+							},
 						},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
@@ -715,42 +710,50 @@ func TestMemoryAddAsset(t *testing.T) {
 				CVEs:       map[string]*model.CVE{},
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
-			Input: db.AddAssetInput{
+			Input: AddAssetInput{
 				ID:    "asset-new-parent",
 				Name:  "Asset New Parent",
 				CPE23: "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-				Children: []db.AddAssetChildInput{
+				Children: []AddAssetChildInput{
 					{
 						ID: "asset",
 					},
 				},
 			},
 			ExpectedErr: nil,
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset-parent": {
-						ID:       "asset-parent",
-						Name:     "Asset Parent",
-						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:      "asset-parent",
+						Name:    "Asset Parent",
+						CPE23:   "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Parents: []*model.Asset{},
+						Children: []*model.Asset{
+							{
+								ID: "asset",
+							},
+						},
+						CVEs: []*model.CVE{},
 					},
 					"asset": {
 						ID:    "asset",
 						Name:  "Asset",
 						CPE23: "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent: &model.Asset{
-							ID: "asset-new-parent",
+						Parents: []*model.Asset{
+							{
+								ID: "asset-parent",
+							}, {
+								ID: "asset-new-parent",
+							},
 						},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
 					"asset-new-parent": {
-						ID:     "asset-new-parent",
-						Name:   "Asset New Parent",
-						CPE23:  "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent: nil,
+						ID:      "asset-new-parent",
+						Name:    "Asset New Parent",
+						CPE23:   "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Parents: []*model.Asset{},
 						Children: []*model.Asset{
 							{
 								ID: "asset",
@@ -780,38 +783,43 @@ func TestMemoryAddAsset(t *testing.T) {
 
 			assert.Equal(tt.ExpectedErr, err)
 			assertEqual(tt.ExpectedMemory, tt.Memory, assert)
+
+			// Check modified input/output does not affect database
+			alter(tt.Input)
+			assertEqual(tt.ExpectedMemory, tt.Memory, assert)
 		})
 	}
 }
 
+// TODO check if can do a multigraph
 func TestMemoryUpdateAsset(t *testing.T) {
 	t.Parallel()
 
 	var tests = map[string]struct {
-		Memory         *db.Memory
-		Input          db.UpdateAssetInput
+		Memory         *Memory
+		Input          UpdateAssetInput
 		ExpectedErr    error
-		ExpectedMemory *db.Memory
+		ExpectedMemory *Memory
 	}{
 		"asset-not-exist": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs:         map[string]*model.CVE{},
 				CVEVPIndex:   map[string]map[string]struct{}{},
 			},
-			Input: db.UpdateAssetInput{
+			Input: UpdateAssetInput{
 				ID:       "asset",
 				Name:     nil,
 				CPE23:    nil,
 				Children: nil,
 				CVEs:     nil,
 			},
-			ExpectedErr: &db.ErrNotExist{
-				K: db.KeyAsset,
+			ExpectedErr: &ErrNotExist{
+				K: KeyAsset,
 				V: "asset",
 			},
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs:         map[string]*model.CVE{},
@@ -819,13 +827,13 @@ func TestMemoryUpdateAsset(t *testing.T) {
 			},
 		},
 		"parent-not-exist": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -838,27 +846,29 @@ func TestMemoryUpdateAsset(t *testing.T) {
 				CVEs:       map[string]*model.CVE{},
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
-			Input: db.UpdateAssetInput{
+			Input: UpdateAssetInput{
 				ID:    "asset",
 				Name:  nil,
 				CPE23: nil,
-				Parent: &db.UpdateAssetParentInput{
-					ID: "asset-parent",
+				Parents: []UpdateAssetParentInput{
+					{
+						ID: "asset-parent",
+					},
 				},
 				Children: nil,
 				CVEs:     nil,
 			},
-			ExpectedErr: &db.ErrNotExist{
-				K: db.KeyAsset,
+			ExpectedErr: &ErrNotExist{
+				K: KeyAsset,
 				V: "asset-parent",
 			},
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -873,13 +883,13 @@ func TestMemoryUpdateAsset(t *testing.T) {
 			},
 		},
 		"child-not-exist": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -892,28 +902,28 @@ func TestMemoryUpdateAsset(t *testing.T) {
 				CVEs:       map[string]*model.CVE{},
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
-			Input: db.UpdateAssetInput{
+			Input: UpdateAssetInput{
 				ID:    "asset",
 				Name:  nil,
 				CPE23: nil,
-				Children: []db.UpdateAssetChildInput{
+				Children: []UpdateAssetChildInput{
 					{
 						ID: "asset-child",
 					},
 				},
 				CVEs: nil,
 			},
-			ExpectedErr: &db.ErrNotExist{
-				K: db.KeyAsset,
+			ExpectedErr: &ErrNotExist{
+				K: KeyAsset,
 				V: "asset-child",
 			},
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -928,13 +938,13 @@ func TestMemoryUpdateAsset(t *testing.T) {
 			},
 		},
 		"cve-not-exist": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -947,28 +957,28 @@ func TestMemoryUpdateAsset(t *testing.T) {
 				CVEs:       map[string]*model.CVE{},
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
-			Input: db.UpdateAssetInput{
+			Input: UpdateAssetInput{
 				ID:       "asset",
 				Name:     nil,
 				CPE23:    nil,
 				Children: nil,
-				CVEs: []db.UpdateAssetCVEsInput{
+				CVEs: []UpdateAssetCVEsInput{
 					{
 						ID: "cve",
 					},
 				},
 			},
-			ExpectedErr: &db.ErrNotExist{
-				K: db.KeyCVE,
+			ExpectedErr: &ErrNotExist{
+				K: KeyCVE,
 				V: "cve",
 			},
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -983,13 +993,13 @@ func TestMemoryUpdateAsset(t *testing.T) {
 			},
 		},
 		"new-name": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -1002,7 +1012,7 @@ func TestMemoryUpdateAsset(t *testing.T) {
 				CVEs:       map[string]*model.CVE{},
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
-			Input: db.UpdateAssetInput{
+			Input: UpdateAssetInput{
 				ID:       "asset",
 				Name:     ptr("New Asset"),
 				CPE23:    nil,
@@ -1010,13 +1020,13 @@ func TestMemoryUpdateAsset(t *testing.T) {
 				CVEs:     nil,
 			},
 			ExpectedErr: nil,
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
 						ID:       "asset",
 						Name:     "New Asset",
 						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -1031,13 +1041,13 @@ func TestMemoryUpdateAsset(t *testing.T) {
 			},
 		},
 		"new-cpe23": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -1050,22 +1060,22 @@ func TestMemoryUpdateAsset(t *testing.T) {
 				CVEs:       map[string]*model.CVE{},
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
-			Input: db.UpdateAssetInput{
+			Input: UpdateAssetInput{
 				ID:       "asset",
 				Name:     nil,
 				CPE23:    ptr("cpe:2.3:a:fake\\_other:asset:2:*:*:*:*:*:*:*"),
-				Parent:   nil,
+				Parents:  nil,
 				Children: nil,
 				CVEs:     nil,
 			},
 			ExpectedErr: nil,
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:fake\\_other:asset:2:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -1080,13 +1090,13 @@ func TestMemoryUpdateAsset(t *testing.T) {
 			},
 		},
 		"new-parent": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -1094,7 +1104,7 @@ func TestMemoryUpdateAsset(t *testing.T) {
 						ID:       "asset-parent",
 						Name:     "Asset Parent",
 						CPE23:    "cpe:2.3:a:fake:asset:*:parent:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -1108,34 +1118,38 @@ func TestMemoryUpdateAsset(t *testing.T) {
 				CVEs:       map[string]*model.CVE{},
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
-			Input: db.UpdateAssetInput{
+			Input: UpdateAssetInput{
 				ID:    "asset",
 				Name:  nil,
 				CPE23: nil,
-				Parent: &db.UpdateAssetParentInput{
-					ID: "asset-parent",
+				Parents: []UpdateAssetParentInput{
+					{
+						ID: "asset-parent",
+					},
 				},
 				Children: nil,
 				CVEs:     nil,
 			},
 			ExpectedErr: nil,
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
 						ID:    "asset",
 						Name:  "Asset",
 						CPE23: "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent: &model.Asset{
-							ID: "asset-parent",
+						Parents: []*model.Asset{
+							{
+								ID: "asset-parent",
+							},
 						},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
 					"asset-parent": {
-						ID:     "asset-parent",
-						Name:   "Asset Parent",
-						CPE23:  "cpe:2.3:a:fake:asset:*:parent:*:*:*:*:*:*",
-						Parent: nil,
+						ID:      "asset-parent",
+						Name:    "Asset Parent",
+						CPE23:   "cpe:2.3:a:fake:asset:*:parent:*:*:*:*:*:*",
+						Parents: []*model.Asset{},
 						Children: []*model.Asset{
 							{
 								ID: "asset",
@@ -1155,13 +1169,13 @@ func TestMemoryUpdateAsset(t *testing.T) {
 			},
 		},
 		"new-parent-already-existing": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset-parent": {
-						ID:     "asset-parent",
-						Name:   "Asset Parent",
-						CPE23:  "cpe:2.3:a:fake:asset:*:parent:*:*:*:*:*:*",
-						Parent: nil,
+						ID:      "asset-parent",
+						Name:    "Asset Parent",
+						CPE23:   "cpe:2.3:a:fake:asset:*:parent:*:*:*:*:*:*",
+						Parents: []*model.Asset{},
 						Children: []*model.Asset{
 							{
 								ID: "asset",
@@ -1173,8 +1187,10 @@ func TestMemoryUpdateAsset(t *testing.T) {
 						ID:    "asset",
 						Name:  "Asset",
 						CPE23: "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent: &model.Asset{
-							ID: "asset-parent",
+						Parents: []*model.Asset{
+							{
+								ID: "asset-parent",
+							},
 						},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
@@ -1183,7 +1199,7 @@ func TestMemoryUpdateAsset(t *testing.T) {
 						ID:       "asset-future-parent",
 						Name:     "Asset Future Parent",
 						CPE23:    "cpe:2.3:a:fake:asset:*:parent:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -1198,24 +1214,26 @@ func TestMemoryUpdateAsset(t *testing.T) {
 				CVEs:       map[string]*model.CVE{},
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
-			Input: db.UpdateAssetInput{
+			Input: UpdateAssetInput{
 				ID:    "asset",
 				Name:  nil,
 				CPE23: nil,
-				Parent: &db.UpdateAssetParentInput{
-					ID: "asset-future-parent",
+				Parents: []UpdateAssetParentInput{
+					{
+						ID: "asset-future-parent",
+					},
 				},
 				Children: nil,
 				CVEs:     nil,
 			},
 			ExpectedErr: nil,
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset-parent": {
 						ID:       "asset-parent",
 						Name:     "Asset Parent",
 						CPE23:    "cpe:2.3:a:fake:asset:*:parent:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -1223,17 +1241,19 @@ func TestMemoryUpdateAsset(t *testing.T) {
 						ID:    "asset",
 						Name:  "Asset",
 						CPE23: "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent: &model.Asset{
-							ID: "asset-future-parent",
+						Parents: []*model.Asset{
+							{
+								ID: "asset-future-parent",
+							},
 						},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
 					"asset-future-parent": {
-						ID:     "asset-future-parent",
-						Name:   "Asset Future Parent",
-						CPE23:  "cpe:2.3:a:fake:asset:*:parent:*:*:*:*:*:*",
-						Parent: nil,
+						ID:      "asset-future-parent",
+						Name:    "Asset Future Parent",
+						CPE23:   "cpe:2.3:a:fake:asset:*:parent:*:*:*:*:*:*",
+						Parents: []*model.Asset{},
 						Children: []*model.Asset{
 							{
 								ID: "asset",
@@ -1254,13 +1274,13 @@ func TestMemoryUpdateAsset(t *testing.T) {
 			},
 		},
 		"new-children": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
-						ID:     "asset",
-						Name:   "Asset",
-						CPE23:  "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent: nil,
+						ID:      "asset",
+						Name:    "Asset",
+						CPE23:   "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Parents: []*model.Asset{},
 						Children: []*model.Asset{
 							{
 								ID: "asset-child-1",
@@ -1274,8 +1294,10 @@ func TestMemoryUpdateAsset(t *testing.T) {
 						ID:    "asset-child-1",
 						Name:  "Asset Child 1",
 						CPE23: "cpe:2.3:a:fake:asset:1:child:*:*:*:*:*:*",
-						Parent: &model.Asset{
-							ID: "asset",
+						Parents: []*model.Asset{
+							{
+								ID: "asset",
+							},
 						},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
@@ -1284,7 +1306,7 @@ func TestMemoryUpdateAsset(t *testing.T) {
 						ID:       "asset-child-2",
 						Name:     "Asset Child 2",
 						CPE23:    "cpe:2.3:a:fake:asset:2:child:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -1292,8 +1314,10 @@ func TestMemoryUpdateAsset(t *testing.T) {
 						ID:    "asset-child-3",
 						Name:  "Asset Child 3",
 						CPE23: "cpe:2.3:a:fake:asset:3:child:*:*:*:*:*:*",
-						Parent: &model.Asset{
-							ID: "asset",
+						Parents: []*model.Asset{
+							{
+								ID: "asset",
+							},
 						},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
@@ -1310,12 +1334,12 @@ func TestMemoryUpdateAsset(t *testing.T) {
 				CVEs:       map[string]*model.CVE{},
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
-			Input: db.UpdateAssetInput{
-				ID:     "asset",
-				Name:   nil,
-				CPE23:  nil,
-				Parent: nil,
-				Children: []db.UpdateAssetChildInput{
+			Input: UpdateAssetInput{
+				ID:      "asset",
+				Name:    nil,
+				CPE23:   nil,
+				Parents: nil,
+				Children: []UpdateAssetChildInput{
 					{
 						ID: "asset-child-2",
 					}, {
@@ -1325,13 +1349,13 @@ func TestMemoryUpdateAsset(t *testing.T) {
 				CVEs: nil,
 			},
 			ExpectedErr: nil,
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
-						ID:     "asset",
-						Name:   "Asset",
-						CPE23:  "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent: nil,
+						ID:      "asset",
+						Name:    "Asset",
+						CPE23:   "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Parents: []*model.Asset{},
 						Children: []*model.Asset{
 							{
 								ID: "asset-child-2",
@@ -1345,7 +1369,7 @@ func TestMemoryUpdateAsset(t *testing.T) {
 						ID:       "asset-child-1",
 						Name:     "Asset Child 1",
 						CPE23:    "cpe:2.3:a:fake:asset:1:child:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -1353,8 +1377,10 @@ func TestMemoryUpdateAsset(t *testing.T) {
 						ID:    "asset-child-2",
 						Name:  "Asset Child 2",
 						CPE23: "cpe:2.3:a:fake:asset:2:child:*:*:*:*:*:*",
-						Parent: &model.Asset{
-							ID: "asset",
+						Parents: []*model.Asset{
+							{
+								ID: "asset",
+							},
 						},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
@@ -1363,8 +1389,10 @@ func TestMemoryUpdateAsset(t *testing.T) {
 						ID:    "asset-child-3",
 						Name:  "Asset Child 3",
 						CPE23: "cpe:2.3:a:fake:asset:3:child:*:*:*:*:*:*",
-						Parent: &model.Asset{
-							ID: "asset",
+						Parents: []*model.Asset{
+							{
+								ID: "asset",
+							},
 						},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
@@ -1383,13 +1411,13 @@ func TestMemoryUpdateAsset(t *testing.T) {
 			},
 		},
 		"new-cves": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
@@ -1498,13 +1526,13 @@ func TestMemoryUpdateAsset(t *testing.T) {
 					},
 				},
 			},
-			Input: db.UpdateAssetInput{
+			Input: UpdateAssetInput{
 				ID:       "asset",
 				Name:     nil,
 				CPE23:    nil,
-				Parent:   nil,
+				Parents:  nil,
 				Children: nil,
-				CVEs: []db.UpdateAssetCVEsInput{
+				CVEs: []UpdateAssetCVEsInput{
 					{
 						ID: "cve-2",
 					}, {
@@ -1513,13 +1541,13 @@ func TestMemoryUpdateAsset(t *testing.T) {
 				},
 			},
 			ExpectedErr: nil,
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
@@ -1639,6 +1667,10 @@ func TestMemoryUpdateAsset(t *testing.T) {
 
 			assert.Equal(tt.ExpectedErr, err)
 			assertEqual(tt.ExpectedMemory, tt.Memory, assert)
+
+			// Check modified input/output does not affect database
+			alter(tt.Input)
+			assertEqual(tt.ExpectedMemory, tt.Memory, assert)
 		})
 	}
 }
@@ -1647,26 +1679,26 @@ func TestMemoryDeleteAsset(t *testing.T) {
 	t.Parallel()
 
 	var tests = map[string]struct {
-		Memory         *db.Memory
-		Input          db.DeleteAssetInput
+		Memory         *Memory
+		Input          DeleteAssetInput
 		ExpectedErr    error
-		ExpectedMemory *db.Memory
+		ExpectedMemory *Memory
 	}{
 		"unexisting-asset": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs:         map[string]*model.CVE{},
 				CVEVPIndex:   map[string]map[string]struct{}{},
 			},
-			Input: db.DeleteAssetInput{
+			Input: DeleteAssetInput{
 				ID: "asset",
 			},
-			ExpectedErr: &db.ErrNotExist{
-				K: db.KeyAsset,
+			ExpectedErr: &ErrNotExist{
+				K: KeyAsset,
 				V: "asset",
 			},
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs:         map[string]*model.CVE{},
@@ -1674,13 +1706,13 @@ func TestMemoryDeleteAsset(t *testing.T) {
 			},
 		},
 		"existing-asset": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset-parent": {
-						ID:     "asset-parent",
-						Name:   "Asset Parent",
-						CPE23:  "cpe:2.3:a:fake:asset:*:parent:*:*:*:*:*:*",
-						Parent: nil,
+						ID:      "asset-parent",
+						Name:    "Asset Parent",
+						CPE23:   "cpe:2.3:a:fake:asset:*:parent:*:*:*:*:*:*",
+						Parents: []*model.Asset{},
 						Children: []*model.Asset{
 							{
 								ID: "asset",
@@ -1692,8 +1724,10 @@ func TestMemoryDeleteAsset(t *testing.T) {
 						ID:    "asset",
 						Name:  "Asset",
 						CPE23: "cpe:2.3:a:fake:asset\\_goodbye:*:*:*:*:*:*:*:*",
-						Parent: &model.Asset{
-							ID: "asset-parent",
+						Parents: []*model.Asset{
+							{
+								ID: "asset-parent",
+							},
 						},
 						Children: []*model.Asset{
 							{
@@ -1710,8 +1744,10 @@ func TestMemoryDeleteAsset(t *testing.T) {
 						ID:    "asset-child",
 						Name:  "Asset Child",
 						CPE23: "cpe:2.3:a:fake:asset:*:child:*:*:*:*:*:*",
-						Parent: &model.Asset{
-							ID: "asset",
+						Parents: []*model.Asset{
+							{
+								ID: "asset",
+							},
 						},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
@@ -1763,17 +1799,17 @@ func TestMemoryDeleteAsset(t *testing.T) {
 					},
 				},
 			},
-			Input: db.DeleteAssetInput{
+			Input: DeleteAssetInput{
 				ID: "asset",
 			},
 			ExpectedErr: nil,
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset-parent": {
 						ID:       "asset-parent",
 						Name:     "Asset Parent",
 						CPE23:    "cpe:2.3:a:fake:asset:*:parent:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -1781,7 +1817,7 @@ func TestMemoryDeleteAsset(t *testing.T) {
 						ID:       "asset-child",
 						Name:     "Asset Child",
 						CPE23:    "cpe:2.3:a:fake:asset:*:child:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -1836,6 +1872,10 @@ func TestMemoryDeleteAsset(t *testing.T) {
 
 			assert.Equal(tt.ExpectedErr, err)
 			assertEqual(tt.ExpectedMemory, tt.Memory, assert)
+
+			// Check modified input/output does not affect database
+			alter(tt.Input)
+			assertEqual(tt.ExpectedMemory, tt.Memory, assert)
 		})
 	}
 }
@@ -1844,28 +1884,28 @@ func TestMemoryGetCVE(t *testing.T) {
 	t.Parallel()
 
 	var tests = map[string]struct {
-		Memory         *db.Memory
-		Input          db.GetCVEInput
+		Memory         *Memory
+		Input          GetCVEInput
 		ExpectedCVE    *model.CVE
 		ExpectedErr    error
-		ExpectedMemory *db.Memory
+		ExpectedMemory *Memory
 	}{
 		"unexisting-cve": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs:         map[string]*model.CVE{},
 				CVEVPIndex:   map[string]map[string]struct{}{},
 			},
-			Input: db.GetCVEInput{
+			Input: GetCVEInput{
 				ID: "cve",
 			},
 			ExpectedCVE: nil,
-			ExpectedErr: &db.ErrNotExist{
-				K: db.KeyCVE,
+			ExpectedErr: &ErrNotExist{
+				K: KeyCVE,
 				V: "cve",
 			},
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs:         map[string]*model.CVE{},
@@ -1873,7 +1913,7 @@ func TestMemoryGetCVE(t *testing.T) {
 			},
 		},
 		"existing-cve": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs: map[string]*model.CVE{
@@ -1917,7 +1957,7 @@ func TestMemoryGetCVE(t *testing.T) {
 					},
 				},
 			},
-			Input: db.GetCVEInput{
+			Input: GetCVEInput{
 				ID: "cve",
 			},
 			ExpectedCVE: &model.CVE{
@@ -1954,7 +1994,7 @@ func TestMemoryGetCVE(t *testing.T) {
 				},
 			},
 			ExpectedErr: nil,
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs: map[string]*model.CVE{
@@ -2011,12 +2051,10 @@ func TestMemoryGetCVE(t *testing.T) {
 			assert.Equal(tt.ExpectedErr, err)
 			assertEqual(tt.ExpectedMemory, tt.Memory, assert)
 
-			// Check return can't be modified
-			if cve != nil {
-				alter(cve)
-
-				assertEqual(tt.ExpectedMemory, tt.Memory, assert)
-			}
+			// Check modified input/output does not affect database
+			alter(tt.Input)
+			alter(cve)
+			assertEqual(tt.ExpectedMemory, tt.Memory, assert)
 		})
 	}
 }
@@ -2025,23 +2063,23 @@ func TestMemoryQueryCVEs(t *testing.T) {
 	t.Parallel()
 
 	var tests = map[string]struct {
-		Memory         *db.Memory
-		Input          db.QueryCVEInput
+		Memory         *Memory
+		Input          QueryCVEInput
 		ExpectedCVEs   []*model.CVE
-		ExpectedMemory *db.Memory
+		ExpectedMemory *Memory
 	}{
 		"no-cves": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs:         map[string]*model.CVE{},
 				CVEVPIndex:   map[string]map[string]struct{}{},
 			},
-			Input: db.QueryCVEInput{
+			Input: QueryCVEInput{
 				VP: nil,
 			},
 			ExpectedCVEs: []*model.CVE{},
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs:         map[string]*model.CVE{},
@@ -2049,7 +2087,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 			},
 		},
 		"multiple-cves": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs: map[string]*model.CVE{
@@ -2113,7 +2151,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 					},
 				},
 			},
-			Input: db.QueryCVEInput{
+			Input: QueryCVEInput{
 				VP: nil,
 			},
 			ExpectedCVEs: []*model.CVE{
@@ -2169,7 +2207,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 					References: []*model.Reference{},
 				},
 			},
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs: map[string]*model.CVE{
@@ -2235,7 +2273,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 			},
 		},
 		"indexed-cve": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs: map[string]*model.CVE{
@@ -2301,7 +2339,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 					},
 				},
 			},
-			Input: db.QueryCVEInput{
+			Input: QueryCVEInput{
 				VP: ptr("fake:asset"),
 			},
 			ExpectedCVEs: []*model.CVE{
@@ -2332,7 +2370,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 					References: []*model.Reference{},
 				},
 			},
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs: map[string]*model.CVE{
@@ -2400,7 +2438,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 			},
 		},
 		"indexed-vp-wildcard-assets": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs: map[string]*model.CVE{
@@ -2470,7 +2508,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 					},
 				},
 			},
-			Input: db.QueryCVEInput{
+			Input: QueryCVEInput{
 				VP: ptr("*:product"),
 			},
 			ExpectedCVEs: []*model.CVE{
@@ -2530,7 +2568,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 					References: []*model.Reference{},
 				},
 			},
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs: map[string]*model.CVE{
@@ -2611,6 +2649,10 @@ func TestMemoryQueryCVEs(t *testing.T) {
 
 			assert.ElementsMatch(tt.ExpectedCVEs, cves)
 			assertEqual(tt.ExpectedMemory, tt.Memory, assert)
+
+			// Check modified input/output does not affect database
+			alter(tt.Input)
+			assertEqual(tt.ExpectedMemory, tt.Memory, assert)
 		})
 	}
 }
@@ -2619,13 +2661,13 @@ func TestMemoryAddCVE(t *testing.T) {
 	t.Parallel()
 
 	var tests = map[string]struct {
-		Memory         *db.Memory
-		Input          db.AddCVEInput
+		Memory         *Memory
+		Input          AddCVEInput
 		ExpectedErr    error
-		ExpectedMemory *db.Memory
+		ExpectedMemory *Memory
 	}{
 		"cve-exist": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs: map[string]*model.CVE{
@@ -2663,19 +2705,19 @@ func TestMemoryAddCVE(t *testing.T) {
 					},
 				},
 			},
-			Input: db.AddCVEInput{
+			Input: AddCVEInput{
 				ID:              "cve",
 				Description:     "CVE in something.",
 				PublicationDate: timeParse("2020-02-01T14:30Z"),
 				LastUpdate:      timeParse("2020-02-01T14:30Z"),
 				CVSS20Vector:    nil,
 				CVSS31Vector:    nil,
-				Configurations: []db.AddCVENodeInput{
+				Configurations: []AddCVENodeInput{
 					{
 						Negate:   nil,
 						Operator: "OR",
 						Children: nil,
-						CPEMatches: []db.AddCVENodeCPEMatchInput{
+						CPEMatches: []AddCVENodeCPEMatchInput{
 							{
 								Vulnerable:            true,
 								CPE23:                 "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
@@ -2687,13 +2729,13 @@ func TestMemoryAddCVE(t *testing.T) {
 						},
 					},
 				},
-				References: []db.AddCVEReferenceInput{},
+				References: []AddCVEReferenceInput{},
 			},
-			ExpectedErr: &db.ErrAlreadyExist{
-				K: db.KeyCVE,
+			ExpectedErr: &ErrAlreadyExist{
+				K: KeyCVE,
 				V: "cve",
 			},
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs: map[string]*model.CVE{
@@ -2733,25 +2775,25 @@ func TestMemoryAddCVE(t *testing.T) {
 			},
 		},
 		"new-cve": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs:         map[string]*model.CVE{},
 				CVEVPIndex:   map[string]map[string]struct{}{},
 			},
-			Input: db.AddCVEInput{
+			Input: AddCVEInput{
 				ID:              "cve",
 				Description:     "CVE in something.",
 				PublicationDate: timeParse("2020-02-01T14:30Z"),
 				LastUpdate:      timeParse("2020-02-01T14:30Z"),
 				CVSS20Vector:    ptr("AV:A/AC:H/Au:S/C:P/I:P/A:C"),
 				CVSS31Vector:    ptr("CVSS:3.1/AV:A/AC:H/PR:L/UI:N/S:C/C:L/I:L/A:H"),
-				Configurations: []db.AddCVENodeInput{
+				Configurations: []AddCVENodeInput{
 					{
 						Negate:   nil,
 						Operator: "OR",
 						Children: nil,
-						CPEMatches: []db.AddCVENodeCPEMatchInput{
+						CPEMatches: []AddCVENodeCPEMatchInput{
 							{
 								Vulnerable:            true,
 								CPE23:                 "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
@@ -2763,7 +2805,7 @@ func TestMemoryAddCVE(t *testing.T) {
 						},
 					},
 				},
-				References: []db.AddCVEReferenceInput{
+				References: []AddCVEReferenceInput{
 					{
 						URL:       "https://example.com",
 						Name:      "Example reference",
@@ -2773,7 +2815,7 @@ func TestMemoryAddCVE(t *testing.T) {
 				},
 			},
 			ExpectedErr: nil,
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs: map[string]*model.CVE{
@@ -2830,6 +2872,10 @@ func TestMemoryAddCVE(t *testing.T) {
 
 			assert.Equal(tt.ExpectedErr, err)
 			assertEqual(tt.ExpectedMemory, tt.Memory, assert)
+
+			// Check modified input/output does not affect database
+			alter(tt.Input)
+			assertEqual(tt.ExpectedMemory, tt.Memory, assert)
 		})
 	}
 }
@@ -2838,19 +2884,19 @@ func TestMemoryUpdateCVE(t *testing.T) {
 	t.Parallel()
 
 	var tests = map[string]struct {
-		Memory         *db.Memory
-		Input          db.UpdateCVEInput
+		Memory         *Memory
+		Input          UpdateCVEInput
 		ExpectedErr    error
-		ExpectedMemory *db.Memory
+		ExpectedMemory *Memory
 	}{
 		"cve-not-exist": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs:         map[string]*model.CVE{},
 				CVEVPIndex:   map[string]map[string]struct{}{},
 			},
-			Input: db.UpdateCVEInput{
+			Input: UpdateCVEInput{
 				ID:             "cve",
 				Description:    nil,
 				LastUpdate:     nil,
@@ -2859,11 +2905,11 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				Configurations: nil,
 				Assets:         nil,
 			},
-			ExpectedErr: &db.ErrNotExist{
-				K: db.KeyCVE,
+			ExpectedErr: &ErrNotExist{
+				K: KeyCVE,
 				V: "cve",
 			},
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs:         map[string]*model.CVE{},
@@ -2871,7 +2917,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 			},
 		},
 		"asset-not-exist": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs: map[string]*model.CVE{
@@ -2909,24 +2955,24 @@ func TestMemoryUpdateCVE(t *testing.T) {
 					},
 				},
 			},
-			Input: db.UpdateCVEInput{
+			Input: UpdateCVEInput{
 				ID:             "cve",
 				Description:    nil,
 				LastUpdate:     nil,
 				CVSS20Vector:   nil,
 				CVSS31Vector:   nil,
 				Configurations: nil,
-				Assets: []db.UpdateCVEAssetInput{
+				Assets: []UpdateCVEAssetInput{
 					{
 						ID: "asset",
 					},
 				},
 			},
-			ExpectedErr: &db.ErrNotExist{
-				K: db.KeyAsset,
+			ExpectedErr: &ErrNotExist{
+				K: KeyAsset,
 				V: "asset",
 			},
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs: map[string]*model.CVE{
@@ -2966,7 +3012,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 			},
 		},
 		"new-description": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs: map[string]*model.CVE{
@@ -2984,7 +3030,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				},
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
-			Input: db.UpdateCVEInput{
+			Input: UpdateCVEInput{
 				ID:             "cve",
 				Description:    ptr("CVE in something, but new."),
 				LastUpdate:     nil,
@@ -2995,7 +3041,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				References:     nil,
 			},
 			ExpectedErr: nil,
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs: map[string]*model.CVE{
@@ -3015,7 +3061,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 			},
 		},
 		"new-lastUpdate": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs: map[string]*model.CVE{
@@ -3053,7 +3099,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 					},
 				},
 			},
-			Input: db.UpdateCVEInput{
+			Input: UpdateCVEInput{
 				ID:             "cve",
 				Description:    nil,
 				LastUpdate:     ptr(timeParse("2022-02-01T14:30Z")),
@@ -3064,7 +3110,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				References:     nil,
 			},
 			ExpectedErr: nil,
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs: map[string]*model.CVE{
@@ -3104,7 +3150,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 			},
 		},
 		"new-cvss20vector": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs: map[string]*model.CVE{
@@ -3122,7 +3168,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				},
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
-			Input: db.UpdateCVEInput{
+			Input: UpdateCVEInput{
 				ID:             "cve",
 				Description:    nil,
 				LastUpdate:     nil,
@@ -3133,7 +3179,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				References:     nil,
 			},
 			ExpectedErr: nil,
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs: map[string]*model.CVE{
@@ -3153,7 +3199,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 			},
 		},
 		"new-cvss30vector": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs: map[string]*model.CVE{
@@ -3172,7 +3218,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				},
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
-			Input: db.UpdateCVEInput{
+			Input: UpdateCVEInput{
 				ID:             "cve",
 				Description:    nil,
 				LastUpdate:     nil,
@@ -3184,7 +3230,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				References:     nil,
 			},
 			ExpectedErr: nil,
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs: map[string]*model.CVE{
@@ -3205,7 +3251,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 			},
 		},
 		"new-cvss31vector": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs: map[string]*model.CVE{
@@ -3223,7 +3269,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				},
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
-			Input: db.UpdateCVEInput{
+			Input: UpdateCVEInput{
 				ID:             "cve",
 				Description:    nil,
 				LastUpdate:     nil,
@@ -3234,7 +3280,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				References:     nil,
 			},
 			ExpectedErr: nil,
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs: map[string]*model.CVE{
@@ -3254,7 +3300,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 			},
 		},
 		"new-configurations": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs: map[string]*model.CVE{
@@ -3302,18 +3348,18 @@ func TestMemoryUpdateCVE(t *testing.T) {
 					},
 				},
 			},
-			Input: db.UpdateCVEInput{
+			Input: UpdateCVEInput{
 				ID:           "cve",
 				Description:  nil,
 				LastUpdate:   nil,
 				CVSS20Vector: nil,
 				CVSS31Vector: nil,
-				Configurations: []db.UpdateCVENodeInput{
+				Configurations: []UpdateCVENodeInput{
 					{
 						Negate:   ptr(true),
 						Operator: "OR",
-						Children: []db.UpdateCVENodeInput{},
-						CPEMatches: []db.UpdateCVENodeCPEMatchInput{
+						Children: []UpdateCVENodeInput{},
+						CPEMatches: []UpdateCVENodeCPEMatchInput{
 							{
 								Vulnerable:            false,
 								CPE23:                 "cpe:2.3:a:fake:asset:0.9.6:*:*:*:*:*:*:*",
@@ -3336,7 +3382,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				References: nil,
 			},
 			ExpectedErr: nil,
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs: map[string]*model.CVE{
@@ -3386,13 +3432,13 @@ func TestMemoryUpdateCVE(t *testing.T) {
 			},
 		},
 		"new-assets": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset-1": {
 						ID:       "asset-1",
 						Name:     "Asset 1",
 						CPE23:    "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
@@ -3404,7 +3450,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						ID:       "asset-2",
 						Name:     "Asset 2",
 						CPE23:    "cpe:2.3:a:fake:asset:2:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -3412,7 +3458,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						ID:       "asset-3",
 						Name:     "Asset 3",
 						CPE23:    "cpe:2.3:a:fake:asset:3:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
@@ -3469,14 +3515,14 @@ func TestMemoryUpdateCVE(t *testing.T) {
 					},
 				},
 			},
-			Input: db.UpdateCVEInput{
+			Input: UpdateCVEInput{
 				ID:             "cve",
 				Description:    nil,
 				LastUpdate:     nil,
 				CVSS20Vector:   nil,
 				CVSS31Vector:   nil,
 				Configurations: nil,
-				Assets: []db.UpdateCVEAssetInput{
+				Assets: []UpdateCVEAssetInput{
 					{
 						ID: "asset-2",
 					}, {
@@ -3486,13 +3532,13 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				References: nil,
 			},
 			ExpectedErr: nil,
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset-1": {
 						ID:       "asset-1",
 						Name:     "Asset 1",
 						CPE23:    "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -3500,7 +3546,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						ID:       "asset-2",
 						Name:     "Asset 2",
 						CPE23:    "cpe:2.3:a:fake:asset:2:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
@@ -3512,7 +3558,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						ID:       "asset-3",
 						Name:     "Asset 3",
 						CPE23:    "cpe:2.3:a:fake:asset:3:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
@@ -3571,7 +3617,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 			},
 		},
 		"new-references": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs: map[string]*model.CVE{
@@ -3596,7 +3642,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				},
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
-			Input: db.UpdateCVEInput{
+			Input: UpdateCVEInput{
 				ID:             "cve",
 				Description:    nil,
 				LastUpdate:     nil,
@@ -3604,7 +3650,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				CVSS31Vector:   nil,
 				Configurations: nil,
 				Assets:         nil,
-				References: []db.UpdateCVEReferencesInput{
+				References: []UpdateCVEReferencesInput{
 					{
 						URL:       "https://new-example.com",
 						Name:      "Example reference",
@@ -3614,7 +3660,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				},
 			},
 			ExpectedErr: nil,
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs: map[string]*model.CVE{
@@ -3650,6 +3696,10 @@ func TestMemoryUpdateCVE(t *testing.T) {
 
 			assert.Equal(tt.ExpectedErr, err)
 			assertEqual(tt.ExpectedMemory, tt.Memory, assert)
+
+			// Check modified input/output does not affect database
+			alter(tt.Input)
+			assertEqual(tt.ExpectedMemory, tt.Memory, assert)
 		})
 	}
 }
@@ -3658,26 +3708,26 @@ func TestMemoryDeleteCVE(t *testing.T) {
 	t.Parallel()
 
 	var tests = map[string]struct {
-		Memory         *db.Memory
-		Input          db.DeleteCVEInput
+		Memory         *Memory
+		Input          DeleteCVEInput
 		ExpectedErr    error
-		ExpectedMemory *db.Memory
+		ExpectedMemory *Memory
 	}{
 		"unexisting-cve": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs:         map[string]*model.CVE{},
 				CVEVPIndex:   map[string]map[string]struct{}{},
 			},
-			Input: db.DeleteCVEInput{
+			Input: DeleteCVEInput{
 				ID: "cve",
 			},
-			ExpectedErr: &db.ErrNotExist{
-				K: db.KeyCVE,
+			ExpectedErr: &ErrNotExist{
+				K: KeyCVE,
 				V: "cve",
 			},
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs:         map[string]*model.CVE{},
@@ -3685,13 +3735,13 @@ func TestMemoryDeleteCVE(t *testing.T) {
 			},
 		},
 		"existing-cve": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
@@ -3744,17 +3794,17 @@ func TestMemoryDeleteCVE(t *testing.T) {
 					},
 				},
 			},
-			Input: db.DeleteCVEInput{
+			Input: DeleteCVEInput{
 				ID: "cve",
 			},
 			ExpectedErr: nil,
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -3778,6 +3828,10 @@ func TestMemoryDeleteCVE(t *testing.T) {
 
 			assert.Equal(tt.ExpectedErr, err)
 			assertEqual(tt.ExpectedMemory, tt.Memory, assert)
+
+			// Check modified input/output does not affect database
+			alter(tt.Input)
+			assertEqual(tt.ExpectedMemory, tt.Memory, assert)
 		})
 	}
 }
@@ -3786,19 +3840,19 @@ func TestGetAssetCVEs(t *testing.T) {
 	t.Parallel()
 
 	var tests = map[string]struct {
-		Memory         *db.Memory
+		Memory         *Memory
 		Asset          *model.Asset
 		ExpectedCVEs   []*model.CVE
-		ExpectedMemory *db.Memory
+		ExpectedMemory *Memory
 	}{
 		"no-cves": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -3815,18 +3869,18 @@ func TestGetAssetCVEs(t *testing.T) {
 				ID:       "asset",
 				Name:     "Asset",
 				CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-				Parent:   nil,
+				Parents:  []*model.Asset{},
 				Children: []*model.Asset{},
 				CVEs:     []*model.CVE{},
 			},
 			ExpectedCVEs: []*model.CVE{},
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs:     []*model.CVE{},
 					},
@@ -3841,13 +3895,13 @@ func TestGetAssetCVEs(t *testing.T) {
 			},
 		},
 		"multiple-cves": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
@@ -3901,7 +3955,7 @@ func TestGetAssetCVEs(t *testing.T) {
 				ID:       "asset",
 				Name:     "Asset",
 				CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-				Parent:   nil,
+				Parents:  []*model.Asset{},
 				Children: []*model.Asset{},
 				CVEs: []*model.CVE{
 					{
@@ -3942,13 +3996,13 @@ func TestGetAssetCVEs(t *testing.T) {
 					References: []*model.Reference{},
 				},
 			},
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
 						ID:       "asset",
 						Name:     "Asset",
 						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
@@ -4009,10 +4063,9 @@ func TestGetAssetCVEs(t *testing.T) {
 
 			assert.ElementsMatch(tt.ExpectedCVEs, cves)
 
-			// Check return can't be modified
-			for i := 0; i < len(cves); i++ {
-				alter(cves[i])
-			}
+			// Check modified input/output does not affect database
+			alter(tt.Asset)
+			alter(cves)
 			assertEqual(tt.ExpectedMemory, tt.Memory, assert)
 		})
 	}
@@ -4022,13 +4075,13 @@ func TestGetCVEAssets(t *testing.T) {
 	t.Parallel()
 
 	var tests = map[string]struct {
-		Memory         *db.Memory
+		Memory         *Memory
 		CVE            *model.CVE
 		ExpectedAssets []*model.Asset
-		ExpectedMemory *db.Memory
+		ExpectedMemory *Memory
 	}{
 		"no-assets": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs: map[string]*model.CVE{
@@ -4056,7 +4109,7 @@ func TestGetCVEAssets(t *testing.T) {
 				Assets:          []*model.Asset{},
 			},
 			ExpectedAssets: []*model.Asset{},
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
 				CVEs: map[string]*model.CVE{
@@ -4075,13 +4128,13 @@ func TestGetCVEAssets(t *testing.T) {
 			},
 		},
 		"multiple-assets": {
-			Memory: &db.Memory{
+			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset-1": {
 						ID:       "asset-1",
 						Name:     "Asset 1",
 						CPE23:    "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
@@ -4093,7 +4146,7 @@ func TestGetCVEAssets(t *testing.T) {
 						ID:       "asset-2",
 						Name:     "Asset 2",
 						CPE23:    "cpe:2.3:a:fake:asset:2:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
@@ -4151,7 +4204,7 @@ func TestGetCVEAssets(t *testing.T) {
 					ID:       "asset-1",
 					Name:     "Asset 1",
 					CPE23:    "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
-					Parent:   nil,
+					Parents:  []*model.Asset{},
 					Children: []*model.Asset{},
 					CVEs: []*model.CVE{
 						{
@@ -4162,7 +4215,7 @@ func TestGetCVEAssets(t *testing.T) {
 					ID:       "asset-2",
 					Name:     "Asset 2",
 					CPE23:    "cpe:2.3:a:fake:asset:2:*:*:*:*:*:*:*",
-					Parent:   nil,
+					Parents:  []*model.Asset{},
 					Children: []*model.Asset{},
 					CVEs: []*model.CVE{
 						{
@@ -4171,13 +4224,13 @@ func TestGetCVEAssets(t *testing.T) {
 					},
 				},
 			},
-			ExpectedMemory: &db.Memory{
+			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset-1": {
 						ID:       "asset-1",
 						Name:     "Asset 1",
 						CPE23:    "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
@@ -4189,7 +4242,7 @@ func TestGetCVEAssets(t *testing.T) {
 						ID:       "asset-2",
 						Name:     "Asset 2",
 						CPE23:    "cpe:2.3:a:fake:asset:2:*:*:*:*:*:*:*",
-						Parent:   nil,
+						Parents:  []*model.Asset{},
 						Children: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
@@ -4236,10 +4289,9 @@ func TestGetCVEAssets(t *testing.T) {
 
 			assert.ElementsMatch(tt.ExpectedAssets, assets)
 
-			// Check return can't be modified
-			for i := 0; i < len(assets); i++ {
-				alter(assets[i])
-			}
+			// Check modified input/output does not affect database
+			alter(tt.CVE)
+			alter(assets)
 			assertEqual(tt.ExpectedMemory, tt.Memory, assert)
 		})
 	}

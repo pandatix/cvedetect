@@ -10,6 +10,15 @@ import (
 	"github.com/pandatix/cvedetect/model"
 )
 
+// Memory holds the in-memory graph database, powering the whole tool.
+// It only achieve what a standard graph database is expected to do :
+// checks for consistency of (un)existing objects, but no more.
+// Cycles, multigraphs...etc. are handled by the business layer.
+//
+// Input and output objects are hardened by a copy of values to block
+// the possibility of modifying the outside data affecting the saved data,
+// so a Memory instance can behave as an outside component (sealed from
+// the current application).
 type Memory struct {
 	mx sync.RWMutex
 
@@ -67,7 +76,7 @@ func (mem *Memory) QueryAssets(input QueryAssetInput) []*model.Asset {
 			inWFN, _ := naming.UnbindFS("cpe:2.3:a:" + *input.VP + "*:*:*:*:*:*:*:*")
 			mp = map[string]*model.Asset{}
 			for vp, assetsIDs := range mem.AssetVPIndex {
-				// XXX workaround as matching.assetare is not directly accessible.
+				// XXX workaround as matching.CompareStrings are is not directly accessible.
 				assetWFN, _ := naming.UnbindFS("cpe:2.3:a:" + vp + "*:*:*:*:*:*:*:*")
 				if matching.IsSuperset(inWFN, assetWFN) {
 					for assetID := range assetsIDs {
@@ -98,20 +107,23 @@ func (mem *Memory) AddAsset(input AddAssetInput) error {
 	defer mem.mx.Unlock()
 
 	// Check for consistency
+	// => Component
 	if _, ok := mem.Assets[input.ID]; ok {
 		return &ErrAlreadyExist{
 			K: KeyAsset,
 			V: input.ID,
 		}
 	}
-	if input.Parent != nil {
-		if _, ok := mem.Assets[input.Parent.ID]; !ok {
+	// => Parents
+	for _, parent := range input.Parents {
+		if _, ok := mem.Assets[parent.ID]; !ok {
 			return &ErrNotExist{
 				K: KeyAsset,
-				V: input.Parent.ID,
+				V: parent.ID,
 			}
 		}
 	}
+	// => Children
 	for _, child := range input.Children {
 		if _, ok := mem.Assets[child.ID]; !ok {
 			return &ErrNotExist{
@@ -120,6 +132,8 @@ func (mem *Memory) AddAsset(input AddAssetInput) error {
 			}
 		}
 	}
+
+	// TODO Check if will create a cycle
 
 	// Save data
 	// => Assets map
@@ -131,26 +145,27 @@ func (mem *Memory) AddAsset(input AddAssetInput) error {
 
 		// Set child's parent relation
 		child := mem.Assets[child.ID]
-		if child.Parent != nil {
-			// Drop existing parent relation
-			parent := mem.Assets[child.Parent.ID]
-			parent.Children = removeAsset(parent.Children, child)
-		}
-		child.Parent = &model.Asset{
+		child.Parents = append(child.Parents, &model.Asset{
 			ID: input.ID,
-		}
+		})
 	}
-	var parent *model.Asset = nil
-	if input.Parent != nil {
-		parent = &model.Asset{
-			ID: input.Parent.ID,
+	parents := make([]*model.Asset, len(input.Parents))
+	for i, parent := range input.Parents {
+		parents[i] = &model.Asset{
+			ID: parent.ID,
 		}
+
+		// Set parent's child relation
+		parent := mem.Assets[parent.ID]
+		parent.Children = append(parent.Children, &model.Asset{
+			ID: input.ID,
+		})
 	}
 	mem.Assets[input.ID] = &model.Asset{
 		ID:       input.ID,
 		Name:     input.Name,
 		CPE23:    input.CPE23,
-		Parent:   parent,
+		Parents:  parents,
 		Children: children,
 		CVEs:     []*model.CVE{},
 	}
@@ -178,11 +193,11 @@ func (mem *Memory) UpdateAsset(input UpdateAssetInput) error {
 		}
 	}
 	// => Parent
-	if input.Parent != nil {
-		if _, ok := mem.Assets[input.Parent.ID]; !ok {
+	for _, parent := range input.Parents {
+		if _, ok := mem.Assets[parent.ID]; !ok {
 			return &ErrNotExist{
 				K: KeyAsset,
-				V: input.Parent.ID,
+				V: parent.ID,
 			}
 		}
 	}
@@ -204,6 +219,8 @@ func (mem *Memory) UpdateAsset(input UpdateAssetInput) error {
 			}
 		}
 	}
+
+	// TODO Check if will create a cycle
 
 	// Save data
 	// => Name
@@ -230,20 +247,46 @@ func (mem *Memory) UpdateAsset(input UpdateAssetInput) error {
 		}
 		asset.CPE23 = *input.CPE23
 	}
-	// => Parent
-	if input.Parent != nil {
-		if asset.Parent != nil {
-			// Drop existing parent relation
-			parent := mem.Assets[asset.Parent.ID]
-			parent.Children = removeAsset(parent.Children, asset)
+	// => Parents
+	if input.Parents != nil {
+		newParents := make([]*model.Asset, len(input.Parents))
+		for i, parent := range input.Parents {
+			newParents[i] = &model.Asset{
+				ID: parent.ID,
+			}
 		}
-		asset.Parent = &model.Asset{
-			ID: input.Parent.ID,
+		// Update parents
+		for _, parent := range asset.Parents {
+			remains := false
+			for _, inputParent := range input.Parents {
+				if parent.ID == inputParent.ID {
+					remains = true
+					break
+				}
+			}
+			if !remains {
+				// Delete link
+				parent := mem.Assets[parent.ID]
+				parent.Children = removeAsset(parent.Children, asset)
+			}
 		}
-		newParent := mem.Assets[input.Parent.ID]
-		newParent.Children = append(newParent.Children, &model.Asset{
-			ID: asset.ID,
-		})
+		for _, inputParent := range input.Parents {
+			found := false
+			for _, parent := range asset.Parents {
+				if inputParent.ID == parent.ID {
+					found = true
+					break
+				}
+			}
+			if !found {
+				// Create link
+				parent := mem.Assets[inputParent.ID]
+				parent.Children = append(parent.Children, &model.Asset{
+					ID: asset.ID,
+				})
+			}
+		}
+		asset.Parents = newParents
 	}
 	// => Children
 	if input.Children != nil {
@@ -265,7 +308,7 @@ func (mem *Memory) UpdateAsset(input UpdateAssetInput) error {
 			if !remains {
 				// Delete link
 				child := mem.Assets[child.ID]
-				child.Parent = nil
+				child.Parents = removeAsset(child.Parents, asset)
 			}
 		}
 		for _, inputChild := range input.Children {
@@ -277,10 +320,11 @@ func (mem *Memory) UpdateAsset(input UpdateAssetInput) error {
 				}
 			}
 			if !found {
+				// Create link
 				child := mem.Assets[inputChild.ID]
-				child.Parent = &model.Asset{
+				child.Parents = append(child.Parents, &model.Asset{
 					ID: asset.ID,
-				}
+				})
 			}
 		}
 		asset.Children = newChildren
@@ -345,14 +389,14 @@ func (mem *Memory) DeleteAsset(input DeleteAssetInput) error {
 
 	// Save data
 	// => Parent
-	if asset.Parent != nil {
-		parent := mem.Assets[asset.Parent.ID]
+	for _, parent := range asset.Parents {
+		parent := mem.Assets[parent.ID]
 		parent.Children = removeAsset(parent.Children, asset)
 	}
 	// => Children
-	for _, assetChild := range asset.Children {
-		child := mem.Assets[assetChild.ID]
-		child.Parent = nil
+	for _, child := range asset.Children {
+		child := mem.Assets[child.ID]
+		child.Parents = removeAsset(child.Parents, asset)
 	}
 	// => CVEs
 	for _, assetCve := range asset.CVEs {
@@ -734,6 +778,12 @@ func getNodeCPEs23(node *model.Node) []string {
 }
 
 func copyAsset(asset *model.Asset) *model.Asset {
+	parents := make([]*model.Asset, len(asset.Parents))
+	for i, parent := range asset.Parents {
+		parents[i] = &model.Asset{
+			ID: parent.ID,
+		}
+	}
 	children := make([]*model.Asset, len(asset.Children))
 	for i, child := range asset.Children {
 		children[i] = &model.Asset{
@@ -746,17 +796,11 @@ func copyAsset(asset *model.Asset) *model.Asset {
 			ID: cve.ID,
 		}
 	}
-	parent := (*model.Asset)(nil)
-	if asset.Parent != nil {
-		parent = &model.Asset{
-			ID: asset.Parent.ID,
-		}
-	}
 	return &model.Asset{
 		ID:       asset.ID,
 		Name:     asset.Name,
 		CPE23:    asset.CPE23,
-		Parent:   parent,
+		Parents:  parents,
 		Children: children,
 		CVEs:     cves,
 	}

@@ -52,9 +52,8 @@ func TestAddAsset(t *testing.T) {
 						Description:     "CVE description",
 						PublicationDate: timeParse("2022-02-01T14:30Z"),
 						LastUpdate:      timeParse("2022-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS30Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
+						CVSS3Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -152,9 +151,8 @@ func TestUpdateAsset(t *testing.T) {
 						Description:     "CVE description",
 						PublicationDate: timeParse("2022-01-02T14:30Z"),
 						LastUpdate:      timeParse("2022-01-02T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS30Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
+						CVSS3Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -227,9 +225,8 @@ func TestUpdateAsset(t *testing.T) {
 						Description:     "CVE description",
 						PublicationDate: timeParse("2022-01-02T14:30Z"),
 						LastUpdate:      timeParse("2022-01-02T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS30Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
+						CVSS3Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -306,9 +303,8 @@ func TestUpdateAsset(t *testing.T) {
 						Description:     "CVE description",
 						PublicationDate: timeParse("2022-01-02T14:30Z"),
 						LastUpdate:      timeParse("2022-01-02T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS30Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
+						CVSS3Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -412,9 +408,8 @@ func TestDeleteAsset(t *testing.T) {
 						Description:     "CVE description",
 						PublicationDate: timeParse("2022-01-02T14:30Z"),
 						LastUpdate:      timeParse("2022-01-02T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS30Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
+						CVSS3Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,

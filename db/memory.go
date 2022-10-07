@@ -501,9 +501,8 @@ func (mem *Memory) AddCVE(input AddCVEInput) error {
 		Description:     input.Description,
 		PublicationDate: input.PublicationDate,
 		LastUpdate:      input.LastUpdate,
-		CVSS20Vector:    cpPtrValue(input.CVSS20Vector),
-		CVSS30Vector:    cpPtrValue(input.CVSS30Vector),
-		CVSS31Vector:    cpPtrValue(input.CVSS31Vector),
+		CVSS2Vector:     cpPtrValue(input.CVSS2Vector),
+		CVSS3Vector:     cpPtrValue(input.CVSS3Vector),
 		Configurations:  configurations,
 		Assets:          []*model.Asset{},
 		References:      references,
@@ -553,17 +552,13 @@ func (mem *Memory) UpdateCVE(input UpdateCVEInput) error {
 	if input.LastUpdate != nil {
 		cve.LastUpdate = *input.LastUpdate
 	}
-	// => CVSS20Vector
-	if input.CVSS20Vector != nil {
-		cve.CVSS20Vector = cpPtrValue(input.CVSS20Vector)
+	// => CVSS2Vector
+	if input.CVSS2Vector != nil {
+		cve.CVSS2Vector = cpPtrValue(input.CVSS2Vector)
 	}
-	// => CVSS30Vector
-	if input.CVSS30Vector != nil {
-		cve.CVSS30Vector = cpPtrValue(input.CVSS30Vector)
-	}
-	// => CVSS31Vector
-	if input.CVSS31Vector != nil {
-		cve.CVSS31Vector = cpPtrValue(input.CVSS31Vector)
+	// => CVSS3Vector
+	if input.CVSS3Vector != nil {
+		cve.CVSS3Vector = cpPtrValue(input.CVSS3Vector)
 	}
 	// => Configurations
 	if input.Configurations != nil {
@@ -833,9 +828,8 @@ func copyCVE(cve *model.CVE) *model.CVE {
 		Description:     cve.Description,
 		PublicationDate: cve.PublicationDate,
 		LastUpdate:      cve.LastUpdate,
-		CVSS20Vector:    cpPtrValue(cve.CVSS20Vector),
-		CVSS30Vector:    cpPtrValue(cve.CVSS30Vector),
-		CVSS31Vector:    cpPtrValue(cve.CVSS31Vector),
+		CVSS2Vector:     cpPtrValue(cve.CVSS2Vector),
+		CVSS3Vector:     cpPtrValue(cve.CVSS3Vector),
 		Configurations:  configurations,
 		Assets:          assets,
 		References:      references,

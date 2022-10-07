@@ -68,9 +68,8 @@ type AddCVEInput struct {
 	Description     string                 `json:"description"`
 	PublicationDate time.Time              `json:"publicationDate"`
 	LastUpdate      time.Time              `json:"lastUpdate"`
-	CVSS20Vector    *string                `json:"cvss20Vector,omitempty"`
-	CVSS30Vector    *string                `json:"cvss30Vector,omitempty"`
-	CVSS31Vector    *string                `json:"cvss31Vector,omitempty"`
+	CVSS2Vector     *string                `json:"cvss2Vector,omitempty"`
+	CVSS3Vector     *string                `json:"cvss3Vector,omitempty"`
 	Configurations  []AddCVENodeInput      `json:"configurations"`
 	References      []AddCVEReferenceInput `json:"references"`
 }
@@ -102,9 +101,8 @@ type UpdateCVEInput struct {
 	ID             string                     `json:"id"`
 	Description    *string                    `json:"description,omitempty"`
 	LastUpdate     *time.Time                 `json:"lastUpdate"`
-	CVSS20Vector   *string                    `json:"cvss20Vector,omitempty"`
-	CVSS30Vector   *string                    `json:"cvss30Vector,omitempty"`
-	CVSS31Vector   *string                    `json:"cvss31Vector,omitempty"`
+	CVSS2Vector    *string                    `json:"cvss2Vector,omitempty"`
+	CVSS3Vector    *string                    `json:"cvss3Vector,omitempty"`
 	Configurations []UpdateCVENodeInput       `json:"configurations"`
 	Assets         []UpdateCVEAssetInput      `json:"assets"`
 	References     []UpdateCVEReferencesInput `json:"references"`

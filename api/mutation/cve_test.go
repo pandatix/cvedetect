@@ -30,9 +30,8 @@ func TestAddCVE(t *testing.T) {
 				Description:     "Gitea 1.12.x and 1.13.x before 1.13.4 allows XSS via certain issue data in some situations.",
 				PublicationDate: timeParse("2020-02-01T14:00Z"),
 				LastUpdate:      timeParse("2020-02-01T14:00Z"),
-				CVSS20Vector:    nil,
-				CVSS30Vector:    nil,
-				CVSS31Vector:    nil,
+				CVSS2Vector:     nil,
+				CVSS3Vector:     nil,
 				Configurations: []db.AddCVENodeInput{
 					{
 						Negate:   nil,
@@ -64,9 +63,8 @@ func TestAddCVE(t *testing.T) {
 				Description:     "Gitea 1.12.x and 1.13.x before 1.13.4 allows XSS via certain issue data in some situations.",
 				PublicationDate: timeParse("2020-02-01T14:00Z"),
 				LastUpdate:      timeParse("2020-02-01T14:00Z"),
-				CVSS20Vector:    nil,
-				CVSS30Vector:    nil,
-				CVSS31Vector:    nil,
+				CVSS2Vector:     nil,
+				CVSS3Vector:     nil,
 				Configurations: []*model.Node{
 					{
 						Negate:   nil,
@@ -130,9 +128,8 @@ func TestAddCVE(t *testing.T) {
 				Description:     "Gitea 1.12.x and 1.13.x before 1.13.4 allows XSS via certain issue data in some situations.",
 				PublicationDate: timeParse("2020-02-01T14:00Z"),
 				LastUpdate:      timeParse("2020-02-01T14:00Z"),
-				CVSS20Vector:    ptr("AV:N/AC:M/Au:S/C:N/I:P/A:N"),
-				CVSS30Vector:    nil,
-				CVSS31Vector:    ptr("CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N"),
+				CVSS2Vector:     ptr("AV:N/AC:M/Au:S/C:N/I:P/A:N"),
+				CVSS3Vector:     ptr("CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N"),
 				Configurations: []db.AddCVENodeInput{
 					{
 						Negate:   nil,
@@ -164,9 +161,8 @@ func TestAddCVE(t *testing.T) {
 				Description:     "Gitea 1.12.x and 1.13.x before 1.13.4 allows XSS via certain issue data in some situations.",
 				PublicationDate: timeParse("2020-02-01T14:00Z"),
 				LastUpdate:      timeParse("2020-02-01T14:00Z"),
-				CVSS20Vector:    ptr("AV:N/AC:M/Au:S/C:N/I:P/A:N"),
-				CVSS30Vector:    nil,
-				CVSS31Vector:    ptr("CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N"),
+				CVSS2Vector:     ptr("AV:N/AC:M/Au:S/C:N/I:P/A:N"),
+				CVSS3Vector:     ptr("CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N"),
 				Configurations: []*model.Node{
 					{
 						Negate:   nil,
@@ -250,9 +246,8 @@ func TestUpdateCVE(t *testing.T) {
 						Description:     "Gitea 1.12.x and 1.13.x before 1.13.4 allows XSS via certain issue data in some situations.",
 						PublicationDate: timeParse("2020-02-01T14:00Z"),
 						LastUpdate:      timeParse("2020-02-01T14:00Z"),
-						CVSS20Vector:    ptr("AV:N/AC:M/Au:S/C:N/I:P/A:N"),
-						CVSS30Vector:    nil,
-						CVSS31Vector:    ptr("CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N"),
+						CVSS2Vector:     ptr("AV:N/AC:M/Au:S/C:N/I:P/A:N"),
+						CVSS3Vector:     ptr("CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N"),
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -300,9 +295,8 @@ func TestUpdateCVE(t *testing.T) {
 				Description:     "Gitea 1.12.x and 1.13.x before 1.13.4 allows XSS via certain issue data in some situations.",
 				PublicationDate: timeParse("2020-02-01T14:00Z"),
 				LastUpdate:      timeParse("2020-02-01T14:00Z"),
-				CVSS20Vector:    ptr("AV:N/AC:M/Au:S/C:N/I:P/A:N"),
-				CVSS30Vector:    nil,
-				CVSS31Vector:    ptr("CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N"),
+				CVSS2Vector:     ptr("AV:N/AC:M/Au:S/C:N/I:P/A:N"),
+				CVSS3Vector:     ptr("CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N"),
 				Configurations:  []*model.Node{},
 				References:      []*model.Reference{},
 				Assets:          []*model.Asset{},
@@ -332,9 +326,8 @@ func TestUpdateCVE(t *testing.T) {
 						Description:     "CVE description",
 						PublicationDate: timeParse("2022-01-02T14:30Z"),
 						LastUpdate:      timeParse("2020-01-02T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS30Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
+						CVSS3Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -387,9 +380,8 @@ func TestUpdateCVE(t *testing.T) {
 				Description:     "CVE description",
 				PublicationDate: timeParse("2022-01-02T14:30Z"),
 				LastUpdate:      timeParse("2020-01-02T14:30Z"),
-				CVSS20Vector:    nil,
-				CVSS30Vector:    nil,
-				CVSS31Vector:    nil,
+				CVSS2Vector:     nil,
+				CVSS3Vector:     nil,
 				Configurations: []*model.Node{
 					{
 						Negate:   nil,
@@ -443,9 +435,8 @@ func TestUpdateCVE(t *testing.T) {
 						Description:     "CVE description",
 						PublicationDate: timeParse("2022-01-02T14:30Z"),
 						LastUpdate:      timeParse("2020-01-02T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS30Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
+						CVSS3Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -502,9 +493,8 @@ func TestUpdateCVE(t *testing.T) {
 				Description:     "CVE description",
 				PublicationDate: timeParse("2022-01-02T14:30Z"),
 				LastUpdate:      timeParse("2020-01-02T14:30Z"),
-				CVSS20Vector:    nil,
-				CVSS30Vector:    nil,
-				CVSS31Vector:    nil,
+				CVSS2Vector:     nil,
+				CVSS3Vector:     nil,
 				Configurations: []*model.Node{
 					{
 						Negate:   nil,
@@ -581,9 +571,8 @@ func TestDeleteCVE(t *testing.T) {
 						Description:     "CVE description",
 						PublicationDate: timeParse("2022-01-02T14:30Z"),
 						LastUpdate:      timeParse("2020-01-02T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS30Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
+						CVSS3Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -623,9 +612,8 @@ func TestDeleteCVE(t *testing.T) {
 				Description:     "CVE description",
 				PublicationDate: timeParse("2022-01-02T14:30Z"),
 				LastUpdate:      timeParse("2020-01-02T14:30Z"),
-				CVSS20Vector:    nil,
-				CVSS30Vector:    nil,
-				CVSS31Vector:    nil,
+				CVSS2Vector:     nil,
+				CVSS3Vector:     nil,
 				Configurations: []*model.Node{
 					{
 						Negate:   nil,

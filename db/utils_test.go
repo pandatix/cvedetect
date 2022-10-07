@@ -103,8 +103,8 @@ func TestAlter(t *testing.T) {
 				Description:     "This is a CVE.",
 				PublicationDate: timeParse("2020-02-01T14:30Z"),
 				LastUpdate:      timeParse("2020-02-01T14:30Z"),
-				CVSS20Vector:    nil,
-				CVSS31Vector:    nil,
+				CVSS2Vector:     nil,
+				CVSS3Vector:     nil,
 				Configurations: []*model.Node{
 					{
 						Negate:   nil,
@@ -136,8 +136,8 @@ func TestAlter(t *testing.T) {
 				Description:     "This is a CVE." + flag,
 				PublicationDate: timeParse("2020-02-01T15:30Z"),
 				LastUpdate:      timeParse("2020-02-01T15:30Z"),
-				CVSS20Vector:    nil,
-				CVSS31Vector:    nil,
+				CVSS2Vector:     nil,
+				CVSS3Vector:     nil,
 				Configurations: []*model.Node{
 					{
 						Negate:   nil,

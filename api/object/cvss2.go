@@ -3,15 +3,15 @@ package object
 import (
 	"github.com/graphql-go/graphql"
 	"github.com/pandatix/cvedetect/api/scalar"
-	gocvss31 "github.com/pandatix/go-cvss/31"
+	gocvss20 "github.com/pandatix/go-cvss/20"
 )
 
-var CVSS31 = graphql.NewObject(graphql.ObjectConfig{
-	Name:        "CVSS31",
-	Description: "Representation of a CVSS v3.1 vector.",
+var CVSS2 = graphql.NewObject(graphql.ObjectConfig{
+	Name:        "CVSS2",
+	Description: "Representation of a CVSS v2.0 vector.",
 	Fields: graphql.Fields{
 		"vector": {
-			Type: graphql.NewNonNull(scalar.CVSS31Vector),
+			Type: graphql.NewNonNull(scalar.CVSS2Vector),
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				if vector, ok := p.Source.(*string); ok {
 					if vector == nil {
@@ -29,8 +29,8 @@ var CVSS31 = graphql.NewObject(graphql.ObjectConfig{
 					if vector == nil {
 						return nil, nil
 					}
-					cvss31, _ := gocvss31.ParseVector(*vector)
-					return cvss31.BaseScore(), nil
+					cvss20, _ := gocvss20.ParseVector(*vector)
+					return cvss20.BaseScore(), nil
 				}
 				return nil, nil
 			},
@@ -42,8 +42,8 @@ var CVSS31 = graphql.NewObject(graphql.ObjectConfig{
 					if vector == nil {
 						return nil, nil
 					}
-					cvss31, _ := gocvss31.ParseVector(*vector)
-					return cvss31.TemporalScore(), nil
+					cvss20, _ := gocvss20.ParseVector(*vector)
+					return cvss20.TemporalScore(), nil
 				}
 				return nil, nil
 			},
@@ -55,8 +55,8 @@ var CVSS31 = graphql.NewObject(graphql.ObjectConfig{
 					if vector == nil {
 						return nil, nil
 					}
-					cvss31, _ := gocvss31.ParseVector(*vector)
-					return cvss31.EnvironmentalScore(), nil
+					cvss20, _ := gocvss20.ParseVector(*vector)
+					return cvss20.EnvironmentalScore(), nil
 				}
 				return nil, nil
 			},

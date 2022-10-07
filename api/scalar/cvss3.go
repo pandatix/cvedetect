@@ -1,14 +1,17 @@
 package scalar
 
 import (
+	"strings"
+
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/graphql/language/ast"
+	gocvss30 "github.com/pandatix/go-cvss/30"
 	gocvss31 "github.com/pandatix/go-cvss/31"
 )
 
-var CVSS31Vector = graphql.NewScalar(graphql.ScalarConfig{
-	Name:        "CVSS31Vector",
-	Description: "CVSS v3.1 vector as defined by first.org.",
+var CVSS3Vector = graphql.NewScalar(graphql.ScalarConfig{
+	Name:        "CVSS3Vector",
+	Description: "CVSS v3 vector as defined by first.org. Supports CVSS v3.0 and v3.1.",
 	Serialize: func(value interface{}) interface{} {
 		switch value := value.(type) {
 		case string:
@@ -25,12 +28,12 @@ var CVSS31Vector = graphql.NewScalar(graphql.ScalarConfig{
 	ParseValue: func(value interface{}) interface{} {
 		switch value := value.(type) {
 		case string:
-			return parseValueCVSS31(value)
+			return parseValueCVSS3(value)
 		case *string:
 			if value == nil {
 				return nil
 			}
-			return parseValueCVSS31(*value)
+			return parseValueCVSS3(*value)
 		default:
 			return nil
 		}
@@ -45,9 +48,15 @@ var CVSS31Vector = graphql.NewScalar(graphql.ScalarConfig{
 	},
 })
 
-func parseValueCVSS31(cvss31vector string) interface{} {
-	if _, err := gocvss31.ParseVector(cvss31vector); err != nil {
+func parseValueCVSS3(vector string) interface{} {
+	if strings.HasPrefix(vector, "CVSS:3.0") {
+		if _, err := gocvss30.ParseVector(vector); err != nil {
+			return nil
+		}
+		return vector
+	}
+	if _, err := gocvss31.ParseVector(vector); err != nil {
 		return nil
 	}
-	return cvss31vector
+	return vector
 }

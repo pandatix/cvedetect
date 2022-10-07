@@ -1438,8 +1438,7 @@ func TestMemoryUpdateAsset(t *testing.T) {
 						ID:              "cve-1",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -1467,8 +1466,7 @@ func TestMemoryUpdateAsset(t *testing.T) {
 						ID:              "cve-2",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -1492,8 +1490,7 @@ func TestMemoryUpdateAsset(t *testing.T) {
 						ID:              "cve-3",
 						PublicationDate: timeParse("2020-02-17T14:30Z"),
 						LastUpdate:      timeParse("2020-02-17T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -1568,8 +1565,7 @@ func TestMemoryUpdateAsset(t *testing.T) {
 						ID:              "cve-1",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -1593,8 +1589,7 @@ func TestMemoryUpdateAsset(t *testing.T) {
 						ID:              "cve-2",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -1622,8 +1617,7 @@ func TestMemoryUpdateAsset(t *testing.T) {
 						ID:              "cve-3",
 						PublicationDate: timeParse("2020-02-17T14:30Z"),
 						LastUpdate:      timeParse("2020-02-17T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -1767,8 +1761,7 @@ func TestMemoryDeleteAsset(t *testing.T) {
 						ID:              "cve",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -1833,8 +1826,7 @@ func TestMemoryDeleteAsset(t *testing.T) {
 						ID:              "cve",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -1922,8 +1914,7 @@ func TestMemoryGetCVE(t *testing.T) {
 						Description:     "This is a CVE.",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -1965,8 +1956,7 @@ func TestMemoryGetCVE(t *testing.T) {
 				Description:     "This is a CVE.",
 				PublicationDate: timeParse("2020-02-01T14:30Z"),
 				LastUpdate:      timeParse("2020-02-01T14:30Z"),
-				CVSS20Vector:    nil,
-				CVSS31Vector:    nil,
+				CVSS2Vector:     nil,
 				Configurations: []*model.Node{
 					{
 						Negate:   nil,
@@ -2003,8 +1993,7 @@ func TestMemoryGetCVE(t *testing.T) {
 						Description:     "This is a CVE.",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -2095,8 +2084,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 						ID:              "cve-1",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -2121,8 +2109,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 						ID:              "cve-2",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -2159,8 +2146,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 					ID:              "cve-1",
 					PublicationDate: timeParse("2020-02-01T14:30Z"),
 					LastUpdate:      timeParse("2020-02-01T14:30Z"),
-					CVSS20Vector:    nil,
-					CVSS31Vector:    nil,
+					CVSS2Vector:     nil,
 					Configurations: []*model.Node{
 						{
 							Negate:   nil,
@@ -2184,8 +2170,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 					ID:              "cve-2",
 					PublicationDate: timeParse("2020-02-01T14:30Z"),
 					LastUpdate:      timeParse("2020-02-01T14:30Z"),
-					CVSS20Vector:    nil,
-					CVSS31Vector:    nil,
+					CVSS2Vector:     nil,
 					Configurations: []*model.Node{
 						{
 							Negate:   nil,
@@ -2215,8 +2200,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 						ID:              "cve-1",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -2241,8 +2225,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 						ID:              "cve-2",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -2281,8 +2264,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 						ID:              "cve-1",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -2307,8 +2289,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 						ID:              "cve-2",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -2347,8 +2328,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 					ID:              "cve-1",
 					PublicationDate: timeParse("2020-02-01T14:30Z"),
 					LastUpdate:      timeParse("2020-02-01T14:30Z"),
-					CVSS20Vector:    nil,
-					CVSS31Vector:    nil,
+					CVSS2Vector:     nil,
 					Configurations: []*model.Node{
 						{
 							Negate:   nil,
@@ -2378,8 +2358,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 						ID:              "cve-1",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -2404,8 +2383,7 @@ func TestMemoryQueryCVEs(t *testing.T) {
 						ID:              "cve-2",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -2447,9 +2425,8 @@ func TestMemoryQueryCVEs(t *testing.T) {
 						Description:     "CVE description 1",
 						PublicationDate: timeParse("2020-05-06T09:35Z"),
 						LastUpdate:      timeParse("2020-05-06T09:35Z"),
-						CVSS20Vector:    nil,
-						CVSS30Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
+						CVSS3Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -2475,9 +2452,8 @@ func TestMemoryQueryCVEs(t *testing.T) {
 						Description:     "CVE description 2",
 						PublicationDate: timeParse("2020-05-06T09:35Z"),
 						LastUpdate:      timeParse("2020-05-06T09:35Z"),
-						CVSS20Vector:    nil,
-						CVSS30Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
+						CVSS3Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -2517,9 +2493,8 @@ func TestMemoryQueryCVEs(t *testing.T) {
 					Description:     "CVE description 1",
 					PublicationDate: timeParse("2020-05-06T09:35Z"),
 					LastUpdate:      timeParse("2020-05-06T09:35Z"),
-					CVSS20Vector:    nil,
-					CVSS30Vector:    nil,
-					CVSS31Vector:    nil,
+					CVSS2Vector:     nil,
+					CVSS3Vector:     nil,
 					Configurations: []*model.Node{
 						{
 							Negate:   nil,
@@ -2544,9 +2519,8 @@ func TestMemoryQueryCVEs(t *testing.T) {
 					Description:     "CVE description 2",
 					PublicationDate: timeParse("2020-05-06T09:35Z"),
 					LastUpdate:      timeParse("2020-05-06T09:35Z"),
-					CVSS20Vector:    nil,
-					CVSS30Vector:    nil,
-					CVSS31Vector:    nil,
+					CVSS2Vector:     nil,
+					CVSS3Vector:     nil,
 					Configurations: []*model.Node{
 						{
 							Negate:   nil,
@@ -2577,9 +2551,8 @@ func TestMemoryQueryCVEs(t *testing.T) {
 						Description:     "CVE description 1",
 						PublicationDate: timeParse("2020-05-06T09:35Z"),
 						LastUpdate:      timeParse("2020-05-06T09:35Z"),
-						CVSS20Vector:    nil,
-						CVSS30Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
+						CVSS3Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -2605,9 +2578,8 @@ func TestMemoryQueryCVEs(t *testing.T) {
 						Description:     "CVE description 2",
 						PublicationDate: timeParse("2020-05-06T09:35Z"),
 						LastUpdate:      timeParse("2020-05-06T09:35Z"),
-						CVSS20Vector:    nil,
-						CVSS30Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
+						CVSS3Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -2676,8 +2648,7 @@ func TestMemoryAddCVE(t *testing.T) {
 						Description:     "CVE in something.",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -2710,8 +2681,7 @@ func TestMemoryAddCVE(t *testing.T) {
 				Description:     "CVE in something.",
 				PublicationDate: timeParse("2020-02-01T14:30Z"),
 				LastUpdate:      timeParse("2020-02-01T14:30Z"),
-				CVSS20Vector:    nil,
-				CVSS31Vector:    nil,
+				CVSS2Vector:     nil,
 				Configurations: []AddCVENodeInput{
 					{
 						Negate:   nil,
@@ -2744,8 +2714,7 @@ func TestMemoryAddCVE(t *testing.T) {
 						Description:     "CVE in something.",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -2786,8 +2755,8 @@ func TestMemoryAddCVE(t *testing.T) {
 				Description:     "CVE in something.",
 				PublicationDate: timeParse("2020-02-01T14:30Z"),
 				LastUpdate:      timeParse("2020-02-01T14:30Z"),
-				CVSS20Vector:    ptr("AV:A/AC:H/Au:S/C:P/I:P/A:C"),
-				CVSS31Vector:    ptr("CVSS:3.1/AV:A/AC:H/PR:L/UI:N/S:C/C:L/I:L/A:H"),
+				CVSS2Vector:     ptr("AV:A/AC:H/Au:S/C:P/I:P/A:C"),
+				CVSS3Vector:     ptr("CVSS:3.1/AV:A/AC:H/PR:L/UI:N/S:C/C:L/I:L/A:H"),
 				Configurations: []AddCVENodeInput{
 					{
 						Negate:   nil,
@@ -2824,9 +2793,8 @@ func TestMemoryAddCVE(t *testing.T) {
 						Description:     "CVE in something.",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    ptr("AV:A/AC:H/Au:S/C:P/I:P/A:C"),
-						CVSS30Vector:    nil,
-						CVSS31Vector:    ptr("CVSS:3.1/AV:A/AC:H/PR:L/UI:N/S:C/C:L/I:L/A:H"),
+						CVSS2Vector:     ptr("AV:A/AC:H/Au:S/C:P/I:P/A:C"),
+						CVSS3Vector:     ptr("CVSS:3.1/AV:A/AC:H/PR:L/UI:N/S:C/C:L/I:L/A:H"),
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -2900,8 +2868,8 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				ID:             "cve",
 				Description:    nil,
 				LastUpdate:     nil,
-				CVSS20Vector:   nil,
-				CVSS31Vector:   nil,
+				CVSS2Vector:    nil,
+				CVSS3Vector:    nil,
 				Configurations: nil,
 				Assets:         nil,
 			},
@@ -2926,8 +2894,8 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						Description:     "CVE in something.",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    ptr("AV:A/AC:H/Au:S/C:P/I:P/A:C"),
-						CVSS31Vector:    ptr("CVSS:3.1/AV:A/AC:H/PR:L/UI:N/S:C/C:L/I:L/A:H"),
+						CVSS2Vector:     ptr("AV:A/AC:H/Au:S/C:P/I:P/A:C"),
+						CVSS3Vector:     ptr("CVSS:3.1/AV:A/AC:H/PR:L/UI:N/S:C/C:L/I:L/A:H"),
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -2959,8 +2927,8 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				ID:             "cve",
 				Description:    nil,
 				LastUpdate:     nil,
-				CVSS20Vector:   nil,
-				CVSS31Vector:   nil,
+				CVSS2Vector:    nil,
+				CVSS3Vector:    nil,
 				Configurations: nil,
 				Assets: []UpdateCVEAssetInput{
 					{
@@ -2981,8 +2949,8 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						Description:     "CVE in something.",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    ptr("AV:A/AC:H/Au:S/C:P/I:P/A:C"),
-						CVSS31Vector:    ptr("CVSS:3.1/AV:A/AC:H/PR:L/UI:N/S:C/C:L/I:L/A:H"),
+						CVSS2Vector:     ptr("AV:A/AC:H/Au:S/C:P/I:P/A:C"),
+						CVSS3Vector:     ptr("CVSS:3.1/AV:A/AC:H/PR:L/UI:N/S:C/C:L/I:L/A:H"),
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -3021,8 +2989,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						Description:     "CVE in something.",
 						PublicationDate: timeParse("2022-02-01T14:30Z"),
 						LastUpdate:      timeParse("2022-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations:  []*model.Node{},
 						Assets:          []*model.Asset{},
 						References:      []*model.Reference{},
@@ -3034,8 +3001,8 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				ID:             "cve",
 				Description:    ptr("CVE in something, but new."),
 				LastUpdate:     nil,
-				CVSS20Vector:   nil,
-				CVSS31Vector:   nil,
+				CVSS2Vector:    nil,
+				CVSS3Vector:    nil,
 				Configurations: nil,
 				Assets:         nil,
 				References:     nil,
@@ -3050,8 +3017,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						Description:     "CVE in something, but new.",
 						PublicationDate: timeParse("2022-02-01T14:30Z"),
 						LastUpdate:      timeParse("2022-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations:  []*model.Node{},
 						Assets:          []*model.Asset{},
 						References:      []*model.Reference{},
@@ -3070,8 +3036,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						Description:     "CVE in something.",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -3103,8 +3068,8 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				ID:             "cve",
 				Description:    nil,
 				LastUpdate:     ptr(timeParse("2022-02-01T14:30Z")),
-				CVSS20Vector:   nil,
-				CVSS31Vector:   nil,
+				CVSS2Vector:    nil,
+				CVSS3Vector:    nil,
 				Configurations: nil,
 				Assets:         nil,
 				References:     nil,
@@ -3119,8 +3084,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						Description:     "CVE in something.",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2022-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -3149,7 +3113,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				},
 			},
 		},
-		"new-cvss20vector": {
+		"new-cvss2vector": {
 			Memory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
@@ -3159,8 +3123,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						Description:     "CVE in something.",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations:  []*model.Node{},
 						Assets:          []*model.Asset{},
 						References:      []*model.Reference{},
@@ -3172,8 +3135,8 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				ID:             "cve",
 				Description:    nil,
 				LastUpdate:     nil,
-				CVSS20Vector:   ptr("AV:A/AC:H/Au:S/C:P/I:P/A:C"),
-				CVSS31Vector:   nil,
+				CVSS2Vector:    ptr("AV:A/AC:H/Au:S/C:P/I:P/A:C"),
+				CVSS3Vector:    nil,
 				Configurations: nil,
 				Assets:         nil,
 				References:     nil,
@@ -3188,8 +3151,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						Description:     "CVE in something.",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    ptr("AV:A/AC:H/Au:S/C:P/I:P/A:C"),
-						CVSS31Vector:    nil,
+						CVSS2Vector:     ptr("AV:A/AC:H/Au:S/C:P/I:P/A:C"),
 						Configurations:  []*model.Node{},
 						Assets:          []*model.Asset{},
 						References:      []*model.Reference{},
@@ -3198,7 +3160,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
 		},
-		"new-cvss30vector": {
+		"new-cvss3vector": {
 			Memory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
@@ -3208,9 +3170,8 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						Description:     "CVE in something.",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS30Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
+						CVSS3Vector:     nil,
 						Configurations:  []*model.Node{},
 						Assets:          []*model.Asset{},
 						References:      []*model.Reference{},
@@ -3222,9 +3183,8 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				ID:             "cve",
 				Description:    nil,
 				LastUpdate:     nil,
-				CVSS20Vector:   nil,
-				CVSS30Vector:   ptr("CVSS:3.0/AV:A/AC:H/PR:L/UI:N/S:C/C:L/I:L/A:H"),
-				CVSS31Vector:   nil,
+				CVSS2Vector:    nil,
+				CVSS3Vector:    ptr("CVSS:3.0/AV:A/AC:H/PR:L/UI:N/S:C/C:L/I:L/A:H"),
 				Configurations: nil,
 				Assets:         nil,
 				References:     nil,
@@ -3239,58 +3199,8 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						Description:     "CVE in something.",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS30Vector:    ptr("CVSS:3.0/AV:A/AC:H/PR:L/UI:N/S:C/C:L/I:L/A:H"),
-						CVSS31Vector:    nil,
-						Configurations:  []*model.Node{},
-						Assets:          []*model.Asset{},
-						References:      []*model.Reference{},
-					},
-				},
-				CVEVPIndex: map[string]map[string]struct{}{},
-			},
-		},
-		"new-cvss31vector": {
-			Memory: &Memory{
-				Assets:       map[string]*model.Asset{},
-				AssetVPIndex: map[string]map[string]struct{}{},
-				CVEs: map[string]*model.CVE{
-					"cve": {
-						ID:              "cve",
-						Description:     "CVE in something.",
-						PublicationDate: timeParse("2020-02-01T14:30Z"),
-						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
-						Configurations:  []*model.Node{},
-						Assets:          []*model.Asset{},
-						References:      []*model.Reference{},
-					},
-				},
-				CVEVPIndex: map[string]map[string]struct{}{},
-			},
-			Input: UpdateCVEInput{
-				ID:             "cve",
-				Description:    nil,
-				LastUpdate:     nil,
-				CVSS20Vector:   nil,
-				CVSS31Vector:   ptr("CVSS:3.1/AV:A/AC:H/PR:L/UI:N/S:C/C:L/I:L/A:H"),
-				Configurations: nil,
-				Assets:         nil,
-				References:     nil,
-			},
-			ExpectedErr: nil,
-			ExpectedMemory: &Memory{
-				Assets:       map[string]*model.Asset{},
-				AssetVPIndex: map[string]map[string]struct{}{},
-				CVEs: map[string]*model.CVE{
-					"cve": {
-						ID:              "cve",
-						Description:     "CVE in something.",
-						PublicationDate: timeParse("2020-02-01T14:30Z"),
-						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    ptr("CVSS:3.1/AV:A/AC:H/PR:L/UI:N/S:C/C:L/I:L/A:H"),
+						CVSS2Vector:     nil,
+						CVSS3Vector:     ptr("CVSS:3.0/AV:A/AC:H/PR:L/UI:N/S:C/C:L/I:L/A:H"),
 						Configurations:  []*model.Node{},
 						Assets:          []*model.Asset{},
 						References:      []*model.Reference{},
@@ -3309,8 +3219,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						Description:     "CVE in something.",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -3349,11 +3258,11 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				},
 			},
 			Input: UpdateCVEInput{
-				ID:           "cve",
-				Description:  nil,
-				LastUpdate:   nil,
-				CVSS20Vector: nil,
-				CVSS31Vector: nil,
+				ID:          "cve",
+				Description: nil,
+				LastUpdate:  nil,
+				CVSS2Vector: nil,
+				CVSS3Vector: nil,
 				Configurations: []UpdateCVENodeInput{
 					{
 						Negate:   ptr(true),
@@ -3391,8 +3300,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						Description:     "CVE in something.",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   ptr(true),
@@ -3480,8 +3388,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						Description:     "CVE in something.",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -3519,8 +3426,8 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				ID:             "cve",
 				Description:    nil,
 				LastUpdate:     nil,
-				CVSS20Vector:   nil,
-				CVSS31Vector:   nil,
+				CVSS2Vector:    nil,
+				CVSS3Vector:    nil,
 				Configurations: nil,
 				Assets: []UpdateCVEAssetInput{
 					{
@@ -3580,8 +3487,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						Description:     "CVE in something.",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -3626,8 +3532,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						Description:     "",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations:  []*model.Node{},
 						Assets:          []*model.Asset{},
 						References: []*model.Reference{
@@ -3646,8 +3551,8 @@ func TestMemoryUpdateCVE(t *testing.T) {
 				ID:             "cve",
 				Description:    nil,
 				LastUpdate:     nil,
-				CVSS20Vector:   nil,
-				CVSS31Vector:   nil,
+				CVSS2Vector:    nil,
+				CVSS3Vector:    nil,
 				Configurations: nil,
 				Assets:         nil,
 				References: []UpdateCVEReferencesInput{
@@ -3669,8 +3574,7 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						Description:     "",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations:  []*model.Node{},
 						Assets:          []*model.Asset{},
 						References: []*model.Reference{
@@ -3761,8 +3665,7 @@ func TestMemoryDeleteCVE(t *testing.T) {
 						Description:     "CVE in something.",
 						PublicationDate: timeParse("2020-02-01T14:30Z"),
 						LastUpdate:      timeParse("2020-02-01T14:30Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations: []*model.Node{
 							{
 								Negate:   nil,
@@ -3923,8 +3826,7 @@ func TestGetAssetCVEs(t *testing.T) {
 						Description:     "CVE example 1",
 						PublicationDate: timeParse("2020-01-02T14:00Z"),
 						LastUpdate:      timeParse("2020-01-02T14:00Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations:  []*model.Node{},
 						Assets: []*model.Asset{
 							{
@@ -3938,8 +3840,7 @@ func TestGetAssetCVEs(t *testing.T) {
 						Description:     "CVE example 2",
 						PublicationDate: timeParse("2020-01-02T14:00Z"),
 						LastUpdate:      timeParse("2020-01-02T14:00Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations:  []*model.Node{},
 						Assets: []*model.Asset{
 							{
@@ -3971,8 +3872,7 @@ func TestGetAssetCVEs(t *testing.T) {
 					Description:     "CVE example 1",
 					PublicationDate: timeParse("2020-01-02T14:00Z"),
 					LastUpdate:      timeParse("2020-01-02T14:00Z"),
-					CVSS20Vector:    nil,
-					CVSS31Vector:    nil,
+					CVSS2Vector:     nil,
 					Configurations:  []*model.Node{},
 					Assets: []*model.Asset{
 						{
@@ -3985,8 +3885,7 @@ func TestGetAssetCVEs(t *testing.T) {
 					Description:     "CVE example 2",
 					PublicationDate: timeParse("2020-01-02T14:00Z"),
 					LastUpdate:      timeParse("2020-01-02T14:00Z"),
-					CVSS20Vector:    nil,
-					CVSS31Vector:    nil,
+					CVSS2Vector:     nil,
 					Configurations:  []*model.Node{},
 					Assets: []*model.Asset{
 						{
@@ -4024,8 +3923,7 @@ func TestGetAssetCVEs(t *testing.T) {
 						Description:     "CVE example 1",
 						PublicationDate: timeParse("2020-01-02T14:00Z"),
 						LastUpdate:      timeParse("2020-01-02T14:00Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations:  []*model.Node{},
 						Assets: []*model.Asset{
 							{
@@ -4039,8 +3937,7 @@ func TestGetAssetCVEs(t *testing.T) {
 						Description:     "CVE example 2",
 						PublicationDate: timeParse("2020-01-02T14:00Z"),
 						LastUpdate:      timeParse("2020-01-02T14:00Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations:  []*model.Node{},
 						Assets: []*model.Asset{
 							{
@@ -4090,8 +3987,7 @@ func TestGetCVEAssets(t *testing.T) {
 						Description:     "CVE example",
 						PublicationDate: timeParse("2020-01-02T14:00Z"),
 						LastUpdate:      timeParse("2020-01-02T14:00Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations:  []*model.Node{},
 						Assets:          []*model.Asset{},
 					},
@@ -4103,8 +3999,7 @@ func TestGetCVEAssets(t *testing.T) {
 				Description:     "CVE example",
 				PublicationDate: timeParse("2020-01-02T14:00Z"),
 				LastUpdate:      timeParse("2020-01-02T14:00Z"),
-				CVSS20Vector:    nil,
-				CVSS31Vector:    nil,
+				CVSS2Vector:     nil,
 				Configurations:  []*model.Node{},
 				Assets:          []*model.Asset{},
 			},
@@ -4118,8 +4013,7 @@ func TestGetCVEAssets(t *testing.T) {
 						Description:     "CVE example",
 						PublicationDate: timeParse("2020-01-02T14:00Z"),
 						LastUpdate:      timeParse("2020-01-02T14:00Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations:  []*model.Node{},
 						Assets:          []*model.Asset{},
 					},
@@ -4167,8 +4061,7 @@ func TestGetCVEAssets(t *testing.T) {
 						Description:     "CVE example",
 						PublicationDate: timeParse("2020-01-02T14:00Z"),
 						LastUpdate:      timeParse("2020-01-02T14:00Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations:  []*model.Node{},
 						Assets: []*model.Asset{
 							{
@@ -4187,8 +4080,7 @@ func TestGetCVEAssets(t *testing.T) {
 				Description:     "CVE example",
 				PublicationDate: timeParse("2020-01-02T14:00Z"),
 				LastUpdate:      timeParse("2020-01-02T14:00Z"),
-				CVSS20Vector:    nil,
-				CVSS31Vector:    nil,
+				CVSS2Vector:     nil,
 				Configurations:  []*model.Node{},
 				Assets: []*model.Asset{
 					{
@@ -4263,8 +4155,7 @@ func TestGetCVEAssets(t *testing.T) {
 						Description:     "CVE example",
 						PublicationDate: timeParse("2020-01-02T14:00Z"),
 						LastUpdate:      timeParse("2020-01-02T14:00Z"),
-						CVSS20Vector:    nil,
-						CVSS31Vector:    nil,
+						CVSS2Vector:     nil,
 						Configurations:  []*model.Node{},
 						Assets: []*model.Asset{
 							{

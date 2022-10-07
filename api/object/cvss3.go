@@ -25,6 +25,18 @@ var CVSS3 = graphql.NewObject(graphql.ObjectConfig{
 				return nil, nil
 			},
 		},
+		"version": {
+			Type: graphql.NewNonNull(graphql.String),
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				if vector, ok := p.Source.(*string); ok {
+					if vector == nil {
+						return nil, nil
+					}
+					return (*vector)[5:8], nil
+				}
+				return nil, nil
+			},
+		},
 		"baseScore": {
 			Type: graphql.NewNonNull(graphql.Float),
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {

@@ -1,6 +1,11 @@
 # cvedetect
 
-[![Coverage Status](https://coveralls.io/repos/github/pandatix/cvedetect/badge.svg?branch=master)](https://coveralls.io/github/pandatix/cvedetect?branch=master)
+<div align="center">
+    <a href="https://github.com/pandatix/cvedetect/blob/master/LICENSE"><img src="https://img.shields.io/github/license/pandatix/cvedetect?style=for-the-badge" alt="License"></a>
+    <a href="https://coveralls.io/github/pandatix/cvedetect?branch=master"><img src="https://img.shields.io/coverallsCoverage/github/pandatix/cvedetect?style=for-the-badge" alt="Coverage Status"></a>
+    <a href="https://hub.docker.com/r/pandatix/cvedetect"><img src="https://img.shields.io/docker/pulls/pandatix/cvedetect?style=for-the-badge" alt="Docker pull"></a>
+    <a href="https://github.com/pandatix/cvedetect/actions/workflows/ci.yaml"><img src="https://img.shields.io/github/actions/workflow/status/pandatix/cvedetect/ci.yaml?label=CI&style=for-the-badge" alt="CI"></a>
+</div>
 
 cvedetect is state of the art Vulnerability Assessment Tool (VAT) working on a non-cylic oriented graph of assets.
 

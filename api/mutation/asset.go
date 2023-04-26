@@ -72,21 +72,21 @@ func DeleteAsset(mem *db.Memory, input db.DeleteAssetInput) (*model.Asset, error
 
 func addAssetChecks(mem *db.Memory, input db.AddAssetInput) error {
 	// Multigraph check
-	fakeAssetParents := make([]*model.Asset, len(input.Parents))
-	for i, inParent := range input.Parents {
-		fakeAssetParents[i] = &model.Asset{
-			ID: inParent.ID,
+	fakeAssetDependents := make([]*model.Asset, len(input.Dependents))
+	for i, inDep := range input.Dependents {
+		fakeAssetDependents[i] = &model.Asset{
+			ID: inDep.ID,
 		}
 	}
-	fakeAssetChildren := make([]*model.Asset, len(input.Children))
-	for i, inChild := range input.Children {
-		fakeAssetChildren[i] = &model.Asset{
-			ID: inChild.ID,
+	fakeAssetDependencies := make([]*model.Asset, len(input.Dependencies))
+	for i, inDep := range input.Dependencies {
+		fakeAssetDependencies[i] = &model.Asset{
+			ID: inDep.ID,
 		}
 	}
 	fakeAsset := &model.Asset{
-		Parents:  fakeAssetParents,
-		Children: fakeAssetChildren,
+		Dependents:   fakeAssetDependents,
+		Dependencies: fakeAssetDependencies,
 	}
 	if err := utils.CheckMultigraph(fakeAsset); err != nil {
 		return err
@@ -97,21 +97,21 @@ func addAssetChecks(mem *db.Memory, input db.AddAssetInput) error {
 
 func updateAssetChecks(mem *db.Memory, input db.UpdateAssetInput) error {
 	// Multigraph check
-	fakeAssetParents := make([]*model.Asset, len(input.Parents))
-	for i, inParent := range input.Parents {
-		fakeAssetParents[i] = &model.Asset{
-			ID: inParent.ID,
+	fakeAssetDependents := make([]*model.Asset, len(input.Dependents))
+	for i, inDep := range input.Dependents {
+		fakeAssetDependents[i] = &model.Asset{
+			ID: inDep.ID,
 		}
 	}
-	fakeAssetChildren := make([]*model.Asset, len(input.Children))
-	for i, inChild := range input.Children {
-		fakeAssetChildren[i] = &model.Asset{
-			ID: inChild.ID,
+	fakeAssetDependencies := make([]*model.Asset, len(input.Dependencies))
+	for i, inDep := range input.Dependencies {
+		fakeAssetDependencies[i] = &model.Asset{
+			ID: inDep.ID,
 		}
 	}
 	fakeAsset := &model.Asset{
-		Parents:  fakeAssetParents,
-		Children: fakeAssetChildren,
+		Dependents:   fakeAssetDependents,
+		Dependencies: fakeAssetDependencies,
 	}
 	if err := utils.CheckMultigraph(fakeAsset); err != nil {
 		return err

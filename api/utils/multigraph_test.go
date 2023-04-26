@@ -20,48 +20,48 @@ func TestCheckMultigraph(t *testing.T) {
 				ID:    "asset",
 				Name:  "Asset",
 				CPE23: "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-				Parents: []*model.Asset{
+				Dependents: []*model.Asset{
 					{
-						ID: "parent-asset",
+						ID: "dependent-asset",
 					},
 				},
-				Children: []*model.Asset{
+				Dependencies: []*model.Asset{
 					{
-						ID: "children-asset",
+						ID: "dependency-asset",
 					},
 				},
 				CVEs: []*model.CVE{},
 			},
 			ExpectedErr: nil,
 		},
-		"multigraph-parent": {
+		"multigraph-dependent": {
 			Asset: &model.Asset{
 				ID:    "asset",
 				Name:  "Asset",
 				CPE23: "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-				Parents: []*model.Asset{
+				Dependents: []*model.Asset{
 					{
-						ID: "parent-asset",
+						ID: "dependent-asset",
 					}, {
-						ID: "parent-asset",
+						ID: "dependent-asset",
 					},
 				},
-				Children: []*model.Asset{},
-				CVEs:     []*model.CVE{},
+				Dependencies: []*model.Asset{},
+				CVEs:         []*model.CVE{},
 			},
 			ExpectedErr: utils.ErrMultigraph,
 		},
-		"multigraph-children": {
+		"multigraph-dependency": {
 			Asset: &model.Asset{
-				ID:      "asset",
-				Name:    "Asset",
-				CPE23:   "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-				Parents: []*model.Asset{},
-				Children: []*model.Asset{
+				ID:         "asset",
+				Name:       "Asset",
+				CPE23:      "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+				Dependents: []*model.Asset{},
+				Dependencies: []*model.Asset{
 					{
-						ID: "children-asset",
+						ID: "dependency-asset",
 					}, {
-						ID: "children-asset",
+						ID: "dependency-asset",
 					},
 				},
 				CVEs: []*model.CVE{},

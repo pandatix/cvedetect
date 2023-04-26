@@ -11,15 +11,15 @@ var (
 )
 
 // CheckMultigraph returns ErrMultigraph if the given fake
-// asset should create a multigraph, whether it is in it's parents
-// or children.
+// asset should create a multigraph, whether it is in it's dependents
+// or dependencies.
 // "fake" means it is the result of an asset built for this
 // check as it could be saved in the in-memory database, but that
 // is not yet saved in it.
 func CheckMultigraph(asset *model.Asset) error {
 	// In the case of an AddAsset mutation:
-	// - a multigraph can happen when a new asset claims a parent
-	//   or a child multiple times.
+	// - a multigraph can happen when a new asset claims a dependent
+	//   or a dependency multiple times.
 	// In the case of an UpdateAsset mutation:
 	// - a multgraph can happen when an existing asset that has a
 	//   link with another asset tries to have more
@@ -28,15 +28,15 @@ func CheckMultigraph(asset *model.Asset) error {
 	//
 	// Those scenarios share in common that the mutations will make
 	// the asset having multiple links with another.
-	// The strategy of this checker is redundant for parents and
-	// children, given the fake asset:
+	// The strategy of this checker is redundant for dependents and
+	// dependencies, given the fake asset:
 	// - create an empty list for known assets
 	// - for each related assets, if it is already referenced in the list
 	//   then return the error, else reference it
-	if err := chkMultigraph(asset.Parents); err != nil {
+	if err := chkMultigraph(asset.Dependents); err != nil {
 		return err
 	}
-	return chkMultigraph(asset.Children)
+	return chkMultigraph(asset.Dependencies)
 }
 
 func chkMultigraph(assets []*model.Asset) error {

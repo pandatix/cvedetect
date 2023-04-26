@@ -70,12 +70,12 @@ func TestMemoryGetAsset(t *testing.T) {
 			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
-						ID:       "asset",
-						Name:     "Asset",
-						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset",
+						Name:         "Asset",
+						CPE23:        "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				CVEs: map[string]*model.CVE{},
@@ -90,23 +90,23 @@ func TestMemoryGetAsset(t *testing.T) {
 				ID: "asset",
 			},
 			ExpectedAsset: &model.Asset{
-				ID:       "asset",
-				Name:     "Asset",
-				CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-				Parents:  []*model.Asset{},
-				Children: []*model.Asset{},
-				CVEs:     []*model.CVE{},
+				ID:           "asset",
+				Name:         "Asset",
+				CPE23:        "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+				Dependents:   []*model.Asset{},
+				Dependencies: []*model.Asset{},
+				CVEs:         []*model.CVE{},
 			},
 			ExpectedErr: nil,
 			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
-						ID:       "asset",
-						Name:     "Asset",
-						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset",
+						Name:         "Asset",
+						CPE23:        "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
@@ -169,20 +169,20 @@ func TestMemoryQueryAssets(t *testing.T) {
 			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset-1": {
-						ID:       "asset-1",
-						Name:     "Asset 1",
-						CPE23:    "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset-1",
+						Name:         "Asset 1",
+						CPE23:        "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 					"asset-2": {
-						ID:       "asset-2",
-						Name:     "Asset 2",
-						CPE23:    "cpe:2.3:a:fake:asset:2:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset-2",
+						Name:         "Asset 2",
+						CPE23:        "cpe:2.3:a:fake:asset:2:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
@@ -199,38 +199,38 @@ func TestMemoryQueryAssets(t *testing.T) {
 			},
 			ExpectedAssets: []*model.Asset{
 				{
-					ID:       "asset-1",
-					Name:     "Asset 1",
-					CPE23:    "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
-					Parents:  []*model.Asset{},
-					Children: []*model.Asset{},
-					CVEs:     []*model.CVE{},
+					ID:           "asset-1",
+					Name:         "Asset 1",
+					CPE23:        "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
+					Dependents:   []*model.Asset{},
+					Dependencies: []*model.Asset{},
+					CVEs:         []*model.CVE{},
 				}, {
-					ID:       "asset-2",
-					Name:     "Asset 2",
-					CPE23:    "cpe:2.3:a:fake:asset:2:*:*:*:*:*:*:*",
-					Parents:  []*model.Asset{},
-					Children: []*model.Asset{},
-					CVEs:     []*model.CVE{},
+					ID:           "asset-2",
+					Name:         "Asset 2",
+					CPE23:        "cpe:2.3:a:fake:asset:2:*:*:*:*:*:*:*",
+					Dependents:   []*model.Asset{},
+					Dependencies: []*model.Asset{},
+					CVEs:         []*model.CVE{},
 				},
 			},
 			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset-1": {
-						ID:       "asset-1",
-						Name:     "Asset 1",
-						CPE23:    "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset-1",
+						Name:         "Asset 1",
+						CPE23:        "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 					"asset-2": {
-						ID:       "asset-2",
-						Name:     "Asset 2",
-						CPE23:    "cpe:2.3:a:fake:asset:2:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset-2",
+						Name:         "Asset 2",
+						CPE23:        "cpe:2.3:a:fake:asset:2:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
@@ -247,20 +247,20 @@ func TestMemoryQueryAssets(t *testing.T) {
 			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset-1": {
-						ID:       "asset-1",
-						Name:     "Asset 1",
-						CPE23:    "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset-1",
+						Name:         "Asset 1",
+						CPE23:        "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 					"asset-2": {
-						ID:       "asset-2",
-						Name:     "Asset 2",
-						CPE23:    "cpe:2.3:a:fake\\_new:asset:2:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset-2",
+						Name:         "Asset 2",
+						CPE23:        "cpe:2.3:a:fake\\_new:asset:2:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
@@ -279,31 +279,31 @@ func TestMemoryQueryAssets(t *testing.T) {
 			},
 			ExpectedAssets: []*model.Asset{
 				{
-					ID:       "asset-2",
-					Name:     "Asset 2",
-					CPE23:    "cpe:2.3:a:fake\\_new:asset:2:*:*:*:*:*:*:*",
-					Parents:  []*model.Asset{},
-					Children: []*model.Asset{},
-					CVEs:     []*model.CVE{},
+					ID:           "asset-2",
+					Name:         "Asset 2",
+					CPE23:        "cpe:2.3:a:fake\\_new:asset:2:*:*:*:*:*:*:*",
+					Dependents:   []*model.Asset{},
+					Dependencies: []*model.Asset{},
+					CVEs:         []*model.CVE{},
 				},
 			},
 			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset-1": {
-						ID:       "asset-1",
-						Name:     "Asset 1",
-						CPE23:    "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset-1",
+						Name:         "Asset 1",
+						CPE23:        "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 					"asset-2": {
-						ID:       "asset-2",
-						Name:     "Asset 2",
-						CPE23:    "cpe:2.3:a:fake\\_new:asset:2:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset-2",
+						Name:         "Asset 2",
+						CPE23:        "cpe:2.3:a:fake\\_new:asset:2:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
@@ -322,20 +322,20 @@ func TestMemoryQueryAssets(t *testing.T) {
 			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset-1": {
-						ID:       "asset-1",
-						Name:     "Asset 1",
-						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset-1",
+						Name:         "Asset 1",
+						CPE23:        "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 					"asset-2": {
-						ID:       "asset-2",
-						Name:     "Asset 2",
-						CPE23:    "cpe:2.3:a:other:asset:*:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset-2",
+						Name:         "Asset 2",
+						CPE23:        "cpe:2.3:a:other:asset:*:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
@@ -354,38 +354,38 @@ func TestMemoryQueryAssets(t *testing.T) {
 			},
 			ExpectedAssets: []*model.Asset{
 				{
-					ID:       "asset-1",
-					Name:     "Asset 1",
-					CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-					Parents:  []*model.Asset{},
-					Children: []*model.Asset{},
-					CVEs:     []*model.CVE{},
+					ID:           "asset-1",
+					Name:         "Asset 1",
+					CPE23:        "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+					Dependents:   []*model.Asset{},
+					Dependencies: []*model.Asset{},
+					CVEs:         []*model.CVE{},
 				}, {
-					ID:       "asset-2",
-					Name:     "Asset 2",
-					CPE23:    "cpe:2.3:a:other:asset:*:*:*:*:*:*:*:*",
-					Parents:  []*model.Asset{},
-					Children: []*model.Asset{},
-					CVEs:     []*model.CVE{},
+					ID:           "asset-2",
+					Name:         "Asset 2",
+					CPE23:        "cpe:2.3:a:other:asset:*:*:*:*:*:*:*:*",
+					Dependents:   []*model.Asset{},
+					Dependencies: []*model.Asset{},
+					CVEs:         []*model.CVE{},
 				},
 			},
 			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset-1": {
-						ID:       "asset-1",
-						Name:     "Asset 1",
-						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset-1",
+						Name:         "Asset 1",
+						CPE23:        "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 					"asset-2": {
-						ID:       "asset-2",
-						Name:     "Asset 2",
-						CPE23:    "cpe:2.3:a:other:asset:*:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset-2",
+						Name:         "Asset 2",
+						CPE23:        "cpe:2.3:a:other:asset:*:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
@@ -431,12 +431,12 @@ func TestMemoryAddAsset(t *testing.T) {
 			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
-						ID:       "asset",
-						Name:     "Asset",
-						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset",
+						Name:         "Asset",
+						CPE23:        "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
@@ -448,10 +448,10 @@ func TestMemoryAddAsset(t *testing.T) {
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
 			Input: AddAssetInput{
-				ID:       "asset",
-				Name:     "Asset",
-				CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-				Children: nil,
+				ID:           "asset",
+				Name:         "Asset",
+				CPE23:        "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+				Dependencies: nil,
 			},
 			ExpectedErr: &ErrAlreadyExist{
 				K: KeyAsset,
@@ -460,12 +460,12 @@ func TestMemoryAddAsset(t *testing.T) {
 			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
-						ID:       "asset",
-						Name:     "Asset",
-						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset",
+						Name:         "Asset",
+						CPE23:        "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
@@ -477,7 +477,7 @@ func TestMemoryAddAsset(t *testing.T) {
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
 		},
-		"parent-not-exist": {
+		"dependent-not-exist": {
 			Memory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
@@ -488,12 +488,12 @@ func TestMemoryAddAsset(t *testing.T) {
 				ID:    "asset",
 				Name:  "Asset",
 				CPE23: "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-				Parents: []AddAssetParentInput{
+				Dependents: []AddAssetDepInput{
 					{
 						ID: "unexisting-asset",
 					},
 				},
-				Children: []AddAssetChildInput{},
+				Dependencies: []AddAssetDepInput{},
 			},
 			ExpectedErr: &ErrNotExist{
 				K: KeyAsset,
@@ -506,7 +506,7 @@ func TestMemoryAddAsset(t *testing.T) {
 				CVEVPIndex:   map[string]map[string]struct{}{},
 			},
 		},
-		"child-not-exist": {
+		"dependency-not-exist": {
 			Memory: &Memory{
 				Assets:       map[string]*model.Asset{},
 				AssetVPIndex: map[string]map[string]struct{}{},
@@ -517,7 +517,7 @@ func TestMemoryAddAsset(t *testing.T) {
 				ID:    "asset",
 				Name:  "Asset",
 				CPE23: "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-				Children: []AddAssetChildInput{
+				Dependencies: []AddAssetDepInput{
 					{
 						ID: "unexisting-asset",
 					},
@@ -537,44 +537,44 @@ func TestMemoryAddAsset(t *testing.T) {
 		"new-asset": {
 			Memory: &Memory{
 				Assets: map[string]*model.Asset{
-					"asset-parent": {
-						ID:       "asset-parent",
-						Name:     "Asset Parent",
-						CPE23:    "cpe:2.3:a:fake:asset:*:parent:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+					"asset-dependent": {
+						ID:           "asset-dependent",
+						Name:         "Asset Dependent",
+						CPE23:        "cpe:2.3:a:fake:asset:*:dependent:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
-					"asset-child-1": {
-						ID:      "asset-child-1",
-						Name:    "Asset Child 1",
-						CPE23:   "cpe:2.3:a:fake:asset:1:child:*:*:*:*:*:*",
-						Parents: []*model.Asset{},
-						Children: []*model.Asset{
+					"asset-dependency-1": {
+						ID:         "asset-dependency-1",
+						Name:       "Asset Dependency 1",
+						CPE23:      "cpe:2.3:a:fake:asset:1:dependency:*:*:*:*:*:*",
+						Dependents: []*model.Asset{},
+						Dependencies: []*model.Asset{
 							{
-								ID: "asset-child-2",
+								ID: "asset-dependency-2",
 							},
 						},
 						CVEs: []*model.CVE{},
 					},
-					"asset-child-2": {
-						ID:    "asset-child-2",
-						Name:  "Asset Child 2",
-						CPE23: "cpe:2.3:a:fake:asset:2:child:*:*:*:*:*:*",
-						Parents: []*model.Asset{
+					"asset-dependency-2": {
+						ID:    "asset-dependency-2",
+						Name:  "Asset Dependency 2",
+						CPE23: "cpe:2.3:a:fake:asset:2:dependency:*:*:*:*:*:*",
+						Dependents: []*model.Asset{
 							{
-								ID: "asset-child-1",
+								ID: "asset-dependency-1",
 							},
 						},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
 					"fake:asset": {
-						"asset-parent":  {},
-						"asset-child-1": {},
-						"asset-child-2": {},
+						"asset-dependent":    {},
+						"asset-dependency-1": {},
+						"asset-dependency-2": {},
 					},
 				},
 				CVEs: map[string]*model.CVE{},
@@ -583,28 +583,28 @@ func TestMemoryAddAsset(t *testing.T) {
 				ID:    "asset",
 				Name:  "Asset",
 				CPE23: "cpe:2.3:a:fake\\_new:asset:*:*:*:*:*:*:*:*",
-				Parents: []AddAssetParentInput{
+				Dependents: []AddAssetDepInput{
 					{
-						ID: "asset-parent",
+						ID: "asset-dependent",
 					},
 				},
-				Children: []AddAssetChildInput{
+				Dependencies: []AddAssetDepInput{
 					{
-						ID: "asset-child-1",
+						ID: "asset-dependency-1",
 					}, {
-						ID: "asset-child-2",
+						ID: "asset-dependency-2",
 					},
 				},
 			},
 			ExpectedErr: nil,
 			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
-					"asset-parent": {
-						ID:      "asset-parent",
-						Name:    "Asset Parent",
-						CPE23:   "cpe:2.3:a:fake:asset:*:parent:*:*:*:*:*:*",
-						Parents: []*model.Asset{},
-						Children: []*model.Asset{
+					"asset-dependent": {
+						ID:         "asset-dependent",
+						Name:       "Asset Dependent",
+						CPE23:      "cpe:2.3:a:fake:asset:*:dependent:*:*:*:*:*:*",
+						Dependents: []*model.Asset{},
+						Dependencies: []*model.Asset{
 							{
 								ID: "asset",
 							},
@@ -615,56 +615,56 @@ func TestMemoryAddAsset(t *testing.T) {
 						ID:    "asset",
 						Name:  "Asset",
 						CPE23: "cpe:2.3:a:fake\\_new:asset:*:*:*:*:*:*:*:*",
-						Parents: []*model.Asset{
+						Dependents: []*model.Asset{
 							{
-								ID: "asset-parent",
+								ID: "asset-dependent",
 							},
 						},
-						Children: []*model.Asset{
+						Dependencies: []*model.Asset{
 							{
-								ID: "asset-child-1",
+								ID: "asset-dependency-1",
 							}, {
-								ID: "asset-child-2",
+								ID: "asset-dependency-2",
 							},
 						},
 						CVEs: []*model.CVE{},
 					},
-					"asset-child-1": {
-						ID:    "asset-child-1",
-						Name:  "Asset Child 1",
-						CPE23: "cpe:2.3:a:fake:asset:1:child:*:*:*:*:*:*",
-						Parents: []*model.Asset{
+					"asset-dependency-1": {
+						ID:    "asset-dependency-1",
+						Name:  "Asset Dependency 1",
+						CPE23: "cpe:2.3:a:fake:asset:1:dependency:*:*:*:*:*:*",
+						Dependents: []*model.Asset{
 							{
 								ID: "asset",
 							},
 						},
-						Children: []*model.Asset{
+						Dependencies: []*model.Asset{
 							{
-								ID: "asset-child-2",
+								ID: "asset-dependency-2",
 							},
 						},
 						CVEs: []*model.CVE{},
 					},
-					"asset-child-2": {
-						ID:    "asset-child-2",
-						Name:  "Asset Child 2",
-						CPE23: "cpe:2.3:a:fake:asset:2:child:*:*:*:*:*:*",
-						Parents: []*model.Asset{
+					"asset-dependency-2": {
+						ID:    "asset-dependency-2",
+						Name:  "Asset Dependency 2",
+						CPE23: "cpe:2.3:a:fake:asset:2:dependency:*:*:*:*:*:*",
+						Dependents: []*model.Asset{
 							{
-								ID: "asset-child-1",
+								ID: "asset-dependency-1",
 							}, {
 								ID: "asset",
 							},
 						},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
 					"fake:asset": {
-						"asset-parent":  {},
-						"asset-child-1": {},
-						"asset-child-2": {},
+						"asset-dependent":    {},
+						"asset-dependency-1": {},
+						"asset-dependency-2": {},
 					},
 					"fake\\_new:asset": {
 						"asset": {},
@@ -673,15 +673,15 @@ func TestMemoryAddAsset(t *testing.T) {
 				CVEs: map[string]*model.CVE{},
 			},
 		},
-		"asset-parent-already-exist": {
+		"asset-dependent-already-exist": {
 			Memory: &Memory{
 				Assets: map[string]*model.Asset{
-					"asset-parent": {
-						ID:      "asset-parent",
-						Name:    "Asset Parent",
-						CPE23:   "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents: []*model.Asset{},
-						Children: []*model.Asset{
+					"asset-dependent": {
+						ID:         "asset-dependent",
+						Name:       "Asset Dependent",
+						CPE23:      "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Dependents: []*model.Asset{},
+						Dependencies: []*model.Asset{
 							{
 								ID: "asset",
 							},
@@ -692,29 +692,29 @@ func TestMemoryAddAsset(t *testing.T) {
 						ID:    "asset",
 						Name:  "Asset",
 						CPE23: "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents: []*model.Asset{
+						Dependents: []*model.Asset{
 							{
-								ID: "asset-parent",
+								ID: "asset-dependent",
 							},
 						},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
 					"fake:asset": {
-						"asset":        {},
-						"asset-parent": {},
+						"asset":           {},
+						"asset-dependent": {},
 					},
 				},
 				CVEs:       map[string]*model.CVE{},
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
 			Input: AddAssetInput{
-				ID:    "asset-new-parent",
-				Name:  "Asset New Parent",
+				ID:    "asset-new-dependent",
+				Name:  "Asset New Dependent",
 				CPE23: "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-				Children: []AddAssetChildInput{
+				Dependencies: []AddAssetDepInput{
 					{
 						ID: "asset",
 					},
@@ -723,12 +723,12 @@ func TestMemoryAddAsset(t *testing.T) {
 			ExpectedErr: nil,
 			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
-					"asset-parent": {
-						ID:      "asset-parent",
-						Name:    "Asset Parent",
-						CPE23:   "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents: []*model.Asset{},
-						Children: []*model.Asset{
+					"asset-dependent": {
+						ID:         "asset-dependent",
+						Name:       "Asset Dependent",
+						CPE23:      "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Dependents: []*model.Asset{},
+						Dependencies: []*model.Asset{
 							{
 								ID: "asset",
 							},
@@ -739,22 +739,22 @@ func TestMemoryAddAsset(t *testing.T) {
 						ID:    "asset",
 						Name:  "Asset",
 						CPE23: "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents: []*model.Asset{
+						Dependents: []*model.Asset{
 							{
-								ID: "asset-parent",
+								ID: "asset-dependent",
 							}, {
-								ID: "asset-new-parent",
+								ID: "asset-new-dependent",
 							},
 						},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
-					"asset-new-parent": {
-						ID:      "asset-new-parent",
-						Name:    "Asset New Parent",
-						CPE23:   "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents: []*model.Asset{},
-						Children: []*model.Asset{
+					"asset-new-dependent": {
+						ID:         "asset-new-dependent",
+						Name:       "Asset New Dependent",
+						CPE23:      "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Dependents: []*model.Asset{},
+						Dependencies: []*model.Asset{
 							{
 								ID: "asset",
 							},
@@ -764,9 +764,9 @@ func TestMemoryAddAsset(t *testing.T) {
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
 					"fake:asset": {
-						"asset":            {},
-						"asset-parent":     {},
-						"asset-new-parent": {},
+						"asset":               {},
+						"asset-dependent":     {},
+						"asset-new-dependent": {},
 					},
 				},
 				CVEs:       map[string]*model.CVE{},
@@ -809,11 +809,11 @@ func TestMemoryUpdateAsset(t *testing.T) {
 				CVEVPIndex:   map[string]map[string]struct{}{},
 			},
 			Input: UpdateAssetInput{
-				ID:       "asset",
-				Name:     nil,
-				CPE23:    nil,
-				Children: nil,
-				CVEs:     nil,
+				ID:           "asset",
+				Name:         nil,
+				CPE23:        nil,
+				Dependencies: nil,
+				CVEs:         nil,
 			},
 			ExpectedErr: &ErrNotExist{
 				K: KeyAsset,
@@ -826,16 +826,16 @@ func TestMemoryUpdateAsset(t *testing.T) {
 				CVEVPIndex:   map[string]map[string]struct{}{},
 			},
 		},
-		"parent-not-exist": {
+		"dependent-not-exist": {
 			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
-						ID:       "asset",
-						Name:     "Asset",
-						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset",
+						Name:         "Asset",
+						CPE23:        "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
@@ -850,27 +850,27 @@ func TestMemoryUpdateAsset(t *testing.T) {
 				ID:    "asset",
 				Name:  nil,
 				CPE23: nil,
-				Parents: []UpdateAssetParentInput{
+				Dependents: []UpdateAssetDepInput{
 					{
-						ID: "asset-parent",
+						ID: "asset-dependent",
 					},
 				},
-				Children: nil,
-				CVEs:     nil,
+				Dependencies: nil,
+				CVEs:         nil,
 			},
 			ExpectedErr: &ErrNotExist{
 				K: KeyAsset,
-				V: "asset-parent",
+				V: "asset-dependent",
 			},
 			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
-						ID:       "asset",
-						Name:     "Asset",
-						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset",
+						Name:         "Asset",
+						CPE23:        "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
@@ -882,16 +882,16 @@ func TestMemoryUpdateAsset(t *testing.T) {
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
 		},
-		"child-not-exist": {
+		"dependency-not-exist": {
 			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
-						ID:       "asset",
-						Name:     "Asset",
-						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset",
+						Name:         "Asset",
+						CPE23:        "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
@@ -906,26 +906,26 @@ func TestMemoryUpdateAsset(t *testing.T) {
 				ID:    "asset",
 				Name:  nil,
 				CPE23: nil,
-				Children: []UpdateAssetChildInput{
+				Dependencies: []UpdateAssetDepInput{
 					{
-						ID: "asset-child",
+						ID: "asset-dependency",
 					},
 				},
 				CVEs: nil,
 			},
 			ExpectedErr: &ErrNotExist{
 				K: KeyAsset,
-				V: "asset-child",
+				V: "asset-dependency",
 			},
 			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
-						ID:       "asset",
-						Name:     "Asset",
-						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset",
+						Name:         "Asset",
+						CPE23:        "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
@@ -941,12 +941,12 @@ func TestMemoryUpdateAsset(t *testing.T) {
 			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
-						ID:       "asset",
-						Name:     "Asset",
-						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset",
+						Name:         "Asset",
+						CPE23:        "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
@@ -958,10 +958,10 @@ func TestMemoryUpdateAsset(t *testing.T) {
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
 			Input: UpdateAssetInput{
-				ID:       "asset",
-				Name:     nil,
-				CPE23:    nil,
-				Children: nil,
+				ID:           "asset",
+				Name:         nil,
+				CPE23:        nil,
+				Dependencies: nil,
 				CVEs: []UpdateAssetCVEsInput{
 					{
 						ID: "cve",
@@ -975,12 +975,12 @@ func TestMemoryUpdateAsset(t *testing.T) {
 			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
-						ID:       "asset",
-						Name:     "Asset",
-						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset",
+						Name:         "Asset",
+						CPE23:        "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
@@ -996,12 +996,12 @@ func TestMemoryUpdateAsset(t *testing.T) {
 			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
-						ID:       "asset",
-						Name:     "Asset",
-						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset",
+						Name:         "Asset",
+						CPE23:        "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
@@ -1013,22 +1013,22 @@ func TestMemoryUpdateAsset(t *testing.T) {
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
 			Input: UpdateAssetInput{
-				ID:       "asset",
-				Name:     ptr("New Asset"),
-				CPE23:    nil,
-				Children: nil,
-				CVEs:     nil,
+				ID:           "asset",
+				Name:         ptr("New Asset"),
+				CPE23:        nil,
+				Dependencies: nil,
+				CVEs:         nil,
 			},
 			ExpectedErr: nil,
 			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
-						ID:       "asset",
-						Name:     "New Asset",
-						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset",
+						Name:         "New Asset",
+						CPE23:        "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
@@ -1044,12 +1044,12 @@ func TestMemoryUpdateAsset(t *testing.T) {
 			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
-						ID:       "asset",
-						Name:     "Asset",
-						CPE23:    "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset",
+						Name:         "Asset",
+						CPE23:        "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
@@ -1061,23 +1061,23 @@ func TestMemoryUpdateAsset(t *testing.T) {
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
 			Input: UpdateAssetInput{
-				ID:       "asset",
-				Name:     nil,
-				CPE23:    ptr("cpe:2.3:a:fake\\_other:asset:2:*:*:*:*:*:*:*"),
-				Parents:  nil,
-				Children: nil,
-				CVEs:     nil,
+				ID:           "asset",
+				Name:         nil,
+				CPE23:        ptr("cpe:2.3:a:fake\\_other:asset:2:*:*:*:*:*:*:*"),
+				Dependents:   nil,
+				Dependencies: nil,
+				CVEs:         nil,
 			},
 			ExpectedErr: nil,
 			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
-						ID:       "asset",
-						Name:     "Asset",
-						CPE23:    "cpe:2.3:a:fake\\_other:asset:2:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset",
+						Name:         "Asset",
+						CPE23:        "cpe:2.3:a:fake\\_other:asset:2:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
@@ -1089,30 +1089,30 @@ func TestMemoryUpdateAsset(t *testing.T) {
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
 		},
-		"new-parent": {
+		"new-dependent": {
 			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
-						ID:       "asset",
-						Name:     "Asset",
-						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset",
+						Name:         "Asset",
+						CPE23:        "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
-					"asset-parent": {
-						ID:       "asset-parent",
-						Name:     "Asset Parent",
-						CPE23:    "cpe:2.3:a:fake:asset:*:parent:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+					"asset-dependent": {
+						ID:           "asset-dependent",
+						Name:         "Asset Dependent",
+						CPE23:        "cpe:2.3:a:fake:asset:*:dependent:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
 					"fake:asset": {
-						"asset":        {},
-						"asset-parent": {},
+						"asset":           {},
+						"asset-dependent": {},
 					},
 				},
 				CVEs:       map[string]*model.CVE{},
@@ -1122,13 +1122,13 @@ func TestMemoryUpdateAsset(t *testing.T) {
 				ID:    "asset",
 				Name:  nil,
 				CPE23: nil,
-				Parents: []UpdateAssetParentInput{
+				Dependents: []UpdateAssetDepInput{
 					{
-						ID: "asset-parent",
+						ID: "asset-dependent",
 					},
 				},
-				Children: nil,
-				CVEs:     nil,
+				Dependencies: nil,
+				CVEs:         nil,
 			},
 			ExpectedErr: nil,
 			ExpectedMemory: &Memory{
@@ -1137,20 +1137,20 @@ func TestMemoryUpdateAsset(t *testing.T) {
 						ID:    "asset",
 						Name:  "Asset",
 						CPE23: "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents: []*model.Asset{
+						Dependents: []*model.Asset{
 							{
-								ID: "asset-parent",
+								ID: "asset-dependent",
 							},
 						},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
-					"asset-parent": {
-						ID:      "asset-parent",
-						Name:    "Asset Parent",
-						CPE23:   "cpe:2.3:a:fake:asset:*:parent:*:*:*:*:*:*",
-						Parents: []*model.Asset{},
-						Children: []*model.Asset{
+					"asset-dependent": {
+						ID:         "asset-dependent",
+						Name:       "Asset Dependent",
+						CPE23:      "cpe:2.3:a:fake:asset:*:dependent:*:*:*:*:*:*",
+						Dependents: []*model.Asset{},
+						Dependencies: []*model.Asset{
 							{
 								ID: "asset",
 							},
@@ -1160,23 +1160,23 @@ func TestMemoryUpdateAsset(t *testing.T) {
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
 					"fake:asset": {
-						"asset":        {},
-						"asset-parent": {},
+						"asset":           {},
+						"asset-dependent": {},
 					},
 				},
 				CVEs:       map[string]*model.CVE{},
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
 		},
-		"new-parent-already-existing": {
+		"new-dependent-already-existing": {
 			Memory: &Memory{
 				Assets: map[string]*model.Asset{
-					"asset-parent": {
-						ID:      "asset-parent",
-						Name:    "Asset Parent",
-						CPE23:   "cpe:2.3:a:fake:asset:*:parent:*:*:*:*:*:*",
-						Parents: []*model.Asset{},
-						Children: []*model.Asset{
+					"asset-dependent": {
+						ID:         "asset-dependent",
+						Name:       "Asset Dependent",
+						CPE23:      "cpe:2.3:a:fake:asset:*:dependent:*:*:*:*:*:*",
+						Dependents: []*model.Asset{},
+						Dependencies: []*model.Asset{
 							{
 								ID: "asset",
 							},
@@ -1187,28 +1187,28 @@ func TestMemoryUpdateAsset(t *testing.T) {
 						ID:    "asset",
 						Name:  "Asset",
 						CPE23: "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents: []*model.Asset{
+						Dependents: []*model.Asset{
 							{
-								ID: "asset-parent",
+								ID: "asset-dependent",
 							},
 						},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
-					"asset-future-parent": {
-						ID:       "asset-future-parent",
-						Name:     "Asset Future Parent",
-						CPE23:    "cpe:2.3:a:fake:asset:*:parent:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+					"asset-future-dependent": {
+						ID:           "asset-future-dependent",
+						Name:         "Asset Future Dependent",
+						CPE23:        "cpe:2.3:a:fake:asset:*:dependent:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
 					"fake:asset": {
-						"asset":               {},
-						"asset-parent":        {},
-						"asset-future-parent": {},
+						"asset":                  {},
+						"asset-dependent":        {},
+						"asset-future-dependent": {},
 					},
 				},
 				CVEs:       map[string]*model.CVE{},
@@ -1218,43 +1218,43 @@ func TestMemoryUpdateAsset(t *testing.T) {
 				ID:    "asset",
 				Name:  nil,
 				CPE23: nil,
-				Parents: []UpdateAssetParentInput{
+				Dependents: []UpdateAssetDepInput{
 					{
-						ID: "asset-future-parent",
+						ID: "asset-future-dependent",
 					},
 				},
-				Children: nil,
-				CVEs:     nil,
+				Dependencies: nil,
+				CVEs:         nil,
 			},
 			ExpectedErr: nil,
 			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
-					"asset-parent": {
-						ID:       "asset-parent",
-						Name:     "Asset Parent",
-						CPE23:    "cpe:2.3:a:fake:asset:*:parent:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+					"asset-dependent": {
+						ID:           "asset-dependent",
+						Name:         "Asset Dependent",
+						CPE23:        "cpe:2.3:a:fake:asset:*:dependent:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 					"asset": {
 						ID:    "asset",
 						Name:  "Asset",
 						CPE23: "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents: []*model.Asset{
+						Dependents: []*model.Asset{
 							{
-								ID: "asset-future-parent",
+								ID: "asset-future-dependent",
 							},
 						},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
-					"asset-future-parent": {
-						ID:      "asset-future-parent",
-						Name:    "Asset Future Parent",
-						CPE23:   "cpe:2.3:a:fake:asset:*:parent:*:*:*:*:*:*",
-						Parents: []*model.Asset{},
-						Children: []*model.Asset{
+					"asset-future-dependent": {
+						ID:         "asset-future-dependent",
+						Name:       "Asset Future Dependent",
+						CPE23:      "cpe:2.3:a:fake:asset:*:dependent:*:*:*:*:*:*",
+						Dependents: []*model.Asset{},
+						Dependencies: []*model.Asset{
 							{
 								ID: "asset",
 							},
@@ -1264,86 +1264,86 @@ func TestMemoryUpdateAsset(t *testing.T) {
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
 					"fake:asset": {
-						"asset":               {},
-						"asset-parent":        {},
-						"asset-future-parent": {},
+						"asset":                  {},
+						"asset-dependent":        {},
+						"asset-future-dependent": {},
 					},
 				},
 				CVEs:       map[string]*model.CVE{},
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
 		},
-		"new-children": {
+		"new-dependencies": {
 			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
-						ID:      "asset",
-						Name:    "Asset",
-						CPE23:   "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents: []*model.Asset{},
-						Children: []*model.Asset{
+						ID:         "asset",
+						Name:       "Asset",
+						CPE23:      "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Dependents: []*model.Asset{},
+						Dependencies: []*model.Asset{
 							{
-								ID: "asset-child-1",
+								ID: "asset-dependency-1",
 							}, {
-								ID: "asset-child-3",
+								ID: "asset-dependency-3",
 							},
 						},
 						CVEs: []*model.CVE{},
 					},
-					"asset-child-1": {
-						ID:    "asset-child-1",
-						Name:  "Asset Child 1",
-						CPE23: "cpe:2.3:a:fake:asset:1:child:*:*:*:*:*:*",
-						Parents: []*model.Asset{
+					"asset-dependency-1": {
+						ID:    "asset-dependency-1",
+						Name:  "Asset Dependency 1",
+						CPE23: "cpe:2.3:a:fake:asset:1:dependency:*:*:*:*:*:*",
+						Dependents: []*model.Asset{
 							{
 								ID: "asset",
 							},
 						},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
-					"asset-child-2": {
-						ID:       "asset-child-2",
-						Name:     "Asset Child 2",
-						CPE23:    "cpe:2.3:a:fake:asset:2:child:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+					"asset-dependency-2": {
+						ID:           "asset-dependency-2",
+						Name:         "Asset Dependency 2",
+						CPE23:        "cpe:2.3:a:fake:asset:2:dependency:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
-					"asset-child-3": {
-						ID:    "asset-child-3",
-						Name:  "Asset Child 3",
-						CPE23: "cpe:2.3:a:fake:asset:3:child:*:*:*:*:*:*",
-						Parents: []*model.Asset{
+					"asset-dependency-3": {
+						ID:    "asset-dependency-3",
+						Name:  "Asset Dependency 3",
+						CPE23: "cpe:2.3:a:fake:asset:3:dependency:*:*:*:*:*:*",
+						Dependents: []*model.Asset{
 							{
 								ID: "asset",
 							},
 						},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
 					"fake:asset": {
-						"asset":         {},
-						"asset-child-1": {},
-						"asset-child-2": {},
-						"asset-child-3": {},
+						"asset":              {},
+						"asset-dependency-1": {},
+						"asset-dependency-2": {},
+						"asset-dependency-3": {},
 					},
 				},
 				CVEs:       map[string]*model.CVE{},
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
 			Input: UpdateAssetInput{
-				ID:      "asset",
-				Name:    nil,
-				CPE23:   nil,
-				Parents: nil,
-				Children: []UpdateAssetChildInput{
+				ID:         "asset",
+				Name:       nil,
+				CPE23:      nil,
+				Dependents: nil,
+				Dependencies: []UpdateAssetDepInput{
 					{
-						ID: "asset-child-2",
+						ID: "asset-dependency-2",
 					}, {
-						ID: "asset-child-3",
+						ID: "asset-dependency-3",
 					},
 				},
 				CVEs: nil,
@@ -1352,58 +1352,58 @@ func TestMemoryUpdateAsset(t *testing.T) {
 			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
-						ID:      "asset",
-						Name:    "Asset",
-						CPE23:   "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents: []*model.Asset{},
-						Children: []*model.Asset{
+						ID:         "asset",
+						Name:       "Asset",
+						CPE23:      "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Dependents: []*model.Asset{},
+						Dependencies: []*model.Asset{
 							{
-								ID: "asset-child-2",
+								ID: "asset-dependency-2",
 							}, {
-								ID: "asset-child-3",
+								ID: "asset-dependency-3",
 							},
 						},
 						CVEs: []*model.CVE{},
 					},
-					"asset-child-1": {
-						ID:       "asset-child-1",
-						Name:     "Asset Child 1",
-						CPE23:    "cpe:2.3:a:fake:asset:1:child:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+					"asset-dependency-1": {
+						ID:           "asset-dependency-1",
+						Name:         "Asset Dependency 1",
+						CPE23:        "cpe:2.3:a:fake:asset:1:dependency:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
-					"asset-child-2": {
-						ID:    "asset-child-2",
-						Name:  "Asset Child 2",
-						CPE23: "cpe:2.3:a:fake:asset:2:child:*:*:*:*:*:*",
-						Parents: []*model.Asset{
+					"asset-dependency-2": {
+						ID:    "asset-dependency-2",
+						Name:  "Asset Dependency 2",
+						CPE23: "cpe:2.3:a:fake:asset:2:dependency:*:*:*:*:*:*",
+						Dependents: []*model.Asset{
 							{
 								ID: "asset",
 							},
 						},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
-					"asset-child-3": {
-						ID:    "asset-child-3",
-						Name:  "Asset Child 3",
-						CPE23: "cpe:2.3:a:fake:asset:3:child:*:*:*:*:*:*",
-						Parents: []*model.Asset{
+					"asset-dependency-3": {
+						ID:    "asset-dependency-3",
+						Name:  "Asset Dependency 3",
+						CPE23: "cpe:2.3:a:fake:asset:3:dependency:*:*:*:*:*:*",
+						Dependents: []*model.Asset{
 							{
 								ID: "asset",
 							},
 						},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
 					"fake:asset": {
-						"asset":         {},
-						"asset-child-1": {},
-						"asset-child-2": {},
-						"asset-child-3": {},
+						"asset":              {},
+						"asset-dependency-1": {},
+						"asset-dependency-2": {},
+						"asset-dependency-3": {},
 					},
 				},
 				CVEs:       map[string]*model.CVE{},
@@ -1414,11 +1414,11 @@ func TestMemoryUpdateAsset(t *testing.T) {
 			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
-						ID:       "asset",
-						Name:     "Asset",
-						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
+						ID:           "asset",
+						Name:         "Asset",
+						CPE23:        "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
 								ID: "cve-1",
@@ -1524,11 +1524,11 @@ func TestMemoryUpdateAsset(t *testing.T) {
 				},
 			},
 			Input: UpdateAssetInput{
-				ID:       "asset",
-				Name:     nil,
-				CPE23:    nil,
-				Parents:  nil,
-				Children: nil,
+				ID:           "asset",
+				Name:         nil,
+				CPE23:        nil,
+				Dependents:   nil,
+				Dependencies: nil,
 				CVEs: []UpdateAssetCVEsInput{
 					{
 						ID: "cve-2",
@@ -1541,11 +1541,11 @@ func TestMemoryUpdateAsset(t *testing.T) {
 			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
-						ID:       "asset",
-						Name:     "Asset",
-						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
+						ID:           "asset",
+						Name:         "Asset",
+						CPE23:        "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
 								ID: "cve-2",
@@ -1702,12 +1702,12 @@ func TestMemoryDeleteAsset(t *testing.T) {
 		"existing-asset": {
 			Memory: &Memory{
 				Assets: map[string]*model.Asset{
-					"asset-parent": {
-						ID:      "asset-parent",
-						Name:    "Asset Parent",
-						CPE23:   "cpe:2.3:a:fake:asset:*:parent:*:*:*:*:*:*",
-						Parents: []*model.Asset{},
-						Children: []*model.Asset{
+					"asset-dependent": {
+						ID:         "asset-dependent",
+						Name:       "Asset Dependent",
+						CPE23:      "cpe:2.3:a:fake:asset:*:dependent:*:*:*:*:*:*",
+						Dependents: []*model.Asset{},
+						Dependencies: []*model.Asset{
 							{
 								ID: "asset",
 							},
@@ -1718,14 +1718,14 @@ func TestMemoryDeleteAsset(t *testing.T) {
 						ID:    "asset",
 						Name:  "Asset",
 						CPE23: "cpe:2.3:a:fake:asset\\_goodbye:*:*:*:*:*:*:*:*",
-						Parents: []*model.Asset{
+						Dependents: []*model.Asset{
 							{
-								ID: "asset-parent",
+								ID: "asset-dependent",
 							},
 						},
-						Children: []*model.Asset{
+						Dependencies: []*model.Asset{
 							{
-								ID: "asset-child",
+								ID: "asset-dependency",
 							},
 						},
 						CVEs: []*model.CVE{
@@ -1734,23 +1734,23 @@ func TestMemoryDeleteAsset(t *testing.T) {
 							},
 						},
 					},
-					"asset-child": {
-						ID:    "asset-child",
-						Name:  "Asset Child",
-						CPE23: "cpe:2.3:a:fake:asset:*:child:*:*:*:*:*:*",
-						Parents: []*model.Asset{
+					"asset-dependency": {
+						ID:    "asset-dependency",
+						Name:  "Asset Dependency",
+						CPE23: "cpe:2.3:a:fake:asset:*:dependency:*:*:*:*:*:*",
+						Dependents: []*model.Asset{
 							{
 								ID: "asset",
 							},
 						},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
 					"fake:asset": {
-						"asset-parent": {},
-						"asset-child":  {},
+						"asset-dependent":  {},
+						"asset-dependency": {},
 					},
 					"fake:asset\\_goodbye": {
 						"asset": {},
@@ -1798,27 +1798,27 @@ func TestMemoryDeleteAsset(t *testing.T) {
 			ExpectedErr: nil,
 			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
-					"asset-parent": {
-						ID:       "asset-parent",
-						Name:     "Asset Parent",
-						CPE23:    "cpe:2.3:a:fake:asset:*:parent:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+					"asset-dependent": {
+						ID:           "asset-dependent",
+						Name:         "Asset Dependent",
+						CPE23:        "cpe:2.3:a:fake:asset:*:dependent:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
-					"asset-child": {
-						ID:       "asset-child",
-						Name:     "Asset Child",
-						CPE23:    "cpe:2.3:a:fake:asset:*:child:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+					"asset-dependency": {
+						ID:           "asset-dependency",
+						Name:         "Asset Dependency",
+						CPE23:        "cpe:2.3:a:fake:asset:*:dependency:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
 					"fake:asset": {
-						"asset-parent": {},
-						"asset-child":  {},
+						"asset-dependent":  {},
+						"asset-dependency": {},
 					},
 				},
 				CVEs: map[string]*model.CVE{
@@ -3343,11 +3343,11 @@ func TestMemoryUpdateCVE(t *testing.T) {
 			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset-1": {
-						ID:       "asset-1",
-						Name:     "Asset 1",
-						CPE23:    "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
+						ID:           "asset-1",
+						Name:         "Asset 1",
+						CPE23:        "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
 								ID: "cve",
@@ -3355,19 +3355,19 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						},
 					},
 					"asset-2": {
-						ID:       "asset-2",
-						Name:     "Asset 2",
-						CPE23:    "cpe:2.3:a:fake:asset:2:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset-2",
+						Name:         "Asset 2",
+						CPE23:        "cpe:2.3:a:fake:asset:2:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 					"asset-3": {
-						ID:       "asset-3",
-						Name:     "Asset 3",
-						CPE23:    "cpe:2.3:a:fake:asset:3:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
+						ID:           "asset-3",
+						Name:         "Asset 3",
+						CPE23:        "cpe:2.3:a:fake:asset:3:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
 								ID: "cve",
@@ -3442,19 +3442,19 @@ func TestMemoryUpdateCVE(t *testing.T) {
 			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset-1": {
-						ID:       "asset-1",
-						Name:     "Asset 1",
-						CPE23:    "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset-1",
+						Name:         "Asset 1",
+						CPE23:        "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 					"asset-2": {
-						ID:       "asset-2",
-						Name:     "Asset 2",
-						CPE23:    "cpe:2.3:a:fake:asset:2:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
+						ID:           "asset-2",
+						Name:         "Asset 2",
+						CPE23:        "cpe:2.3:a:fake:asset:2:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
 								ID: "cve",
@@ -3462,11 +3462,11 @@ func TestMemoryUpdateCVE(t *testing.T) {
 						},
 					},
 					"asset-3": {
-						ID:       "asset-3",
-						Name:     "Asset 3",
-						CPE23:    "cpe:2.3:a:fake:asset:3:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
+						ID:           "asset-3",
+						Name:         "Asset 3",
+						CPE23:        "cpe:2.3:a:fake:asset:3:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
 								ID: "cve",
@@ -3642,11 +3642,11 @@ func TestMemoryDeleteCVE(t *testing.T) {
 			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
-						ID:       "asset",
-						Name:     "Asset",
-						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
+						ID:           "asset",
+						Name:         "Asset",
+						CPE23:        "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
 								ID: "cve",
@@ -3704,12 +3704,12 @@ func TestMemoryDeleteCVE(t *testing.T) {
 			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
-						ID:       "asset",
-						Name:     "Asset",
-						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset",
+						Name:         "Asset",
+						CPE23:        "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
@@ -3752,12 +3752,12 @@ func TestGetAssetCVEs(t *testing.T) {
 			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
-						ID:       "asset",
-						Name:     "Asset",
-						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset",
+						Name:         "Asset",
+						CPE23:        "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
@@ -3769,23 +3769,23 @@ func TestGetAssetCVEs(t *testing.T) {
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
 			Asset: &model.Asset{
-				ID:       "asset",
-				Name:     "Asset",
-				CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-				Parents:  []*model.Asset{},
-				Children: []*model.Asset{},
-				CVEs:     []*model.CVE{},
+				ID:           "asset",
+				Name:         "Asset",
+				CPE23:        "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+				Dependents:   []*model.Asset{},
+				Dependencies: []*model.Asset{},
+				CVEs:         []*model.CVE{},
 			},
 			ExpectedCVEs: []*model.CVE{},
 			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
-						ID:       "asset",
-						Name:     "Asset",
-						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
-						CVEs:     []*model.CVE{},
+						ID:           "asset",
+						Name:         "Asset",
+						CPE23:        "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
+						CVEs:         []*model.CVE{},
 					},
 				},
 				AssetVPIndex: map[string]map[string]struct{}{
@@ -3801,11 +3801,11 @@ func TestGetAssetCVEs(t *testing.T) {
 			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
-						ID:       "asset",
-						Name:     "Asset",
-						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
+						ID:           "asset",
+						Name:         "Asset",
+						CPE23:        "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
 								ID: "cve-1",
@@ -3853,11 +3853,11 @@ func TestGetAssetCVEs(t *testing.T) {
 				CVEVPIndex: map[string]map[string]struct{}{},
 			},
 			Asset: &model.Asset{
-				ID:       "asset",
-				Name:     "Asset",
-				CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-				Parents:  []*model.Asset{},
-				Children: []*model.Asset{},
+				ID:           "asset",
+				Name:         "Asset",
+				CPE23:        "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+				Dependents:   []*model.Asset{},
+				Dependencies: []*model.Asset{},
 				CVEs: []*model.CVE{
 					{
 						ID: "cve-1",
@@ -3898,11 +3898,11 @@ func TestGetAssetCVEs(t *testing.T) {
 			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset": {
-						ID:       "asset",
-						Name:     "Asset",
-						CPE23:    "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
+						ID:           "asset",
+						Name:         "Asset",
+						CPE23:        "cpe:2.3:a:fake:asset:*:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
 								ID: "cve-1",
@@ -4025,11 +4025,11 @@ func TestGetCVEAssets(t *testing.T) {
 			Memory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset-1": {
-						ID:       "asset-1",
-						Name:     "Asset 1",
-						CPE23:    "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
+						ID:           "asset-1",
+						Name:         "Asset 1",
+						CPE23:        "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
 								ID: "cve",
@@ -4037,11 +4037,11 @@ func TestGetCVEAssets(t *testing.T) {
 						},
 					},
 					"asset-2": {
-						ID:       "asset-2",
-						Name:     "Asset 2",
-						CPE23:    "cpe:2.3:a:fake:asset:2:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
+						ID:           "asset-2",
+						Name:         "Asset 2",
+						CPE23:        "cpe:2.3:a:fake:asset:2:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
 								ID: "cve",
@@ -4093,22 +4093,22 @@ func TestGetCVEAssets(t *testing.T) {
 			},
 			ExpectedAssets: []*model.Asset{
 				{
-					ID:       "asset-1",
-					Name:     "Asset 1",
-					CPE23:    "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
-					Parents:  []*model.Asset{},
-					Children: []*model.Asset{},
+					ID:           "asset-1",
+					Name:         "Asset 1",
+					CPE23:        "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
+					Dependents:   []*model.Asset{},
+					Dependencies: []*model.Asset{},
 					CVEs: []*model.CVE{
 						{
 							ID: "cve",
 						},
 					},
 				}, {
-					ID:       "asset-2",
-					Name:     "Asset 2",
-					CPE23:    "cpe:2.3:a:fake:asset:2:*:*:*:*:*:*:*",
-					Parents:  []*model.Asset{},
-					Children: []*model.Asset{},
+					ID:           "asset-2",
+					Name:         "Asset 2",
+					CPE23:        "cpe:2.3:a:fake:asset:2:*:*:*:*:*:*:*",
+					Dependents:   []*model.Asset{},
+					Dependencies: []*model.Asset{},
 					CVEs: []*model.CVE{
 						{
 							ID: "cve",
@@ -4119,11 +4119,11 @@ func TestGetCVEAssets(t *testing.T) {
 			ExpectedMemory: &Memory{
 				Assets: map[string]*model.Asset{
 					"asset-1": {
-						ID:       "asset-1",
-						Name:     "Asset 1",
-						CPE23:    "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
+						ID:           "asset-1",
+						Name:         "Asset 1",
+						CPE23:        "cpe:2.3:a:fake:asset:1:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
 								ID: "cve",
@@ -4131,11 +4131,11 @@ func TestGetCVEAssets(t *testing.T) {
 						},
 					},
 					"asset-2": {
-						ID:       "asset-2",
-						Name:     "Asset 2",
-						CPE23:    "cpe:2.3:a:fake:asset:2:*:*:*:*:*:*:*",
-						Parents:  []*model.Asset{},
-						Children: []*model.Asset{},
+						ID:           "asset-2",
+						Name:         "Asset 2",
+						CPE23:        "cpe:2.3:a:fake:asset:2:*:*:*:*:*:*:*",
+						Dependents:   []*model.Asset{},
+						Dependencies: []*model.Asset{},
 						CVEs: []*model.CVE{
 							{
 								ID: "cve",

@@ -80,30 +80,21 @@ var AddAssetInput = graphql.NewInputObject(graphql.InputObjectConfig{
 		"cpe23": {
 			Type: graphql.NewNonNull(scalar.CPE23),
 		},
-		"parents": {
+		"dependents": {
 			Type: &graphql.List{
-				OfType: graphql.NewNonNull(AddAssetParentInput),
+				OfType: graphql.NewNonNull(AddAssetDepInput),
 			},
 		},
-		"children": {
+		"dependencies": {
 			Type: &graphql.List{
-				OfType: graphql.NewNonNull(AddAssetChildInput),
+				OfType: graphql.NewNonNull(AddAssetDepInput),
 			},
 		},
 	},
 })
 
-var AddAssetParentInput = graphql.NewInputObject(graphql.InputObjectConfig{
-	Name: "AddAssetParentInput",
-	Fields: graphql.InputObjectConfigFieldMap{
-		"id": {
-			Type: graphql.NewNonNull(graphql.String),
-		},
-	},
-})
-
-var AddAssetChildInput = graphql.NewInputObject(graphql.InputObjectConfig{
-	Name: "AddAssetChildInput",
+var AddAssetDepInput = graphql.NewInputObject(graphql.InputObjectConfig{
+	Name: "AddAssetDepInput",
 	Fields: graphql.InputObjectConfigFieldMap{
 		"id": {
 			Type: graphql.NewNonNull(graphql.String),
@@ -123,30 +114,21 @@ var UpdateAssetInput = graphql.NewInputObject(graphql.InputObjectConfig{
 		"cpe23": {
 			Type: scalar.CPE23,
 		},
-		"parents": {
+		"dependents": {
 			Type: &graphql.List{
-				OfType: graphql.NewNonNull(UpdateAssetParentInput),
+				OfType: graphql.NewNonNull(UpdateAssetDepInput),
 			},
 		},
-		"children": {
+		"dependencies": {
 			Type: &graphql.List{
-				OfType: graphql.NewNonNull(UpdateAssetChildInput),
+				OfType: graphql.NewNonNull(UpdateAssetDepInput),
 			},
 		},
 	},
 })
 
-var UpdateAssetParentInput = graphql.NewInputObject(graphql.InputObjectConfig{
-	Name: "UpdateAssetParentInput",
-	Fields: graphql.InputObjectConfigFieldMap{
-		"id": {
-			Type: graphql.NewNonNull(graphql.String),
-		},
-	},
-})
-
-var UpdateAssetChildInput = graphql.NewInputObject(graphql.InputObjectConfig{
-	Name: "UpdateAssetChildInput",
+var UpdateAssetDepInput = graphql.NewInputObject(graphql.InputObjectConfig{
+	Name: "UpdateAssetDepInput",
 	Fields: graphql.InputObjectConfigFieldMap{
 		"id": {
 			Type: graphql.NewNonNull(graphql.String),
@@ -164,24 +146,24 @@ var DeleteAssetInput = graphql.NewInputObject(graphql.InputObjectConfig{
 })
 
 func init() {
-	Asset.AddFieldConfig("chilren", &graphql.Field{
+	Asset.AddFieldConfig("dependents", &graphql.Field{
 		Type: graphql.NewNonNull(&graphql.List{
 			OfType: graphql.NewNonNull(Asset),
 		}),
 		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 			if asset, ok := p.Source.(*model.Asset); ok {
-				return asset.Children, nil
+				return asset.Dependents, nil
 			}
 			return nil, nil
 		},
 	})
-	Asset.AddFieldConfig("parents", &graphql.Field{
+	Asset.AddFieldConfig("dependencies", &graphql.Field{
 		Type: graphql.NewNonNull(&graphql.List{
 			OfType: graphql.NewNonNull(Asset),
 		}),
 		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 			if asset, ok := p.Source.(*model.Asset); ok {
-				return asset.Parents, nil
+				return asset.Dependencies, nil
 			}
 			return nil, nil
 		},

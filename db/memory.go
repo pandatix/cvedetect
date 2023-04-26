@@ -114,21 +114,21 @@ func (mem *Memory) AddAsset(input AddAssetInput) error {
 			V: input.ID,
 		}
 	}
-	// => Parents
-	for _, parent := range input.Parents {
-		if _, ok := mem.Assets[parent.ID]; !ok {
+	// => Dependents
+	for _, dep := range input.Dependents {
+		if _, ok := mem.Assets[dep.ID]; !ok {
 			return &ErrNotExist{
 				K: KeyAsset,
-				V: parent.ID,
+				V: dep.ID,
 			}
 		}
 	}
-	// => Children
-	for _, child := range input.Children {
-		if _, ok := mem.Assets[child.ID]; !ok {
+	// => Dependencies
+	for _, dep := range input.Dependencies {
+		if _, ok := mem.Assets[dep.ID]; !ok {
 			return &ErrNotExist{
 				K: KeyAsset,
-				V: child.ID,
+				V: dep.ID,
 			}
 		}
 	}
@@ -137,37 +137,37 @@ func (mem *Memory) AddAsset(input AddAssetInput) error {
 
 	// Save data
 	// => Assets map
-	children := make([]*model.Asset, len(input.Children))
-	for i, child := range input.Children {
-		children[i] = &model.Asset{
-			ID: child.ID,
+	dependencies := make([]*model.Asset, len(input.Dependencies))
+	for i, dep := range input.Dependencies {
+		dependencies[i] = &model.Asset{
+			ID: dep.ID,
 		}
 
-		// Set child's parent relation
-		child := mem.Assets[child.ID]
-		child.Parents = append(child.Parents, &model.Asset{
+		// Set dependency's dependent symetric relation
+		dependency := mem.Assets[dep.ID]
+		dependency.Dependents = append(dependency.Dependents, &model.Asset{
 			ID: input.ID,
 		})
 	}
-	parents := make([]*model.Asset, len(input.Parents))
-	for i, parent := range input.Parents {
-		parents[i] = &model.Asset{
-			ID: parent.ID,
+	dependents := make([]*model.Asset, len(input.Dependents))
+	for i, dep := range input.Dependents {
+		dependents[i] = &model.Asset{
+			ID: dep.ID,
 		}
 
-		// Set parent's child relation
-		parent := mem.Assets[parent.ID]
-		parent.Children = append(parent.Children, &model.Asset{
+		// Set dependent's dependency symetric relation
+		dependent := mem.Assets[dep.ID]
+		dependent.Dependencies = append(dependent.Dependencies, &model.Asset{
 			ID: input.ID,
 		})
 	}
 	mem.Assets[input.ID] = &model.Asset{
-		ID:       input.ID,
-		Name:     input.Name,
-		CPE23:    input.CPE23,
-		Parents:  parents,
-		Children: children,
-		CVEs:     []*model.CVE{},
+		ID:           input.ID,
+		Name:         input.Name,
+		CPE23:        input.CPE23,
+		Dependents:   dependents,
+		Dependencies: dependencies,
+		CVEs:         []*model.CVE{},
 	}
 	// => Index map
 	vp := internal.GetVP(input.CPE23)
@@ -192,21 +192,21 @@ func (mem *Memory) UpdateAsset(input UpdateAssetInput) error {
 			V: input.ID,
 		}
 	}
-	// => Parent
-	for _, parent := range input.Parents {
-		if _, ok := mem.Assets[parent.ID]; !ok {
+	// => Dependents
+	for _, dep := range input.Dependents {
+		if _, ok := mem.Assets[dep.ID]; !ok {
 			return &ErrNotExist{
 				K: KeyAsset,
-				V: parent.ID,
+				V: dep.ID,
 			}
 		}
 	}
-	// => Children
-	for _, child := range input.Children {
-		if _, ok := mem.Assets[child.ID]; !ok {
+	// => Dependencies
+	for _, dep := range input.Dependencies {
+		if _, ok := mem.Assets[dep.ID]; !ok {
 			return &ErrNotExist{
 				K: KeyAsset,
-				V: child.ID,
+				V: dep.ID,
 			}
 		}
 	}
@@ -247,87 +247,87 @@ func (mem *Memory) UpdateAsset(input UpdateAssetInput) error {
 		}
 		asset.CPE23 = *input.CPE23
 	}
-	// => Parents
-	if input.Parents != nil {
-		newParents := make([]*model.Asset, len(input.Parents))
-		for i, parent := range input.Parents {
-			newParents[i] = &model.Asset{
-				ID: parent.ID,
+	// => Dependents
+	if input.Dependents != nil {
+		newDependents := make([]*model.Asset, len(input.Dependents))
+		for i, dep := range input.Dependents {
+			newDependents[i] = &model.Asset{
+				ID: dep.ID,
 			}
 		}
-		// Update parents
-		for _, parent := range asset.Parents {
+		// Update dependents
+		for _, dep := range asset.Dependents {
 			remains := false
-			for _, inputParent := range input.Parents {
-				if parent.ID == inputParent.ID {
+			for _, inputDep := range input.Dependents {
+				if dep.ID == inputDep.ID {
 					remains = true
 					break
 				}
 			}
 			if !remains {
 				// Delete link
-				parent := mem.Assets[parent.ID]
-				parent.Children = removeAsset(parent.Children, asset)
+				dependent := mem.Assets[dep.ID]
+				dependent.Dependencies = removeAsset(dependent.Dependencies, asset)
 			}
 		}
-		for _, inputParent := range input.Parents {
+		for _, inputDep := range input.Dependents {
 			found := false
-			for _, parent := range asset.Parents {
-				if inputParent.ID == parent.ID {
+			for _, dep := range asset.Dependents {
+				if inputDep.ID == dep.ID {
 					found = true
 					break
 				}
 			}
 			if !found {
 				// Create link
-				parent := mem.Assets[inputParent.ID]
-				parent.Children = append(parent.Children, &model.Asset{
+				dependent := mem.Assets[inputDep.ID]
+				dependent.Dependencies = append(dependent.Dependencies, &model.Asset{
 					ID: asset.ID,
 				})
 			}
 		}
-		asset.Parents = newParents
+		asset.Dependents = newDependents
 	}
-	// => Children
-	if input.Children != nil {
-		newChildren := make([]*model.Asset, len(input.Children))
-		for i, child := range input.Children {
-			newChildren[i] = &model.Asset{
-				ID: child.ID,
+	// => Dependencies
+	if input.Dependencies != nil {
+		newDependencies := make([]*model.Asset, len(input.Dependencies))
+		for i, dep := range input.Dependencies {
+			newDependencies[i] = &model.Asset{
+				ID: dep.ID,
 			}
 		}
-		// Update children
-		for _, child := range asset.Children {
+		// Update dependencies
+		for _, dep := range asset.Dependencies {
 			remains := false
-			for _, inputChild := range input.Children {
-				if child.ID == inputChild.ID {
+			for _, inputDep := range input.Dependencies {
+				if dep.ID == inputDep.ID {
 					remains = true
 					break
 				}
 			}
 			if !remains {
 				// Delete link
-				child := mem.Assets[child.ID]
-				child.Parents = removeAsset(child.Parents, asset)
+				dependency := mem.Assets[dep.ID]
+				dependency.Dependents = removeAsset(dependency.Dependents, asset)
 			}
 		}
-		for _, inputChild := range input.Children {
+		for _, inputDep := range input.Dependencies {
 			found := false
-			for _, child := range asset.Children {
-				if inputChild.ID == child.ID {
+			for _, dep := range asset.Dependencies {
+				if inputDep.ID == dep.ID {
 					found = true
 					break
 				}
 			}
 			if !found {
 				// Create link
-				child := mem.Assets[inputChild.ID]
-				child.Parents = append(child.Parents, &model.Asset{
+				dependency := mem.Assets[inputDep.ID]
+				dependency.Dependents = append(dependency.Dependents, &model.Asset{
 					ID: asset.ID,
 				})
 			}
 		}
-		asset.Children = newChildren
+		asset.Dependencies = newDependencies
 	}
 	// => CVEs
 	if input.CVEs != nil {
@@ -388,15 +388,15 @@ func (mem *Memory) DeleteAsset(input DeleteAssetInput) error {
 	}
 
 	// Save data
-	// => Parent
-	for _, parent := range asset.Parents {
-		parent := mem.Assets[parent.ID]
-		parent.Children = removeAsset(parent.Children, asset)
+	// => Dependents
+	for _, dep := range asset.Dependents {
+		dependent := mem.Assets[dep.ID]
+		dependent.Dependencies = removeAsset(dependent.Dependencies, asset)
 	}
-	// => Children
-	for _, child := range asset.Children {
-		child := mem.Assets[child.ID]
-		child.Parents = removeAsset(child.Parents, asset)
+	// => Dependencies
+	for _, dep := range asset.Dependencies {
+		dependency := mem.Assets[dep.ID]
+		dependency.Dependents = removeAsset(dependency.Dependents, asset)
 	}
 	// => CVEs
 	for _, assetCve := range asset.CVEs {
@@ -773,16 +773,16 @@ func getNodeCPEs23(node *model.Node) []string {
 }
 
 func copyAsset(asset *model.Asset) *model.Asset {
-	parents := make([]*model.Asset, len(asset.Parents))
-	for i, parent := range asset.Parents {
-		parents[i] = &model.Asset{
-			ID: parent.ID,
+	dependents := make([]*model.Asset, len(asset.Dependents))
+	for i, dep := range asset.Dependents {
+		dependents[i] = &model.Asset{
+			ID: dep.ID,
 		}
 	}
-	children := make([]*model.Asset, len(asset.Children))
-	for i, child := range asset.Children {
-		children[i] = &model.Asset{
-			ID: child.ID,
+	dependencies := make([]*model.Asset, len(asset.Dependencies))
+	for i, dep := range asset.Dependencies {
+		dependencies[i] = &model.Asset{
+			ID: dep.ID,
 		}
 	}
 	cves := make([]*model.CVE, len(asset.CVEs))
@@ -792,12 +792,12 @@ func copyAsset(asset *model.Asset) *model.Asset {
 		}
 	}
 	return &model.Asset{
-		ID:       asset.ID,
-		Name:     asset.Name,
-		CPE23:    asset.CPE23,
-		Parents:  parents,
-		Children: children,
-		CVEs:     cves,
+		ID:           asset.ID,
+		Name:         asset.Name,
+		CPE23:        asset.CPE23,
+		Dependents:   dependents,
+		Dependencies: dependencies,
+		CVEs:         cves,
 	}
 }
 

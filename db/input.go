@@ -13,35 +13,27 @@ type QueryAssetInput struct {
 }
 
 type AddAssetInput struct {
-	ID       string                `json:"id"`
-	Name     string                `json:"name"`
-	CPE23    string                `json:"cpe23"`
-	Parents  []AddAssetParentInput `json:"parents"`
-	Children []AddAssetChildInput  `json:"children"`
+	ID           string             `json:"id"`
+	Name         string             `json:"name"`
+	CPE23        string             `json:"cpe23"`
+	Dependents   []AddAssetDepInput `json:"dependents"`
+	Dependencies []AddAssetDepInput `json:"dependencies"`
 }
 
-type AddAssetParentInput struct {
-	ID string `json:"id"`
-}
-
-type AddAssetChildInput struct {
+type AddAssetDepInput struct {
 	ID string `json:"id"`
 }
 
 type UpdateAssetInput struct {
-	ID       string                   `json:"id"`
-	Name     *string                  `json:"name,omitempty"`
-	CPE23    *string                  `json:"cpe23,omitempty"`
-	Parents  []UpdateAssetParentInput `json:"parents,omitempty"`
-	Children []UpdateAssetChildInput  `json:"children,omitempty"`
-	CVEs     []UpdateAssetCVEsInput   `json:"cves,omitempty"`
+	ID           string                 `json:"id"`
+	Name         *string                `json:"name,omitempty"`
+	CPE23        *string                `json:"cpe23,omitempty"`
+	Dependents   []UpdateAssetDepInput  `json:"dependents,omitempty"`
+	Dependencies []UpdateAssetDepInput  `json:"dependencies,omitempty"`
+	CVEs         []UpdateAssetCVEsInput `json:"cves,omitempty"`
 }
 
-type UpdateAssetParentInput struct {
-	ID string `json:"id"`
-}
-
-type UpdateAssetChildInput struct {
+type UpdateAssetDepInput struct {
 	ID string `json:"id"`
 }
 

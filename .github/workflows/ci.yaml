@@ -11,6 +11,16 @@ jobs:
         with:
           access_token: ${{ github.token }}
 
+  scan:
+    runs-on: ubuntu-20.04
+    needs: [setup]
+    steps:
+      - name: Trivy secret and config scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scanners: 'secret,config'
+          scan-type: 'fs'
+
   unit-tests:
     strategy:
       matrix:

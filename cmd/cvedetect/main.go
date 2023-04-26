@@ -29,7 +29,7 @@ func main() {
 	app := cli.App{
 		Name:        "CVE-Detect",
 		Version:     "v0.1.0-alpha",
-		Description: "Implementation of personnal researches on CVE detection, exposing a GraphQL API to work with.",
+		Description: "Implementation of personnal researches on CVE detection, exposing a GraphQL API to work with.\n\nThis product uses the NVD API but is not endorsed or certified by the NVD.",
 		Flags: []cli.Flag{
 			cli.HelpFlag,
 			cli.VersionFlag,

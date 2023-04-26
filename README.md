@@ -4,6 +4,8 @@
 
 cvedetect is state of the art Vulnerability Assessment Tool (VAT) working on a non-cylic oriented graph of assets.
 
+> This product uses the NVD API but is not endorsed or certified by the NVD.
+
 ## TODO
 
  - [ ] Implement complete `match` algorithm

@@ -15,7 +15,7 @@ import (
 	"github.com/pandatix/cvedetect/api"
 	apidb "github.com/pandatix/cvedetect/api/db"
 	"github.com/pandatix/cvedetect/db"
-	"github.com/pandatix/nvdapi"
+	"github.com/pandatix/nvdapi/v1"
 	"github.com/urfave/cli/v2"
 )
 
